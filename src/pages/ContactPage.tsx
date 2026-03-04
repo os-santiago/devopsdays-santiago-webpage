@@ -119,6 +119,17 @@ const ContactPage = () => {
             <p className="text-muted-foreground text-lg">¿Preguntas? ¿Ideas? ¡Estamos para ayudarte!</p>
           </motion.div>
 
+          <p className="max-w-2xl mx-auto mb-6 text-center text-sm text-muted-foreground">
+            Si tienes algún problema con el formulario, puedes escribirnos a{" "}
+            <a
+              className="font-semibold text-primary hover:underline"
+              href="mailto:contacto@devopsdayschile.cl"
+            >
+              contacto@devopsdayschile.cl
+            </a>
+            .
+          </p>
+
           <motion.form
             onSubmit={handleSubmit}
             noValidate
