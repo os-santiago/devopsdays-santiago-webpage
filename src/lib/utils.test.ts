@@ -11,6 +11,7 @@ describe("cn", () => {
   });
 
   it("ignores falsy values", () => {
-    expect(cn("flex", false && "hidden", undefined, null, "items-center")).toBe("flex items-center");
+    const optionalClass: string | false = false;
+    expect(cn("flex", optionalClass, undefined, null, "items-center")).toBe("flex items-center");
   });
 });

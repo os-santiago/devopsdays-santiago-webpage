@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
+import type { ReactNode } from "react";
 
 vi.mock("@/components/ui/toaster", () => ({
   Toaster: () => null,
@@ -10,7 +11,7 @@ vi.mock("@/components/ui/sonner", () => ({
 }));
 
 vi.mock("@/components/ui/tooltip", () => ({
-  TooltipProvider: ({ children }: any) => children,
+  TooltipProvider: ({ children }: { children: ReactNode }) => children,
 }));
 
 import App from "@/App";

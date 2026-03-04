@@ -1,9 +1,14 @@
 import "@testing-library/jest-dom";
 import { afterEach, vi } from "vitest";
 import { cleanup } from "@testing-library/react";
+import type { ReactNode } from "react";
 
 vi.mock("framer-motion", async () => {
   const React = await import("react");
+  type MotionComponentProps = {
+    children?: ReactNode;
+    [key: string]: unknown;
+  };
   const motionOnlyProps = new Set([
     "initial",
     "animate",
@@ -22,7 +27,7 @@ vi.mock("framer-motion", async () => {
     {},
     {
       get: (_, tag: string) => {
-        return React.forwardRef(({ children, ...props }: any, ref) => {
+        return React.forwardRef<unknown, MotionComponentProps>(({ children, ...props }, ref) => {
           const domProps = Object.fromEntries(
             Object.entries(props).filter(([key]) => !motionOnlyProps.has(key)),
           );
@@ -35,7 +40,7 @@ vi.mock("framer-motion", async () => {
 
   return {
     motion,
-    AnimatePresence: ({ children }: any) =>
+    AnimatePresence: ({ children }: { children?: ReactNode }) =>
       React.createElement(React.Fragment, null, children),
   };
 });
