@@ -54,28 +54,34 @@ export type AgendaItem = {
 export const AgendaDay = ({ title, items }: { title: string; items: AgendaItem[] }) => (
   <div>
     <h3 className="text-2xl font-bold text-foreground mb-6">{title}</h3>
-    <div className="space-y-3">
-      {items.map((item, i) => {
-        const Icon = typeIcons[item.type] || Clock;
-        return (
-          <motion.div
-            key={i}
-            className={`flex items-start gap-4 p-4 rounded-xl border ${typeStyles[item.type]}`}
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.05 }}
-          >
-            <span className="text-sm font-mono font-bold text-muted-foreground min-w-[50px]">{item.time}</span>
-            <Icon className="w-5 h-5 text-muted-foreground mt-0.5 shrink-0" />
-            <div>
-              <p className="font-semibold text-foreground">{item.title}</p>
-              {item.speaker && <p className="text-sm text-muted-foreground">{item.speaker}</p>}
-            </div>
-          </motion.div>
-        );
-      })}
-    </div>
+    {items.length === 0 ? (
+      <div className="rounded-xl border border-border bg-muted/20 p-4 text-sm text-muted-foreground">
+        Estamos trabajando para elaborar la mejor experiencia espacial.
+      </div>
+    ) : (
+      <div className="space-y-3">
+        {items.map((item, i) => {
+          const Icon = typeIcons[item.type] || Clock;
+          return (
+            <motion.div
+              key={i}
+              className={`flex items-start gap-4 p-4 rounded-xl border ${typeStyles[item.type]}`}
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.05 }}
+            >
+              <span className="text-sm font-mono font-bold text-muted-foreground min-w-[50px]">{item.time}</span>
+              <Icon className="w-5 h-5 text-muted-foreground mt-0.5 shrink-0" />
+              <div>
+                <p className="font-semibold text-foreground">{item.title}</p>
+                {item.speaker && <p className="text-sm text-muted-foreground">{item.speaker}</p>}
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+    )}
   </div>
 );
 
