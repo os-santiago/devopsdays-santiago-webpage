@@ -40,60 +40,15 @@ jobs:
           fetch-depth: 0
 
       - name: Validate branch and confirmation
-        run: |
-          set -euo pipefail
-
-          if [[ "${GITHUB_REF_NAME}" != "main" ]]; then
-            echo "This workflow can only run from main. Current branch: ${GITHUB_REF_NAME}"
-            exit 1
-          fi
-
-          if [[ "${{ github.event.inputs.confirm_release }}" != "true" ]]; then
-            echo "Release confirmation was not provided. Set confirm_release=true."
-            exit 1
-          fi
+        env:
+          CONFIRM_RELEASE: ${{ github.event.inputs.confirm_release }}
+        run: bash scripts/ci/manual_release_validate_trigger.sh
 
       - name: Compute release version
         id: compute
-        shell: bash
-        run: |
-          set -euo pipefail
-
-          git fetch --tags --force
-
-          latest_rc_tag="$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*-rc.[0-9]*' | sort -V | tail -n 1 || true)"
-          latest_stable_tag="$(git tag -l 'v[0-9]*.[0-9]*.[0-9]*' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1 || true)"
-          release_type="${{ github.event.inputs.release_type }}"
-
-          if [[ -z "${latest_rc_tag}" ]]; then
-            echo "No active RC tag found. Expected something like vX.Y.Z-rc.N"
-            exit 1
-          fi
-
-          if [[ ! "${latest_rc_tag}" =~ ^(v[0-9]+\.[0-9]+\.[0-9]+)-rc\.[0-9]+$ ]]; then
-            echo "Invalid RC tag format: ${latest_rc_tag}"
-            exit 1
-          fi
-
-          if [[ "${release_type}" != "minor" && "${release_type}" != "major" ]]; then
-            echo "Unsupported release type: ${release_type}"
-            exit 1
-          fi
-
-          # Policy: both minor and major promote the active RC base.
-          final_tag="${BASH_REMATCH[1]}"
-          rc_commit="$(git rev-list -n 1 "${latest_rc_tag}")"
-
-          if git rev-parse -q --verify "refs/tags/${final_tag}" >/dev/null; then
-            echo "Final tag already exists: ${final_tag}"
-            exit 1
-          fi
-
-          echo "rc_tag=${latest_rc_tag}" >> "$GITHUB_OUTPUT"
-          echo "rc_commit=${rc_commit}" >> "$GITHUB_OUTPUT"
-          echo "final_tag=${final_tag}" >> "$GITHUB_OUTPUT"
-          echo "release_type=${release_type}" >> "$GITHUB_OUTPUT"
-          echo "last_stable_tag=${latest_stable_tag}" >> "$GITHUB_OUTPUT"
+        env:
+          RELEASE_TYPE: ${{ github.event.inputs.release_type }}
+        run: bash scripts/ci/manual_release_compute_version.sh
 
   build:
     runs-on: ubuntu-latest
@@ -137,7 +92,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-scripts
-          path: scripts/ci/ftps_deploy.sh
+          path: |
+            scripts/ci/ftps_deploy.sh
+            scripts/ci/manual_release_*.sh
           if-no-files-found: error
 
   approve-and-deploy:
@@ -172,45 +129,12 @@ jobs:
           CPANEL_FTP_PASSWORD: ${{ secrets.CPANEL_FTP_PASSWORD }}
           CPANEL_FTP_PORT: ${{ secrets.CPANEL_FTP_PORT }}
           CPANEL_FTP_REMOTE_DIR: ${{ secrets.CPANEL_FTP_REMOTE_DIR }}
-        run: |
-          set -euo pipefail
-          log_file="${RUNNER_TEMP}/ftps_deploy.log"
-          : > "${log_file}"
-
-          if [[ -z "${CPANEL_FTP_HOST:-}" || -z "${CPANEL_FTP_USER:-}" || -z "${CPANEL_FTP_PASSWORD:-}" ]]; then
-            echo "Missing required FTPS secrets (CPANEL_FTP_HOST/CPANEL_FTP_USER/CPANEL_FTP_PASSWORD)." | tee -a "${log_file}"
-            exit 1
-          fi
-
-          port="${CPANEL_FTP_PORT:-21}"
-          remote_dir="${CPANEL_FTP_REMOTE_DIR:-devopsdayschile.cl/}"
-          echo "Using FTPS host=${CPANEL_FTP_HOST} user=${CPANEL_FTP_USER} port=${port} remote_dir=${remote_dir}" | tee -a "${log_file}"
+        run: bash scripts/ci/manual_release_validate_ftp_config.sh
 
       - name: Create SMTP runtime config for contact API
         env:
           SMTP_USER_PASSWORD: ${{ secrets.SMTP_USER_PASSWORD }}
-        run: |
-          set -euo pipefail
-
-          if [[ -z "${SMTP_USER_PASSWORD:-}" ]]; then
-            echo "Missing required secret: SMTP_USER_PASSWORD"
-            exit 1
-          fi
-
-          mkdir -p dist/api
-          umask 077
-          cat > dist/api/contact_smtp.php <<EOF
-          <?php
-          declare(strict_types=1);
-
-          return [
-              'SMTP_HOST' => 'mail.devopsdayschile.cl',
-              'SMTP_PORT' => 465,
-              'SMTP_USER' => 'contacto@devopsdayschile.cl',
-              'SMTP_PASS' => '${SMTP_USER_PASSWORD}',
-              'SMTP_SECURE' => 'ssl',
-          ];
-          EOF
+        run: bash scripts/ci/manual_release_create_smtp_config.sh
 
       - name: Connectivity/Auth preflight (FTPS)
         env:
@@ -260,81 +184,16 @@ jobs:
       - preflight
       - approve-and-deploy
     steps:
+      - name: Download deployment scripts artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release-scripts
+          path: scripts/ci
+
       - name: Validate deployed version
         env:
           EXPECTED_TAG: ${{ needs.preflight.outputs.final_tag }}
-        run: |
-          set -euo pipefail
-
-          url="https://santiago.devopsdayschile.cl/"
-          attempt=1
-          max_attempts=12
-          deployed_version=""
-          last_status="meta_not_found"
-
-          while [[ ${attempt} -le ${max_attempts} ]]; do
-            html="$(curl -fsSL \
-              --connect-timeout 10 \
-              --max-time 20 \
-              -H 'Cache-Control: no-cache' \
-              "${url}" || true)"
-
-            normalized_html="$(tr '\n' ' ' <<< "${html}")"
-            meta_tag="$(
-              grep -Eio "<meta[^>]*name=['\"]app-version['\"][^>]*>|<meta[^>]*content=['\"][^'\"]+['\"][^>]*name=['\"]app-version['\"][^>]*>" <<< "${normalized_html}" \
-              | head -n 1 || true
-            )"
-
-            deployed_version=""
-            if [[ -n "${meta_tag}" ]]; then
-              deployed_version="$(
-                sed -nE "s/.*content=['\"]([^'\"]+)['\"].*/\1/p" <<< "${meta_tag}" | head -n 1
-              )"
-            fi
-
-            if [[ -z "${meta_tag}" || -z "${deployed_version}" ]]; then
-              last_status="meta_not_found"
-              echo "Attempt ${attempt}/${max_attempts}: status=meta_not_found"
-            elif [[ "${deployed_version}" == "${EXPECTED_TAG}" ]]; then
-              last_status="version_match"
-              echo "Attempt ${attempt}/${max_attempts}: status=version_match expected=${EXPECTED_TAG} deployed=${deployed_version}"
-
-              {
-                echo "## Smoke Test Summary"
-                echo "- URL: ${url}"
-                echo "- Expected version: ${EXPECTED_TAG}"
-                echo "- Detected version: ${deployed_version}"
-                echo "- Result: pass"
-              } >> "${GITHUB_STEP_SUMMARY}"
-
-              echo "Smoke test passed with expected version ${EXPECTED_TAG}"
-              exit 0
-            else
-              last_status="version_mismatch"
-              echo "Attempt ${attempt}/${max_attempts}: status=version_mismatch expected=${EXPECTED_TAG} deployed=${deployed_version}"
-            fi
-
-            attempt=$((attempt + 1))
-            sleep 10
-          done
-
-          head_excerpt="$(sed -nE 's/.*<head[^>]*>(.*)<\/head>.*/\1/p' <<< "${normalized_html}" | cut -c1-200 || true)"
-
-          {
-            echo "## Smoke Test Summary"
-            echo "- URL: ${url}"
-            echo "- Expected version: ${EXPECTED_TAG}"
-            echo "- Detected version: ${deployed_version:-not_found}"
-            echo "- Result: fail"
-            echo "- Final status: ${last_status}"
-          } >> "${GITHUB_STEP_SUMMARY}"
-
-          if [[ -n "${head_excerpt}" ]]; then
-            echo "Head excerpt (first 200 chars): ${head_excerpt}"
-          fi
-
-          echo "Smoke test failed: expected=${EXPECTED_TAG} detected=${deployed_version:-not_found} status=${last_status}"
-          exit 1
+        run: bash scripts/ci/manual_release_smoke_test.sh
 
   publish-release:
     runs-on: ubuntu-latest
@@ -357,35 +216,14 @@ jobs:
         env:
           FINAL_TAG: ${{ needs.preflight.outputs.final_tag }}
           RC_COMMIT: ${{ needs.preflight.outputs.rc_commit }}
-        run: |
-          set -euo pipefail
-          git fetch --tags --force
-
-          if git rev-parse -q --verify "refs/tags/${FINAL_TAG}" >/dev/null; then
-            echo "Tag already exists: ${FINAL_TAG}"
-            exit 1
-          fi
-
-          git tag -a "${FINAL_TAG}" -m "Release ${FINAL_TAG}" "${RC_COMMIT}"
-          git push origin "refs/tags/${FINAL_TAG}"
+        run: bash scripts/ci/manual_release_create_tag.sh
 
       - name: Generate changelog
         id: changelog
         env:
           LAST_STABLE_TAG: ${{ needs.preflight.outputs.last_stable_tag }}
           RC_COMMIT: ${{ needs.preflight.outputs.rc_commit }}
-        run: |
-          set -euo pipefail
-
-          if [[ -n "${LAST_STABLE_TAG}" ]]; then
-            git log --pretty=format:'- %h %s' "${LAST_STABLE_TAG}..${RC_COMMIT}" > CHANGELOG_RELEASE.md
-          else
-            git log --pretty=format:'- %h %s' "${RC_COMMIT}" > CHANGELOG_RELEASE.md
-          fi
-
-          if [[ ! -s CHANGELOG_RELEASE.md ]]; then
-            echo "- No commits found in selected range." > CHANGELOG_RELEASE.md
-          fi
+        run: bash scripts/ci/manual_release_generate_changelog.sh
 
       - name: Create GitHub release
         env:
@@ -400,26 +238,4 @@ jobs:
       - name: Clean up RC tags for promoted candidate
         env:
           RC_TAG: ${{ needs.preflight.outputs.rc_tag }}
-        run: |
-          set -euo pipefail
-          git fetch --tags --force
-
-          if [[ ! "${RC_TAG}" =~ ^(v[0-9]+\.[0-9]+\.[0-9]+)-rc\.[0-9]+$ ]]; then
-            echo "RC tag does not match expected format, skipping cleanup: ${RC_TAG}"
-            exit 0
-          fi
-
-          rc_base="${BASH_REMATCH[1]}"
-          mapfile -t rc_tags < <(git tag -l "${rc_base}-rc.*" | sort -V)
-
-          if [[ "${#rc_tags[@]}" -eq 0 ]]; then
-            echo "No RC tags found to clean for ${rc_base}"
-            exit 0
-          fi
-
-          echo "Deleting RC tags for ${rc_base}: ${rc_tags[*]}"
-
-          for tag in "${rc_tags[@]}"; do
-            git tag -d "${tag}" >/dev/null 2>&1 || true
-            git push origin ":refs/tags/${tag}"
-          done
+        run: bash scripts/ci/manual_release_cleanup_rc_tags.sh
