@@ -30,18 +30,26 @@ touch "${log_file}"
 
 write_lftp_script() {
   local file="$1"
-  local commands="$2"
+  shift
 
-  cat > "${file}" <<EOF
+  {
+    cat <<EOF
 set cmd:fail-exit true
 set ftp:ssl-force true
 set ftp:ssl-protect-data true
 set ssl:verify-certificate ${verify_cert}
 set net:timeout 15
 set net:max-retries 2
-${commands}
+EOF
+
+    for cmd in "$@"; do
+      printf '%s\n' "${cmd}"
+    done
+
+    cat <<EOF
 bye
 EOF
+  } > "${file}"
 }
 
 run_lftp_script() {
@@ -59,7 +67,9 @@ case "${phase}" in
     fi
 
     script_file="$(mktemp)"
-    write_lftp_script "${script_file}" $'pwd\nls'
+    write_lftp_script "${script_file}" \
+      "pwd" \
+      "ls"
     run_lftp_script "${script_file}"
     rm -f "${script_file}"
 
@@ -77,7 +87,9 @@ case "${phase}" in
 
   purge)
     script_file="$(mktemp)"
-    write_lftp_script "${script_file}" $'mkdir -p "'"${remote_dir}"'"\nglob -a rm -rf "'"${remote_dir}"'"/*'
+    write_lftp_script "${script_file}" \
+      "mkdir -p \"${remote_dir}\"" \
+      "glob -a rm -rf \"${remote_dir}\"/*"
     {
       echo "- Purge start: ${remote_dir}"
     } >> "${GITHUB_STEP_SUMMARY}"
@@ -90,7 +102,9 @@ case "${phase}" in
 
   upload)
     script_file="$(mktemp)"
-    write_lftp_script "${script_file}" $'set xfer:clobber true\nmirror -R --parallel=4 --verbose --ignore-time dist "'"${remote_dir}"'"'
+    write_lftp_script "${script_file}" \
+      "set xfer:clobber true" \
+      "mirror -R --parallel=4 --verbose --ignore-time dist \"${remote_dir}\""
     run_lftp_script "${script_file}"
     rm -f "${script_file}"
     {
