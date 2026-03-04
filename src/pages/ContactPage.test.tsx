@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
-import { screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { renderWithRouter } from "@/test/test-utils";
 
 const toastSpy = vi.fn();
@@ -8,34 +8,215 @@ vi.mock("@/hooks/use-toast", () => ({
   useToast: () => ({ toast: toastSpy }),
 }));
 
-import ContactPage from "@/pages/ContactPage";
+vi.mock("@/lib/contact-api", () => ({
+  sendContactForm: vi.fn(),
+}));
+
+import ContactPage, { submitContactForm } from "@/pages/ContactPage";
+import { sendContactForm } from "@/lib/contact-api";
+
+const sendContactFormMock = vi.mocked(sendContactForm);
+
+const baseForm = {
+  name: "  Jane  ",
+  email: "  jane@example.com  ",
+  subject: "  Duda  ",
+  message: "  Necesito ayuda con entradas  ",
+  website: "   ",
+};
 
 describe("ContactPage", () => {
-  it("renders contact content and form fields", () => {
-    renderWithRouter(<ContactPage />, { route: "/contacto" });
+  beforeEach(() => {
+    toastSpy.mockReset();
+    sendContactFormMock.mockReset();
+  });
+
+  it("renders content, contact fallback mail and honeypot", () => {
+    const { container } = renderWithRouter(<ContactPage />, { route: "/contacto" });
 
     expect(screen.getByRole("heading", { name: /Comunícate con el/i })).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Tu nombre")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("tu@email.com")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("¿En qué podemos ayudarte?")).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Cuéntanos más...")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /Enviar Mensaje/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "contacto@devopsdayschile.cl" })).toHaveAttribute(
+      "href",
+      "mailto:contacto@devopsdayschile.cl",
+    );
+    expect(container.querySelector('input[name="website"]')).toBeInTheDocument();
   });
 
-  it("includes hidden honeypot field", () => {
-    const { container } = renderWithRouter(<ContactPage />, { route: "/contacto" });
+  it("submits through UI with trimmed payload", async () => {
+    sendContactFormMock.mockResolvedValue(
+      new Response(JSON.stringify({ ok: true }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }),
+    );
 
-    const honeypot = container.querySelector('input[name="website"]') as HTMLInputElement | null;
-    expect(honeypot).not.toBeNull();
-    expect(honeypot).toHaveAttribute("type", "text");
-    expect(honeypot).toHaveValue("");
-  });
+    renderWithRouter(<ContactPage />, { route: "/contacto" });
 
-  it("disables native form validation", () => {
-    const { container } = renderWithRouter(<ContactPage />, { route: "/contacto" });
+    fireEvent.change(screen.getByPlaceholderText("Tu nombre"), { target: { value: "  Jane  " } });
+    fireEvent.change(screen.getByPlaceholderText("tu@email.com"), {
+      target: { value: "  jane@example.com  " },
+    });
+    fireEvent.change(screen.getByPlaceholderText("¿En qué podemos ayudarte?"), {
+      target: { value: "  Duda  " },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Cuéntanos más..."), {
+      target: { value: "  Necesito ayuda con entradas  " },
+    });
 
-    const form = container.querySelector("form");
+    const submitButton = screen.getByRole("button", { name: /Enviar Mensaje/i });
+    const form = submitButton.closest("form") as HTMLFormElement | null;
     expect(form).not.toBeNull();
-    expect(form).toHaveAttribute("novalidate");
+    fireEvent.submit(form as HTMLFormElement);
+
+    await waitFor(() => expect(sendContactFormMock).toHaveBeenCalledTimes(1));
+    expect(sendContactFormMock).toHaveBeenCalledWith({
+      name: "Jane",
+      email: "jane@example.com",
+      subject: "Duda",
+      message: "Necesito ayuda con entradas",
+      website: "",
+    });
+  });
+
+  it("returns early when already submitting", async () => {
+    const setIsSubmitting = vi.fn();
+    let called = false;
+    const sendForm = async () => {
+      called = true;
+      return { ok: true, json: async () => ({ ok: true }) } as Response;
+    };
+    const resetForm = vi.fn();
+
+    await submitContactForm({
+      form: baseForm,
+      isSubmitting: true,
+      setIsSubmitting,
+      sendForm,
+      toast: toastSpy,
+      resetForm,
+    });
+
+    expect(setIsSubmitting).not.toHaveBeenCalled();
+    expect(called).toBe(false);
+    expect(toastSpy).not.toHaveBeenCalled();
+    expect(resetForm).not.toHaveBeenCalled();
+  });
+
+  it("sends trimmed payload and resets form on success", async () => {
+    const setIsSubmitting = vi.fn();
+    let receivedPayload: unknown = null;
+    const sendForm = async (payload: unknown) => {
+      receivedPayload = payload;
+      return { ok: true, json: async () => ({ ok: true }) } as Response;
+    };
+    const resetForm = vi.fn();
+
+    await submitContactForm({
+      form: baseForm,
+      isSubmitting: false,
+      setIsSubmitting,
+      sendForm,
+      toast: toastSpy,
+      resetForm,
+    });
+
+    expect(setIsSubmitting).toHaveBeenNthCalledWith(1, true);
+    expect(receivedPayload).toEqual({
+      name: "Jane",
+      email: "jane@example.com",
+      subject: "Duda",
+      message: "Necesito ayuda con entradas",
+      website: "",
+    });
+    expect(toastSpy).toHaveBeenCalledWith({
+      title: "Mensaje enviado 🚀",
+      description: "Te responderemos pronto. ¡Gracias!",
+    });
+    expect(resetForm).toHaveBeenCalledTimes(1);
+    expect(setIsSubmitting).toHaveBeenLastCalledWith(false);
+  });
+
+  it("shows rate-limited toast", async () => {
+    const setIsSubmitting = vi.fn();
+    const sendForm = async () =>
+      ({ ok: false, json: async () => ({ ok: false, error: "rate_limited" }) }) as Response;
+
+    await submitContactForm({
+      form: baseForm,
+      isSubmitting: false,
+      setIsSubmitting,
+      sendForm,
+      toast: toastSpy,
+      resetForm: vi.fn(),
+    });
+
+    expect(toastSpy).toHaveBeenCalledWith({
+      title: "Demasiados intentos",
+      description: "Espera unos minutos antes de volver a enviar tu mensaje.",
+    });
+    expect(setIsSubmitting).toHaveBeenLastCalledWith(false);
+  });
+
+  it("shows invalid-input toast", async () => {
+    const setIsSubmitting = vi.fn();
+    const sendForm = async () =>
+      ({ ok: false, json: async () => ({ ok: false, error: "invalid_input" }) }) as Response;
+
+    await submitContactForm({
+      form: baseForm,
+      isSubmitting: false,
+      setIsSubmitting,
+      sendForm,
+      toast: toastSpy,
+      resetForm: vi.fn(),
+    });
+
+    expect(toastSpy).toHaveBeenCalledWith({
+      title: "Revisa el formulario",
+      description: "Verifica los datos ingresados e inténtalo nuevamente.",
+    });
+    expect(setIsSubmitting).toHaveBeenLastCalledWith(false);
+  });
+
+  it("shows generic error toast when backend response is unknown", async () => {
+    const setIsSubmitting = vi.fn();
+    const sendForm = async () => ({ ok: false, json: async () => ({ ok: false }) }) as Response;
+
+    await submitContactForm({
+      form: baseForm,
+      isSubmitting: false,
+      setIsSubmitting,
+      sendForm,
+      toast: toastSpy,
+      resetForm: vi.fn(),
+    });
+
+    expect(toastSpy).toHaveBeenCalledWith({
+      title: "No se pudo enviar",
+      description: "Hubo un problema al enviar el mensaje. Inténtalo nuevamente.",
+    });
+    expect(setIsSubmitting).toHaveBeenLastCalledWith(false);
+  });
+
+  it("shows network error toast when request throws", async () => {
+    const setIsSubmitting = vi.fn();
+    const sendForm = async () => {
+      throw new Error("network down");
+    };
+
+    await submitContactForm({
+      form: baseForm,
+      isSubmitting: false,
+      setIsSubmitting,
+      sendForm,
+      toast: toastSpy,
+      resetForm: vi.fn(),
+    });
+
+    expect(toastSpy).toHaveBeenCalledWith({
+      title: "Error de conexión",
+      description: "No fue posible conectar con el servidor. Inténtalo nuevamente.",
+    });
+    expect(setIsSubmitting).toHaveBeenLastCalledWith(false);
   });
 });

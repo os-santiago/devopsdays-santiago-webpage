@@ -4,6 +4,7 @@ import { Send, Mail, User, MessageSquare } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useToast } from "@/hooks/use-toast";
+import { sendContactForm } from "@/lib/contact-api";
 
 type ContactForm = {
   name: string;
@@ -17,6 +18,84 @@ type ContactApiResponse = {
   ok?: boolean;
   message?: string;
   error?: "invalid_input" | "rate_limited" | "send_failed";
+};
+
+type ContactToast = {
+  title: string;
+  description: string;
+};
+
+type SubmitContactDeps = {
+  form: ContactForm;
+  isSubmitting: boolean;
+  setIsSubmitting: (value: boolean) => void;
+  sendForm: (payload: ContactForm) => Promise<Response>;
+  toast: (payload: ContactToast) => void;
+  resetForm: () => void;
+};
+
+export const submitContactForm = async ({
+  form,
+  isSubmitting,
+  setIsSubmitting,
+  sendForm,
+  toast,
+  resetForm,
+}: SubmitContactDeps) => {
+  if (isSubmitting) {
+    return;
+  }
+
+  setIsSubmitting(true);
+
+  const payload: ContactForm = {
+    name: form.name.trim(),
+    email: form.email.trim(),
+    subject: form.subject.trim(),
+    message: form.message.trim(),
+    website: form.website.trim(),
+  };
+
+  try {
+    const response = await sendForm(payload);
+
+    let parsedResponse: ContactApiResponse | null = null;
+    try {
+      parsedResponse = (await response.json()) as ContactApiResponse;
+    } catch {
+      parsedResponse = null;
+    }
+
+    if (response.ok && parsedResponse?.ok) {
+      toast({ title: "Mensaje enviado 🚀", description: "Te responderemos pronto. ¡Gracias!" });
+      resetForm();
+      return;
+    }
+
+    if (parsedResponse?.error === "rate_limited") {
+      toast({
+        title: "Demasiados intentos",
+        description: "Espera unos minutos antes de volver a enviar tu mensaje.",
+      });
+    } else if (parsedResponse?.error === "invalid_input") {
+      toast({
+        title: "Revisa el formulario",
+        description: "Verifica los datos ingresados e inténtalo nuevamente.",
+      });
+    } else {
+      toast({
+        title: "No se pudo enviar",
+        description: "Hubo un problema al enviar el mensaje. Inténtalo nuevamente.",
+      });
+    }
+  } catch {
+    toast({
+      title: "Error de conexión",
+      description: "No fue posible conectar con el servidor. Inténtalo nuevamente.",
+    });
+  } finally {
+    setIsSubmitting(false);
+  }
 };
 
 const ContactPage = () => {
@@ -36,68 +115,14 @@ const ContactPage = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (isSubmitting) {
-      return;
-    }
-
-    setIsSubmitting(true);
-
-    const formData = new FormData(e.currentTarget);
-    const payload: ContactForm = {
-      name: String(formData.get("name") ?? "").trim(),
-      email: String(formData.get("email") ?? "").trim(),
-      subject: String(formData.get("subject") ?? "").trim(),
-      message: String(formData.get("message") ?? "").trim(),
-      website: String(formData.get("website") ?? "").trim(),
-    };
-
-    try {
-      const response = await fetch("/api/contact.php", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      });
-
-      let payload: ContactApiResponse | null = null;
-      try {
-        payload = (await response.json()) as ContactApiResponse;
-      } catch {
-        payload = null;
-      }
-
-      if (response.ok && payload?.ok) {
-        toast({ title: "Mensaje enviado 🚀", description: "Te responderemos pronto. ¡Gracias!" });
-        resetForm();
-        return;
-      }
-
-      if (payload?.error === "rate_limited") {
-        toast({
-          title: "Demasiados intentos",
-          description: "Espera unos minutos antes de volver a enviar tu mensaje.",
-        });
-      } else if (payload?.error === "invalid_input") {
-        toast({
-          title: "Revisa el formulario",
-          description: "Verifica los datos ingresados e inténtalo nuevamente.",
-        });
-      } else {
-        toast({
-          title: "No se pudo enviar",
-          description: "Hubo un problema al enviar el mensaje. Inténtalo nuevamente.",
-        });
-      }
-    } catch {
-      toast({
-        title: "Error de conexión",
-        description: "No fue posible conectar con el servidor. Inténtalo nuevamente.",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    await submitContactForm({
+      form,
+      isSubmitting,
+      setIsSubmitting,
+      sendForm: sendContactForm,
+      toast,
+      resetForm,
+    });
   };
 
   return (

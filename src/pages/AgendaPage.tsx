@@ -44,7 +44,14 @@ const typeIcons: Record<string, React.ElementType> = {
   break: Coffee,
 };
 
-const AgendaDay = ({ title, items }: { title: string; items: typeof day1 }) => (
+export type AgendaItem = {
+  time: string;
+  title: string;
+  speaker: string;
+  type: string;
+};
+
+export const AgendaDay = ({ title, items }: { title: string; items: AgendaItem[] }) => (
   <div>
     <h3 className="text-2xl font-bold text-foreground mb-6">{title}</h3>
     <div className="space-y-3">
