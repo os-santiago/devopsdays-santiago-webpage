@@ -18,6 +18,18 @@ function json_response(int $status, array $payload): void
     exit;
 }
 
+function invalid_input_response(string $reason, array $fields = []): void
+{
+    json_response(400, [
+        'ok' => false,
+        'error' => 'invalid_input',
+        'details' => [
+            'reason' => $reason,
+            'fields' => $fields,
+        ],
+    ]);
+}
+
 function str_length(string $value): int
 {
     if (function_exists('mb_strlen')) {
@@ -264,19 +276,28 @@ function smtp_send_mail(array $cfg, string $from, string $to, string $replyTo, s
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    json_response(405, ['ok' => false, 'error' => 'method_not_allowed']);
+    json_response(405, [
+        'ok' => false,
+        'error' => 'method_not_allowed',
+        'details' => [
+            'allowed_method' => 'POST',
+            'received_method' => $_SERVER['REQUEST_METHOD'] ?? 'unknown',
+        ],
+    ]);
 }
 
 $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
 if (stripos($contentType, 'application/json') === false) {
-    json_response(400, ['ok' => false, 'error' => 'invalid_input']);
+    invalid_input_response('invalid_content_type', [
+        'content_type' => $contentType === '' ? 'missing' : $contentType,
+    ]);
 }
 
 $rawBody = file_get_contents('php://input');
 $payload = json_decode((string)$rawBody, true);
 
 if (!is_array($payload)) {
-    json_response(400, ['ok' => false, 'error' => 'invalid_input']);
+    invalid_input_response('invalid_json_body');
 }
 
 $name = trim((string)($payload['name'] ?? ''));
@@ -286,26 +307,57 @@ $message = trim((string)($payload['message'] ?? ''));
 $website = trim((string)($payload['website'] ?? ''));
 
 if ($website !== '') {
-    json_response(400, ['ok' => false, 'error' => 'invalid_input']);
+    invalid_input_response('honeypot_triggered', [
+        'website' => 'must_be_empty',
+    ]);
 }
 
-if (
-    str_length($name) < 2 || str_length($name) > 120 ||
-    !filter_var($email, FILTER_VALIDATE_EMAIL) ||
-    str_length($subject) < 3 || str_length($subject) > 180 ||
-    str_length($message) < 10 || str_length($message) > 5000
-) {
-    json_response(400, ['ok' => false, 'error' => 'invalid_input']);
+$validationErrors = [];
+
+$nameLength = str_length($name);
+if ($nameLength < 2 || $nameLength > 120) {
+    $validationErrors['name'] = 'must_be_between_2_and_120_chars';
+}
+
+if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $validationErrors['email'] = 'must_be_valid_email';
+}
+
+$subjectLength = str_length($subject);
+if ($subjectLength < 3 || $subjectLength > 180) {
+    $validationErrors['subject'] = 'must_be_between_3_and_180_chars';
+}
+
+$messageLength = str_length($message);
+if ($messageLength < 10 || $messageLength > 5000) {
+    $validationErrors['message'] = 'must_be_between_10_and_5000_chars';
+}
+
+if (count($validationErrors) > 0) {
+    invalid_input_response('validation_failed', $validationErrors);
 }
 
 $ip = $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 if (is_rate_limited($ip, RATE_LIMIT_MAX_REQUESTS, RATE_LIMIT_WINDOW_SECONDS)) {
-    json_response(429, ['ok' => false, 'error' => 'rate_limited']);
+    json_response(429, [
+        'ok' => false,
+        'error' => 'rate_limited',
+        'details' => [
+            'max_requests' => RATE_LIMIT_MAX_REQUESTS,
+            'window_seconds' => RATE_LIMIT_WINDOW_SECONDS,
+        ],
+    ]);
 }
 
 $config = load_smtp_config();
 if ($config === null) {
-    json_response(500, ['ok' => false, 'error' => 'send_failed']);
+    json_response(500, [
+        'ok' => false,
+        'error' => 'send_failed',
+        'details' => [
+            'reason' => 'smtp_config_not_found_or_invalid',
+        ],
+    ]);
 }
 
 $timestamp = date('c');
@@ -332,5 +384,11 @@ try {
 
     json_response(200, ['ok' => true, 'message' => 'Mensaje enviado']);
 } catch (Throwable $exception) {
-    json_response(500, ['ok' => false, 'error' => 'send_failed']);
+    json_response(500, [
+        'ok' => false,
+        'error' => 'send_failed',
+        'details' => [
+            'reason' => 'smtp_delivery_failed',
+        ],
+    ]);
 }
