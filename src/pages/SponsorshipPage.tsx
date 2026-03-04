@@ -7,7 +7,7 @@ const levels = [
   {
     icon: Rocket,
     name: "Platinium 🪐",
-    price: "$8.000.000 CLP (~$10.000 USD)",
+    price: "$8.000.000 CLP (~$8.920 USD)",
     color: "border-accent",
     highlight: true,
     benefits: [
@@ -25,7 +25,7 @@ const levels = [
   {
     icon: Star,
     name: "Gold 🌎",
-    price: "$5.000.000 CLP (~$6.250 USD)",
+    price: "$5.000.000 CLP (~$5.575 USD)",
     color: "border-muted-foreground",
     benefits: [
       "Stand 3x2 mtrs",
@@ -40,7 +40,7 @@ const levels = [
   {
     icon: Gem,
     name: "Silver 🌙",
-    price: "$3.000.000 CLP (~$3.750 USD)",
+    price: "$3.000.000 CLP (~$3.345 USD)",
     color: "border-border",
     benefits: [
       "Stand 2x2 mtrs",
@@ -96,14 +96,17 @@ const SponsorshipPage = () => (
                   </li>
                 ))}
               </ul>
-              <a
-                href="/contacto"
-                className="block text-center py-3 rounded-xl font-bold bg-muted text-foreground hover:bg-accent hover:text-accent-foreground transition-all"
-              >
-                Contactar
-              </a>
             </motion.div>
           ))}
+        </div>
+
+        <div className="mt-10 text-center">
+          <a
+            href="/contacto"
+            className="inline-flex items-center justify-center px-16 py-3 rounded-xl font-bold bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all"
+          >
+            Contactar
+          </a>
         </div>
       </div>
     </div>
