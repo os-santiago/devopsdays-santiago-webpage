@@ -127,6 +127,13 @@ jobs:
           path: dist
           if-no-files-found: error
 
+      - name: Upload deployment scripts artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-scripts
+          path: scripts/ci/ftps_deploy.sh
+          if-no-files-found: error
+
   approve-and-deploy:
     runs-on: ubuntu-latest
     needs:
@@ -139,6 +146,12 @@ jobs:
         with:
           name: release-dist
           path: dist
+
+      - name: Download deployment scripts artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release-scripts
+          path: scripts/ci
 
       - name: Install lftp
         run: |
