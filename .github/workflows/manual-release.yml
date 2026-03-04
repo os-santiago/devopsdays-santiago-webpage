@@ -16,11 +16,6 @@ on:
           - minor
           - major
         default: minor
-      debug_ssh:
-        description: "Enable verbose SSH diagnostics"
-        required: true
-        type: boolean
-        default: false
 
 permissions:
   contents: write
