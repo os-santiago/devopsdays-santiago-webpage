@@ -1,0 +1,4 @@
+interface:
+  display_name: "Unit Test Coverage Guard"
+  short_description: "Keep unit test coverage at 80%+"
+  default_prompt: "Enforce and preserve unit test quality and coverage gates for functional units in this project."
