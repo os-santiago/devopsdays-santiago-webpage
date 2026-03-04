@@ -20,7 +20,7 @@ const sendContactFormMock = vi.mocked(sendContactForm);
 const baseForm = {
   name: "  Jane  ",
   email: "  jane@example.com  ",
-  subject: "  Duda  ",
+  subject: "  Entradas  ",
   message: "  Necesito ayuda con entradas  ",
   website: "   ",
 };
@@ -56,8 +56,8 @@ describe("ContactPage", () => {
     fireEvent.change(screen.getByPlaceholderText("tu@email.com"), {
       target: { value: "  jane@example.com  " },
     });
-    fireEvent.change(screen.getByPlaceholderText("¿En qué podemos ayudarte?"), {
-      target: { value: "  Duda  " },
+    fireEvent.change(screen.getByRole("combobox", { name: /Asunto/i }), {
+      target: { value: "Entradas" },
     });
     fireEvent.change(screen.getByPlaceholderText("Cuéntanos más..."), {
       target: { value: "  Necesito ayuda con entradas  " },
@@ -72,10 +72,117 @@ describe("ContactPage", () => {
     expect(sendContactFormMock).toHaveBeenCalledWith({
       name: "Jane",
       email: "jane@example.com",
-      subject: "Duda",
+      subject: "Entradas",
       message: "Necesito ayuda con entradas",
       website: "",
     });
+  });
+
+  it("does not send request and shows errors when required fields are missing", async () => {
+    renderWithRouter(<ContactPage />, { route: "/contacto" });
+
+    const submitButton = screen.getByRole("button", { name: /Enviar Mensaje/i });
+    const form = submitButton.closest("form") as HTMLFormElement | null;
+    expect(form).not.toBeNull();
+    fireEvent.submit(form as HTMLFormElement);
+
+    expect(sendContactFormMock).not.toHaveBeenCalled();
+    expect(screen.getByText("Nombre es obligatorio")).toBeInTheDocument();
+    expect(screen.getByText("Email es obligatorio")).toBeInTheDocument();
+    expect(screen.getByText("Debes seleccionar un asunto")).toBeInTheDocument();
+    expect(screen.getByText("Mensaje es obligatorio")).toBeInTheDocument();
+  });
+
+  it("blocks submit when name is out of range", async () => {
+    renderWithRouter(<ContactPage />, { route: "/contacto" });
+
+    fireEvent.change(screen.getByPlaceholderText("Tu nombre"), { target: { value: "Jo" } });
+    fireEvent.change(screen.getByPlaceholderText("tu@email.com"), {
+      target: { value: "jane@example.com" },
+    });
+    fireEvent.change(screen.getByRole("combobox", { name: /Asunto/i }), {
+      target: { value: "Entradas" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Cuéntanos más..."), {
+      target: { value: "Mensaje válido para pasar regla mínima" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Enviar Mensaje/i }));
+
+    expect(sendContactFormMock).not.toHaveBeenCalled();
+    expect(screen.getByText("Nombre debe tener entre 3 y 100 caracteres")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByPlaceholderText("Tu nombre"), { target: { value: "A".repeat(101) } });
+    fireEvent.click(screen.getByRole("button", { name: /Enviar Mensaje/i }));
+    expect(sendContactFormMock).not.toHaveBeenCalled();
+    expect(screen.getByText("Nombre debe tener entre 3 y 100 caracteres")).toBeInTheDocument();
+  });
+
+  it("blocks submit when email is invalid", async () => {
+    renderWithRouter(<ContactPage />, { route: "/contacto" });
+
+    fireEvent.change(screen.getByPlaceholderText("Tu nombre"), { target: { value: "Jane Doe" } });
+    fireEvent.change(screen.getByPlaceholderText("tu@email.com"), {
+      target: { value: "invalid-email" },
+    });
+    fireEvent.change(screen.getByRole("combobox", { name: /Asunto/i }), {
+      target: { value: "Entradas" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Cuéntanos más..."), {
+      target: { value: "Mensaje válido para pasar regla mínima" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Enviar Mensaje/i }));
+
+    expect(sendContactFormMock).not.toHaveBeenCalled();
+    expect(screen.getByText("Email no es válido")).toBeInTheDocument();
+  });
+
+  it("blocks submit when subject is not selected", async () => {
+    renderWithRouter(<ContactPage />, { route: "/contacto" });
+
+    fireEvent.change(screen.getByPlaceholderText("Tu nombre"), { target: { value: "Jane Doe" } });
+    fireEvent.change(screen.getByPlaceholderText("tu@email.com"), {
+      target: { value: "jane@example.com" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Cuéntanos más..."), {
+      target: { value: "Mensaje válido para pasar regla mínima" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Enviar Mensaje/i }));
+
+    expect(sendContactFormMock).not.toHaveBeenCalled();
+    expect(screen.getByText("Debes seleccionar un asunto")).toBeInTheDocument();
+  });
+
+  it("blocks submit when message is too short", async () => {
+    renderWithRouter(<ContactPage />, { route: "/contacto" });
+
+    fireEvent.change(screen.getByPlaceholderText("Tu nombre"), { target: { value: "Jane Doe" } });
+    fireEvent.change(screen.getByPlaceholderText("tu@email.com"), {
+      target: { value: "jane@example.com" },
+    });
+    fireEvent.change(screen.getByRole("combobox", { name: /Asunto/i }), {
+      target: { value: "Consulta General" },
+    });
+    fireEvent.change(screen.getByPlaceholderText("Cuéntanos más..."), {
+      target: { value: "Corto" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Enviar Mensaje/i }));
+
+    expect(sendContactFormMock).not.toHaveBeenCalled();
+    expect(screen.getByText("Mensaje debe tener entre 10 y 400 caracteres")).toBeInTheDocument();
+  });
+
+  it("enforces message max length and shows live counter", () => {
+    renderWithRouter(<ContactPage />, { route: "/contacto" });
+
+    const messageField = screen.getByPlaceholderText("Cuéntanos más...") as HTMLTextAreaElement;
+    fireEvent.change(messageField, { target: { value: "A".repeat(450) } });
+
+    expect(screen.getByDisplayValue("A".repeat(400))).toBeInTheDocument();
+    expect(screen.getByText("400/400")).toBeInTheDocument();
   });
 
   it("returns early when already submitting", async () => {
@@ -124,7 +231,7 @@ describe("ContactPage", () => {
     expect(receivedPayload).toEqual({
       name: "Jane",
       email: "jane@example.com",
-      subject: "Duda",
+      subject: "Entradas",
       message: "Necesito ayuda con entradas",
       website: "",
     });

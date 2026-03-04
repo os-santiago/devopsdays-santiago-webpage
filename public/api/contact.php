@@ -190,7 +190,15 @@ function smtp_command($socket, string $command, array $allowedCodes): string
     return smtp_expect($socket, $allowedCodes);
 }
 
-function smtp_send_mail(array $cfg, string $from, string $to, string $replyTo, string $subject, string $body): void
+function smtp_send_mail(
+    array $cfg,
+    string $envelopeFrom,
+    string $fromHeader,
+    string $to,
+    string $replyTo,
+    string $subject,
+    string $body
+): void
 {
     $host = (string)($cfg['SMTP_HOST'] ?? '');
     $port = (int)($cfg['SMTP_PORT'] ?? 0);
@@ -244,14 +252,15 @@ function smtp_send_mail(array $cfg, string $from, string $to, string $replyTo, s
         smtp_command($socket, base64_encode($user), [334]);
         smtp_command($socket, base64_encode($pass), [235]);
 
-        smtp_command($socket, 'MAIL FROM:<' . $from . '>', [250]);
+        smtp_command($socket, 'MAIL FROM:<' . $envelopeFrom . '>', [250]);
         smtp_command($socket, 'RCPT TO:<' . $to . '>', [250, 251]);
         smtp_command($socket, 'DATA', [354]);
 
         $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
 
         $headers = [
-            'From: ' . $from,
+            'From: ' . $fromHeader,
+            'Sender: ' . $envelopeFrom,
             'To: ' . $to,
             'Reply-To: ' . $replyTo,
             'Subject: DevOpsDays Santiago | Contacto desde la web - ' . $encodedSubject,
@@ -373,9 +382,12 @@ $mailBody = "Nuevo mensaje desde formulario de contacto\n\n"
     . "Fecha servidor: {$timestamp}\n";
 
 try {
+    $smtpEnvelopeFrom = isset($config['SMTP_USER']) ? (string)$config['SMTP_USER'] : 'contacto@devopsdayschile.cl';
+
     smtp_send_mail(
         $config,
-        'contacto@devopsdayschile.cl',
+        $smtpEnvelopeFrom,
+        $email,
         'contacto@devopsdayschile.cl',
         $email,
         $mailSubject,

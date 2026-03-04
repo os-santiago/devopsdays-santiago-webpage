@@ -14,6 +14,24 @@ type ContactForm = {
   website: string;
 };
 
+type ContactField = "name" | "email" | "subject" | "message";
+type ValidationErrors = Partial<Record<ContactField, string>>;
+
+const contactSubjectOptions = [
+  "Consulta General",
+  "Entradas",
+  "Patrocinio",
+  "Call for Papers",
+  "Prensa",
+  "Voluntariado",
+] as const;
+const MAX_MESSAGE_LENGTH = 400;
+const MIN_MESSAGE_LENGTH = 10;
+const MIN_NAME_LENGTH = 3;
+const MAX_NAME_LENGTH = 100;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const contactFields: ContactField[] = ["name", "email", "subject", "message"];
+
 type ContactApiResponse = {
   ok?: boolean;
   message?: string;
@@ -98,6 +116,38 @@ export const submitContactForm = async ({
   }
 };
 
+export const validateContactForm = (form: ContactForm): ValidationErrors => {
+  const errors: ValidationErrors = {};
+  const name = form.name.trim();
+  const email = form.email.trim();
+  const subject = form.subject.trim();
+  const message = form.message.trim();
+
+  if (name.length === 0) {
+    errors.name = "Nombre es obligatorio";
+  } else if (name.length < MIN_NAME_LENGTH || name.length > MAX_NAME_LENGTH) {
+    errors.name = "Nombre debe tener entre 3 y 100 caracteres";
+  }
+
+  if (email.length === 0) {
+    errors.email = "Email es obligatorio";
+  } else if (!EMAIL_REGEX.test(email)) {
+    errors.email = "Email no es válido";
+  }
+
+  if (subject.length === 0) {
+    errors.subject = "Debes seleccionar un asunto";
+  }
+
+  if (message.length === 0) {
+    errors.message = "Mensaje es obligatorio";
+  } else if (message.length < MIN_MESSAGE_LENGTH || message.length > MAX_MESSAGE_LENGTH) {
+    errors.message = "Mensaje debe tener entre 10 y 400 caracteres";
+  }
+
+  return errors;
+};
+
 const ContactPage = () => {
   const { toast } = useToast();
   const [form, setForm] = useState<ContactForm>({
@@ -108,13 +158,69 @@ const ContactPage = () => {
     website: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [touched, setTouched] = useState<Partial<Record<ContactField, boolean>>>({});
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const computeVisibleErrors = (
+    nextForm: ContactForm,
+    nextTouched: Partial<Record<ContactField, boolean>>,
+    nextSubmitted: boolean,
+  ): ValidationErrors => {
+    const allErrors = validateContactForm(nextForm);
+    const visibleErrors: ValidationErrors = {};
+
+    contactFields.forEach((field) => {
+      if (allErrors[field] && (nextSubmitted || nextTouched[field])) {
+        visibleErrors[field] = allErrors[field];
+      }
+    });
+
+    return visibleErrors;
+  };
+
+  const isFieldErrorVisible = (field: ContactField) => Boolean(errors[field] && (isSubmitted || touched[field]));
+
+  const getFieldDescribedBy = (field: ContactField) => (isFieldErrorVisible(field) ? `${field}-error` : undefined);
+
+  const updateField = (field: ContactField, rawValue: string) => {
+    const value = field === "message" ? rawValue.slice(0, MAX_MESSAGE_LENGTH) : rawValue;
+
+    setForm((prev) => {
+      const nextForm = { ...prev, [field]: value };
+      if (isSubmitted || touched[field]) {
+        setErrors(computeVisibleErrors(nextForm, touched, isSubmitted));
+      }
+      return nextForm;
+    });
+  };
+
+  const handleFieldBlur = (field: ContactField) => {
+    setTouched((prev) => {
+      const nextTouched = { ...prev, [field]: true };
+      setErrors(computeVisibleErrors(form, nextTouched, isSubmitted));
+      return nextTouched;
+    });
+  };
 
   const resetForm = () => {
     setForm({ name: "", email: "", subject: "", message: "", website: "" });
+    setErrors({});
+    setTouched({});
+    setIsSubmitted(false);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSubmitted(true);
+
+    const validationErrors = validateContactForm(form);
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
+      return;
+    }
+
     await submitContactForm({
       form,
       isSubmitting,
@@ -131,7 +237,7 @@ const ContactPage = () => {
       <div className="pt-24 pb-20">
         <div className="container mx-auto px-4">
           <motion.div
-            className="text-center mb-16"
+            className="text-center mb-4"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
           >
@@ -165,61 +271,116 @@ const ContactPage = () => {
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
+                <label htmlFor="name" className="block text-sm font-medium text-foreground mb-2">
                   <User className="inline w-4 h-4 mr-1" /> Nombre
                 </label>
                 <input
+                  id="name"
                   name="name"
                   type="text"
                   required
                   value={form.name}
-                  onChange={(e) => setForm((prev) => ({ ...prev, name: e.target.value }))}
+                  onChange={(e) => updateField("name", e.target.value)}
+                  onBlur={() => handleFieldBlur("name")}
+                  aria-invalid={isFieldErrorVisible("name")}
+                  aria-describedby={getFieldDescribedBy("name")}
                   className="w-full px-4 py-3 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
                   placeholder="Tu nombre"
                 />
+                {isFieldErrorVisible("name") && (
+                  <p id="name-error" className="mt-2 text-sm text-destructive">
+                    {errors.name}
+                  </p>
+                )}
               </div>
               <div>
-                <label className="block text-sm font-medium text-foreground mb-2">
+                <label htmlFor="email" className="block text-sm font-medium text-foreground mb-2">
                   <Mail className="inline w-4 h-4 mr-1" /> Email
                 </label>
                 <input
+                  id="email"
                   name="email"
                   type="email"
                   required
                   value={form.email}
-                  onChange={(e) => setForm((prev) => ({ ...prev, email: e.target.value }))}
+                  onChange={(e) => updateField("email", e.target.value)}
+                  onBlur={() => handleFieldBlur("email")}
+                  aria-invalid={isFieldErrorVisible("email")}
+                  aria-describedby={getFieldDescribedBy("email")}
                   className="w-full px-4 py-3 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
                   placeholder="tu@email.com"
                 />
+                {isFieldErrorVisible("email") && (
+                  <p id="email-error" className="mt-2 text-sm text-destructive">
+                    {errors.email}
+                  </p>
+                )}
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">
+              <label htmlFor="subject" className="block text-sm font-medium text-foreground mb-2">
                 <MessageSquare className="inline w-4 h-4 mr-1" /> Asunto
               </label>
-              <input
+              <select
+                id="subject"
                 name="subject"
-                type="text"
                 required
                 value={form.subject}
-                onChange={(e) => setForm((prev) => ({ ...prev, subject: e.target.value }))}
-                className="w-full px-4 py-3 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
-                placeholder="¿En qué podemos ayudarte?"
-              />
+                onChange={(e) => updateField("subject", e.target.value)}
+                onBlur={() => handleFieldBlur("subject")}
+                aria-invalid={isFieldErrorVisible("subject")}
+                aria-describedby={getFieldDescribedBy("subject")}
+                className="w-full px-4 py-3 rounded-xl bg-card border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+              >
+                <option value="" disabled>
+                  Selecciona un asunto
+                </option>
+                {contactSubjectOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+              {isFieldErrorVisible("subject") && (
+                <p id="subject-error" className="mt-2 text-sm text-destructive">
+                  {errors.subject}
+                </p>
+              )}
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-foreground mb-2">Mensaje</label>
+              <label htmlFor="message" className="block text-sm font-medium text-foreground mb-2">
+                Mensaje
+              </label>
               <textarea
+                id="message"
                 name="message"
                 required
                 rows={5}
                 value={form.message}
-                onChange={(e) => setForm((prev) => ({ ...prev, message: e.target.value }))}
+                onChange={(e) => updateField("message", e.target.value)}
+                onBlur={() => handleFieldBlur("message")}
+                aria-invalid={isFieldErrorVisible("message")}
+                aria-describedby={getFieldDescribedBy("message")}
                 className="w-full px-4 py-3 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent resize-none"
                 placeholder="Cuéntanos más..."
               />
+              <div className="mt-2 flex items-center justify-between">
+                {isFieldErrorVisible("message") ? (
+                  <p id="message-error" className="text-sm text-destructive">
+                    {errors.message}
+                  </p>
+                ) : (
+                  <span />
+                )}
+                <p
+                  className={`text-xs ${form.message.length >= 360 ? "text-accent" : "text-muted-foreground"}`}
+                  aria-live="polite"
+                >
+                  {form.message.length}/{MAX_MESSAGE_LENGTH}
+                </p>
+              </div>
             </div>
 
             <div className="sr-only" aria-hidden="true">
