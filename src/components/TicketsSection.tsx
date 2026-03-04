@@ -50,11 +50,11 @@ const TicketsSection = () => (
         <p className="text-muted-foreground text-lg">Elige tu nivel de tripulación para la misión DevOps 2026</p>
       </motion.div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto justify-items-center">
         {tickets.map((ticket, i) => (
           <motion.div
             key={ticket.name}
-            className={`rounded-2xl p-8 border flex flex-col ${
+            className={`w-full max-w-sm rounded-2xl p-8 border flex flex-col ${
               ticket.highlight
                 ? "bg-primary/10 border-primary glow-red scale-105"
                 : "bg-card/60 border-border"
