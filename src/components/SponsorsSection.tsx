@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import dynatraceLogo from "@/assets/logo-dynatrace.png";
 
 type Sponsor = {
   name: string;
@@ -25,7 +26,7 @@ const sponsorTiers = [
     capacity: 3,
     sponsors: [
       { name: "Mondini IT", website: "https://mondini.io" },
-      { name: "Dynatrace", website: "https://www.dynatrace.com" },
+      { name: "Dynatrace", website: "https://www.dynatrace.com", logoSrc: dynatraceLogo },
       { name: "TG Native", website: "https://www.tgnative.com" },
     ],
   },
@@ -100,7 +101,7 @@ const SponsorsSection = () => (
                       <img
                         src={slot.logoSrc}
                         alt={`Logo ${slot.name}`}
-                        className="max-h-14 max-w-full object-contain"
+                        className="max-h-20 max-w-full object-contain"
                       />
                     ) : (
                       <span className="text-sm text-slate-800 font-semibold text-center">{slot.name}</span>
