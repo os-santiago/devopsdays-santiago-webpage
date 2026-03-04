@@ -148,7 +148,6 @@ jobs:
       - name: Configure SSH
         env:
           CPANEL_SSH_PRIVATE_KEY: ${{ secrets.CPANEL_SSH_PRIVATE_KEY }}
-          CPANEL_SSH_PASSPHRASE: ${{ secrets.CPANEL_SSH_PASSPHRASE }}
           CPANEL_SSH_HOST: ${{ secrets.CPANEL_SSH_HOST }}
           CPANEL_SSH_USER: ${{ secrets.CPANEL_SSH_USER }}
           CPANEL_SSH_PORT: ${{ secrets.CPANEL_SSH_PORT }}
@@ -168,29 +167,9 @@ jobs:
           printf "%s" "${CPANEL_SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-          if [[ -n "${CPANEL_SSH_PASSPHRASE:-}" ]]; then
-            if ! ssh-keygen -y -P "${CPANEL_SSH_PASSPHRASE}" -f ~/.ssh/id_rsa >/dev/null 2>>"${log_file}"; then
-              echo "SSH key validation failed with provided passphrase." | tee -a "${log_file}"
-              exit 1
-            fi
-
-            eval "$(ssh-agent -s)" >>"${log_file}" 2>&1
-            askpass_script="${RUNNER_TEMP}/ssh-askpass.sh"
-            cat > "${askpass_script}" <<'EOF'
-            #!/usr/bin/env bash
-            echo "${CPANEL_SSH_PASSPHRASE}"
-            EOF
-            chmod 700 "${askpass_script}"
-            DISPLAY=:0 SSH_ASKPASS="${askpass_script}" SSH_ASKPASS_REQUIRE=force \
-              ssh-add ~/.ssh/id_rsa < /dev/null >>"${log_file}" 2>&1
-            rm -f "${askpass_script}"
-            echo "SSH key loaded in agent using passphrase secret." | tee -a "${log_file}"
-          else
-            if ! ssh-keygen -y -f ~/.ssh/id_rsa >/dev/null 2>>"${log_file}"; then
-              echo "SSH private key appears encrypted. Set CPANEL_SSH_PASSPHRASE or use an unencrypted deploy key." | tee -a "${log_file}"
-              exit 1
-            fi
-            echo "SSH key validated without passphrase." | tee -a "${log_file}"
+          if ! ssh-keygen -y -f ~/.ssh/id_rsa >/dev/null 2>>"${log_file}"; then
+            echo "Invalid SSH private key." | tee -a "${log_file}"
+            exit 1
           fi
 
           port="${CPANEL_SSH_PORT:-21}"
