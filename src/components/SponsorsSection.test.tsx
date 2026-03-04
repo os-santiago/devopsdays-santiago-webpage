@@ -4,14 +4,27 @@ import SponsorsSection from "@/components/SponsorsSection";
 import { renderWithRouter } from "@/test/test-utils";
 
 describe("SponsorsSection", () => {
-  it("renders sponsor tiers and sample logos", () => {
+  it("renders sponsor tiers, linked sponsors, and available slots", () => {
     renderWithRouter(<SponsorsSection />);
 
-    expect(screen.getByText("Platino 🪐")).toBeInTheDocument();
+    expect(screen.getByText("Platinium 🪐")).toBeInTheDocument();
     expect(screen.getByText("Oro ⭐")).toBeInTheDocument();
     expect(screen.getByText("Plata 🌙")).toBeInTheDocument();
-    expect(screen.getByText("Mondini IT")).toBeInTheDocument();
-    expect(screen.getByText("Dynatrace")).toBeInTheDocument();
+
+    expect(screen.getByRole("link", { name: "Sitio web de Mondini IT" })).toHaveAttribute(
+      "href",
+      "https://mondini.io",
+    );
+    expect(screen.getByRole("link", { name: "Sitio web de Dynatrace" })).toHaveAttribute(
+      "href",
+      "https://www.dynatrace.com",
+    );
+    expect(screen.getByRole("link", { name: "Sitio web de TG Native" })).toHaveAttribute(
+      "href",
+      "https://www.tgnative.com",
+    );
+
+    expect(screen.getAllByText("Espacio disponible")).toHaveLength(18);
   });
 
   it("links to sponsorship page", () => {

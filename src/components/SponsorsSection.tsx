@@ -1,27 +1,61 @@
 import { motion } from "framer-motion";
 
+type Sponsor = {
+  name: string;
+  website: string;
+  logoSrc?: string;
+};
+
+type SponsorTier = {
+  tier: string;
+  capacity: number;
+  sponsors: Sponsor[];
+};
+
+type SponsorSlot = {
+  name: string;
+  website?: string;
+  logoSrc?: string;
+  available: boolean;
+};
+
 const sponsorTiers = [
   {
-    tier: "Platino 🪐",
-    logos: [
-      "Mondini IT", 
-      "Dynatrace",
-      "TG Native",
+    tier: "Platinium 🪐",
+    capacity: 3,
+    sponsors: [
+      { name: "Mondini IT", website: "https://mondini.io" },
+      { name: "Dynatrace", website: "https://www.dynatrace.com" },
+      { name: "TG Native", website: "https://www.tgnative.com" },
     ],
   },
   {
     tier: "Oro ⭐",
-    logos: [
-      "Sponsor Oro 1", 
-      "Sponsor Oro 2", 
-      "Sponsor Oro 3"
-    ],
+    capacity: 10,
+    sponsors: [],
   },
   {
     tier: "Plata 🌙",
-    logos: ["Sponsor Plata 1", "Sponsor Plata 2", "Sponsor Plata 3", "Sponsor Plata 4"],
+    capacity: 8,
+    sponsors: [],
   },
-];
+] satisfies SponsorTier[];
+
+const toSlots = (tier: SponsorTier): SponsorSlot[] => {
+  const filledSlots = tier.sponsors.slice(0, tier.capacity).map((sponsor) => ({
+    name: sponsor.name,
+    website: sponsor.website,
+    logoSrc: sponsor.logoSrc,
+    available: false,
+  }));
+
+  const availableSlots = Array.from({ length: Math.max(tier.capacity - filledSlots.length, 0) }, (_, index) => ({
+    name: `Espacio disponible ${index + 1}`,
+    available: true,
+  }));
+
+  return [...filledSlots, ...availableSlots];
+};
 
 const SponsorsSection = () => (
   <section className="py-20 bg-secondary relative">
@@ -43,16 +77,37 @@ const SponsorsSection = () => (
       <div className="space-y-12 max-w-4xl mx-auto">
         {sponsorTiers.map((tier) => (
           <div key={tier.tier} className="text-center">
-            <h3 className="text-lg font-bold text-muted-foreground mb-6">{tier.tier}</h3>
+            <h3 className="text-3xl font-bold text-muted-foreground mb-6">{tier.tier}</h3>
             <div className="flex flex-wrap justify-center gap-6">
-              {tier.logos.map((name) => (
-                <div
-                  key={name}
-                  className="w-40 h-20 rounded-xl bg-card/60 border border-border flex items-center justify-center text-sm text-muted-foreground font-medium"
-                >
-                  {name}
-                </div>
-              ))}
+              {toSlots(tier).map((slot) =>
+                slot.available ? (
+                  <div
+                    key={`${tier.tier}-${slot.name}`}
+                    className="w-40 h-20 rounded-xl bg-card/60 border border-border flex items-center justify-center px-3 text-xs text-muted-foreground font-semibold uppercase tracking-wide"
+                  >
+                    Espacio disponible
+                  </div>
+                ) : (
+                  <a
+                    key={`${tier.tier}-${slot.name}`}
+                    href={slot.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-44 h-24 rounded-xl bg-white border border-border/60 shadow-sm hover:shadow-md transition-all flex items-center justify-center p-3"
+                    aria-label={`Sitio web de ${slot.name}`}
+                  >
+                    {slot.logoSrc ? (
+                      <img
+                        src={slot.logoSrc}
+                        alt={`Logo ${slot.name}`}
+                        className="max-h-14 max-w-full object-contain"
+                      />
+                    ) : (
+                      <span className="text-sm text-slate-800 font-semibold text-center">{slot.name}</span>
+                    )}
+                  </a>
+                ),
+              )}
             </div>
           </div>
         ))}
