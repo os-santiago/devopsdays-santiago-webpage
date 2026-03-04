@@ -18,9 +18,10 @@ done
 
 port="${CPANEL_FTP_PORT:-21}"
 remote_dir="${CPANEL_FTP_REMOTE_DIR:-devopsdayschile.cl/}"
-insecure="${CPANEL_FTP_INSECURE:-false}"
+insecure_raw="${CPANEL_FTP_INSECURE:-false}"
+insecure="$(printf '%s' "${insecure_raw}" | tr '[:upper:]' '[:lower:]')"
 verify_cert="true"
-if [[ "${insecure}" == "true" ]]; then
+if [[ "${insecure}" == "true" || "${insecure}" == "1" || "${insecure}" == "yes" ]]; then
   verify_cert="false"
 fi
 
@@ -46,7 +47,9 @@ EOF
 run_lftp_script() {
   local script_file="$1"
   # Some lftp builds do not support -f; feed commands through stdin for compatibility.
-  lftp -u "${CPANEL_FTP_USER},${CPANEL_FTP_PASSWORD}" -p "${port}" "${CPANEL_FTP_HOST}" < "${script_file}" >> "${log_file}" 2>&1
+  # Redact password if lftp echoes connection URL in logs.
+  lftp -u "${CPANEL_FTP_USER},${CPANEL_FTP_PASSWORD}" -p "${port}" "${CPANEL_FTP_HOST}" < "${script_file}" 2>&1 \
+    | sed -E 's#(ftp://[^:]+:)[^@]+@#\1***@#g' >> "${log_file}"
 }
 
 case "${phase}" in
@@ -68,6 +71,7 @@ case "${phase}" in
       echo "- Remote dir: ${remote_dir}"
       echo "- FTPS preflight: OK"
       echo "- Certificate verify: ${verify_cert}"
+      echo "- Insecure mode (CPANEL_FTP_INSECURE): ${insecure_raw}"
     } >> "${GITHUB_STEP_SUMMARY}"
     ;;
 
