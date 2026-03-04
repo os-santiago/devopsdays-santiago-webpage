@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+[[ "${TRACE:-false}" == "true" ]] && set -x
 
 confirm_release="${CONFIRM_RELEASE:-}"
 
@@ -12,4 +13,3 @@ if [[ "${confirm_release}" != "true" ]]; then
   echo "Release confirmation was not provided. Set confirm_release=true."
   exit 1
 fi
-

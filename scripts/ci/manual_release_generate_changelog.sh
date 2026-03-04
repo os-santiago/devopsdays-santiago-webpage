@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+[[ "${TRACE:-false}" == "true" ]] && set -x
 
 last_stable_tag="${LAST_STABLE_TAG:-}"
 rc_commit="${RC_COMMIT:-}"
@@ -13,4 +14,3 @@ fi
 if [[ ! -s CHANGELOG_RELEASE.md ]]; then
   echo "- No commits found in selected range." > CHANGELOG_RELEASE.md
 fi
-

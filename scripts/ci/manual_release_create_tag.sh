@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+[[ "${TRACE:-false}" == "true" ]] && set -x
 
 final_tag="${FINAL_TAG:-}"
 rc_commit="${RC_COMMIT:-}"
@@ -13,4 +14,3 @@ fi
 
 git tag -a "${final_tag}" -m "Release ${final_tag}" "${rc_commit}"
 git push origin "refs/tags/${final_tag}"
-

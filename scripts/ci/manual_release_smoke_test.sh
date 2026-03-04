@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+[[ "${TRACE:-false}" == "true" ]] && set -x
 
 expected_tag="${EXPECTED_TAG:-}"
 url="${SMOKE_TEST_URL:-https://santiago.devopsdayschile.cl/}"
@@ -65,4 +66,3 @@ fi
 
 echo "Smoke test failed: expected=${expected_tag} detected=${deployed_version:-not_found} status=${last_status}"
 exit 1
-

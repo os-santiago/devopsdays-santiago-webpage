@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+[[ "${TRACE:-false}" == "true" ]] && set -x
 
 release_type="${RELEASE_TYPE:-}"
 
@@ -39,4 +40,3 @@ fi
   echo "release_type=${release_type}"
   echo "last_stable_tag=${latest_stable_tag}"
 } >> "${GITHUB_OUTPUT}"
-

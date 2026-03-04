@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+[[ "${TRACE:-false}" == "true" ]] && set -x
 
 rc_tag="${RC_TAG:-}"
 
@@ -24,4 +25,3 @@ for tag in "${rc_tags[@]}"; do
   git tag -d "${tag}" >/dev/null 2>&1 || true
   git push origin ":refs/tags/${tag}"
 done
-

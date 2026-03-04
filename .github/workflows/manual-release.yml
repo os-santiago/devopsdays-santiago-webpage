@@ -42,12 +42,14 @@ jobs:
       - name: Validate branch and confirmation
         env:
           CONFIRM_RELEASE: ${{ github.event.inputs.confirm_release }}
+          TRACE: "true"
         run: bash scripts/ci/manual_release_validate_trigger.sh
 
       - name: Compute release version
         id: compute
         env:
           RELEASE_TYPE: ${{ github.event.inputs.release_type }}
+          TRACE: "true"
         run: bash scripts/ci/manual_release_compute_version.sh
 
   build:
@@ -207,6 +209,7 @@ jobs:
       - name: Validate deployed version
         env:
           EXPECTED_TAG: ${{ needs.preflight.outputs.final_tag }}
+          TRACE: "true"
         run: bash scripts/ci/manual_release_smoke_test.sh
 
   publish-release:
@@ -230,6 +233,7 @@ jobs:
         env:
           FINAL_TAG: ${{ needs.preflight.outputs.final_tag }}
           RC_COMMIT: ${{ needs.preflight.outputs.rc_commit }}
+          TRACE: "true"
         run: bash scripts/ci/manual_release_create_tag.sh
 
       - name: Generate changelog
@@ -237,6 +241,7 @@ jobs:
         env:
           LAST_STABLE_TAG: ${{ needs.preflight.outputs.last_stable_tag }}
           RC_COMMIT: ${{ needs.preflight.outputs.rc_commit }}
+          TRACE: "true"
         run: bash scripts/ci/manual_release_generate_changelog.sh
 
       - name: Create GitHub release
@@ -252,4 +257,5 @@ jobs:
       - name: Clean up RC tags for promoted candidate
         env:
           RC_TAG: ${{ needs.preflight.outputs.rc_tag }}
+          TRACE: "true"
         run: bash scripts/ci/manual_release_cleanup_rc_tags.sh
