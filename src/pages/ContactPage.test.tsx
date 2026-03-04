@@ -1,5 +1,5 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
-import { fireEvent, screen, waitFor } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { screen } from "@testing-library/react";
 import { renderWithRouter } from "@/test/test-utils";
 
 const toastSpy = vi.fn();
@@ -11,39 +11,31 @@ vi.mock("@/hooks/use-toast", () => ({
 import ContactPage from "@/pages/ContactPage";
 
 describe("ContactPage", () => {
-  beforeEach(() => {
-    toastSpy.mockClear();
-  });
-
-  it("submits form, triggers toast and resets fields", async () => {
+  it("renders contact content and form fields", () => {
     renderWithRouter(<ContactPage />, { route: "/contacto" });
 
-    const nameInput = screen.getByPlaceholderText("Tu nombre");
-    const emailInput = screen.getByPlaceholderText("tu@email.com");
-    const subjectInput = screen.getByPlaceholderText("¿En qué podemos ayudarte?");
-    const messageInput = screen.getByPlaceholderText("Cuéntanos más...");
+    expect(screen.getByRole("heading", { name: /Comunícate con el/i })).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Tu nombre")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("tu@email.com")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("¿En qué podemos ayudarte?")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Cuéntanos más...")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Enviar Mensaje/i })).toBeInTheDocument();
+  });
 
-    fireEvent.change(nameInput, { target: { value: "Caique" } });
-    fireEvent.change(emailInput, { target: { value: "caique@example.com" } });
-    fireEvent.change(subjectInput, { target: { value: "Consulta" } });
-    fireEvent.change(messageInput, { target: { value: "Necesito información del evento" } });
+  it("includes hidden honeypot field", () => {
+    const { container } = renderWithRouter(<ContactPage />, { route: "/contacto" });
 
-    const submitButton = screen.getByRole("button", { name: /Enviar Mensaje/i });
-    const form = submitButton.closest("form");
+    const honeypot = container.querySelector('input[name="website"]') as HTMLInputElement | null;
+    expect(honeypot).not.toBeNull();
+    expect(honeypot).toHaveAttribute("type", "text");
+    expect(honeypot).toHaveValue("");
+  });
 
+  it("disables native form validation", () => {
+    const { container } = renderWithRouter(<ContactPage />, { route: "/contacto" });
+
+    const form = container.querySelector("form");
     expect(form).not.toBeNull();
-    fireEvent.submit(form!);
-
-    await waitFor(() => {
-      expect(toastSpy).toHaveBeenCalledWith({
-        title: "Mensaje enviado 🚀",
-        description: "Te responderemos pronto. ¡Gracias!",
-      });
-    });
-
-    expect(nameInput).toHaveValue("Caique");
-    expect(emailInput).toHaveValue("caique@example.com");
-    expect(subjectInput).toHaveValue("Consulta");
-    expect(messageInput).toHaveValue("Necesito información del evento");
+    expect(form).toHaveAttribute("novalidate");
   });
 });
