@@ -42,11 +42,17 @@ const HeroSection = () => (
           <div className="flex flex-col sm:flex-row gap-4 mb-8">
             <div className="flex items-center gap-2 text-muted-foreground">
               <CalendarDays className="w-5 h-5 text-accent" />
-              <span className="text-sm font-medium">15-16 Octubre, 2026</span>
+              <span className="text-sm font-medium">8-9 Septiembre, 2026</span>
             </div>
             <div className="flex items-center gap-2 text-muted-foreground">
               <MapPin className="w-5 h-5 text-primary" />
-              <span className="text-sm font-medium">Santiago, Chile</span>
+              <a
+                href="https://maps.app.goo.gl/sZCydBh2ycoQvyxH8"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span className="text-sm font-medium">Centro de Extensión UC, Santiago, Chile</span>
+              </a>
             </div>
           </div>
 

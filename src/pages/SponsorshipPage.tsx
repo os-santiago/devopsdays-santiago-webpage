@@ -6,56 +6,48 @@ import Footer from "@/components/Footer";
 const levels = [
   {
     icon: Rocket,
-    name: "Bronce 🌍",
-    price: "$500 USD",
-    color: "border-border",
+    name: "Platinium 🪐",
+    price: "$8.000.000 CLP (~$10.000 USD)",
+    color: "border-accent",
+    highlight: true,
     benefits: [
-      "Logo en sitio web",
-      "Mención en redes sociales",
-      "2 entradas al evento",
+      "Stand 4x2 mtrs tipo isla",
+      "Mucha más visibilidad",
+      "20 mins de charla en escenario principal",
+      "Participación en Panel de Expertos",
+      "Publicidad especial en redes sociales y página web",
+      "10 Entradas normales",
+      "5 Entradas VIP",
+      "8 Entradas al After Office",
+      "2 Estacionamientos",
     ],
   },
   {
     icon: Star,
-    name: "Plata 🌙",
-    price: "$1.500 USD",
+    name: "Gold 🌎",
+    price: "$5.000.000 CLP (~$6.250 USD)",
     color: "border-muted-foreground",
     benefits: [
-      "Todo lo de Bronce",
-      "Logo en material impreso",
-      "5 entradas al evento",
-      "Stand pequeño",
-      "Mención en keynote",
+      "Stand 3x2 mtrs",
+      "Mayor visibilidad",
+      "5 mins en escenario principal",
+      "Publicidad en redes sociales y página web",
+      "10 Entradas normales",
+      "4 Entradas al After Office",
+      "1 Estacionamiento",
     ],
   },
   {
     icon: Gem,
-    name: "Oro ⭐",
-    price: "$3.000 USD",
-    color: "border-accent",
-    highlight: true,
+    name: "Silver 🌙",
+    price: "$3.000.000 CLP (~$3.750 USD)",
+    color: "border-border",
     benefits: [
-      "Todo lo de Plata",
-      "Stand grande",
-      "10 entradas al evento",
-      "Logo en camisetas",
-      "Charla de 5 min",
-      "Publicidad en pantallas",
-    ],
-  },
-  {
-    icon: Crown,
-    name: "Platino 🪐",
-    price: "$5.000 USD",
-    color: "border-primary",
-    benefits: [
-      "Todo lo de Oro",
-      "Naming de track",
-      "15 entradas al evento",
-      "Charla de 15 min",
-      "Logo principal en todo el material",
-      "Acceso VIP completo",
-      "Cena con organizadores",
+      "Stand 2x2 mtrs",
+      "Publicidad en redes sociales y página web",
+      "5 Entradas normales",
+      "2 Entradas al After Office",
+      "1 Estacionamiento",
     ],
   },
 ];
@@ -94,8 +86,8 @@ const SponsorshipPage = () => (
               transition={{ delay: i * 0.1 }}
             >
               <level.icon className={`w-10 h-10 mb-4 ${level.highlight ? "text-accent" : "text-muted-foreground"}`} />
-              <h3 className="text-xl font-bold text-foreground mb-1">{level.name}</h3>
-              <p className="text-3xl font-black text-foreground mb-6">{level.price}</p>
+              <p className="text-3xl font-black text-foreground mb-1">{level.name}</p>
+              <h3 className="text-xl font-bold text-foreground mb-6">{level.price}</h3>
               <ul className="space-y-3 flex-1 mb-6">
                 {level.benefits.map((b) => (
                   <li key={b} className="text-sm text-muted-foreground flex items-start gap-2">

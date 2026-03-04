@@ -11,9 +11,9 @@ const Index = () => (
     <Navbar />
     <HeroSection />
     <EventInfoSection />
-    <CFPSection />
-    <TicketsSection />
     <SponsorsSection />
+    <TicketsSection />
+    <CFPSection />
     <Footer />
   </div>
 );

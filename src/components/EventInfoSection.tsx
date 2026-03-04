@@ -2,9 +2,9 @@ import { motion } from "framer-motion";
 import { CalendarDays, MapPin, Users, Mic2 } from "lucide-react";
 
 const stats = [
-  { icon: CalendarDays, label: "Fecha", value: "15-16 Oct 2026" },
-  { icon: MapPin, label: "Lugar", value: "Santiago, Chile" },
-  { icon: Users, label: "Asistentes", value: "500+" },
+  { icon: CalendarDays, label: "Fecha", value: "8-9 Sept 2026" },
+  { icon: MapPin, label: "Lugar", value: "Centro de Extensión UC" },
+  { icon: Users, label: "Asistentes", value: "700+" },
   { icon: Mic2, label: "Charlas", value: "20+" },
 ];
 

@@ -23,9 +23,9 @@ const CFPSection = () => (
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           {[
-            { icon: Lightbulb, title: "Temas", desc: "DevOps, SRE, Platform Engineering, Cloud Native, Seguridad, Cultura" },
-            { icon: Clock, title: "Formato", desc: "Charlas de 30 min, Ignite Talks de 5 min, Talleres" },
-            { icon: Send, title: "Deadline", desc: "30 de Junio, 2026" },
+            { icon: Lightbulb, title: "Temas", desc: "IA, DevOps, SRE, Platform Engineering, Cloud Native, Seguridad, Cultura" },
+            { icon: Clock, title: "Formato", desc: "Charlas de 30 min, Lightning Talks de 15 min, Talleres 60 min, Panel 30 min" },
+            { icon: Send, title: "Deadline", desc: "30 de Mayo, 2026" },
           ].map((item, i) => (
             <motion.div
               key={item.title}
@@ -43,7 +43,7 @@ const CFPSection = () => (
         </div>
 
         <a
-          href="https://www.papercall.io/"
+          href="https://homedir.opensourcesantiago.io/event/devopsdays-santiago-2026/cfp"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-accent text-accent-foreground font-bold glow-sky transition-transform hover:scale-105"

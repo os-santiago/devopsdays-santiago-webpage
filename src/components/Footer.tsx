@@ -1,12 +1,11 @@
 import { Link } from "react-router-dom";
-import { Github, Twitter, Linkedin, Instagram, Youtube, Globe } from "lucide-react";
+import { Linkedin, Instagram, Youtube, Globe } from "lucide-react";
 import logo from "@/assets/logo-devopsdays.png";
 
 const socialLinks = [
-  { icon: Twitter, href: "https://twitter.com/devaborday", label: "Twitter" },
-  { icon: Linkedin, href: "https://linkedin.com/company/devopsdays-santiago", label: "LinkedIn" },
-  { icon: Instagram, href: "https://instagram.com/devopsdayschile", label: "Instagram" },
-  { icon: Youtube, href: "https://youtube.com/@devopsdayschile", label: "YouTube" },
+  { icon: Linkedin, href: "https://www.linkedin.com/company/devopsdayschile", label: "LinkedIn" },
+  { icon: Instagram, href: "https://www.instagram.com/devopsdayssantiago", label: "Instagram" },
+  { icon: Youtube, href: "https://www.youtube.com/@DevOpsDaysSantiago", label: "YouTube" },
   { icon: Globe, href: "https://devopsdayschile.cl", label: "Website" },
 ];
 

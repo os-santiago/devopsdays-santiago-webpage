@@ -4,28 +4,28 @@ import Footer from "@/components/Footer";
 import { Clock, Coffee, Mic2, Users, Rocket } from "lucide-react";
 
 const day1 = [
-  { time: "08:30", title: "Registro y Café ☕", speaker: "", type: "break" },
-  { time: "09:00", title: "Keynote: El Futuro del DevOps en la Era Espacial", speaker: "Por confirmar", type: "keynote" },
-  { time: "10:00", title: "Platform Engineering: Construyendo la Estación Espacial", speaker: "Por confirmar", type: "talk" },
-  { time: "10:45", title: "Coffee Break 🚀", speaker: "", type: "break" },
-  { time: "11:15", title: "SRE: Manteniendo Satélites en Órbita", speaker: "Por confirmar", type: "talk" },
-  { time: "12:00", title: "Ignite Talks (5 min c/u)", speaker: "Múltiples speakers", type: "ignite" },
-  { time: "12:30", title: "Almuerzo 🍽️", speaker: "", type: "break" },
-  { time: "14:00", title: "Open Spaces", speaker: "Toda la comunidad", type: "workshop" },
-  { time: "16:00", title: "Cierre Día 1 + Networking", speaker: "", type: "break" },
+  // { time: "08:30", title: "Registro y Café ☕", speaker: "", type: "break" },
+  // { time: "09:00", title: "Keynote: El Futuro del DevOps en la Era Espacial", speaker: "Por confirmar", type: "keynote" },
+  // { time: "10:00", title: "Platform Engineering: Construyendo la Estación Espacial", speaker: "Por confirmar", type: "talk" },
+  // { time: "10:45", title: "Coffee Break 🚀", speaker: "", type: "break" },
+  // { time: "11:15", title: "SRE: Manteniendo Satélites en Órbita", speaker: "Por confirmar", type: "talk" },
+  // { time: "12:00", title: "Ignite Talks (5 min c/u)", speaker: "Múltiples speakers", type: "ignite" },
+  // { time: "12:30", title: "Almuerzo 🍽️", speaker: "", type: "break" },
+  // { time: "14:00", title: "Open Spaces", speaker: "Toda la comunidad", type: "workshop" },
+  // { time: "16:00", title: "Cierre Día 1 + Networking", speaker: "", type: "break" },
 ];
 
 const day2 = [
-  { time: "08:30", title: "Registro y Café ☕", speaker: "", type: "break" },
-  { time: "09:00", title: "Keynote: Seguridad en la Frontera Final", speaker: "Por confirmar", type: "keynote" },
-  { time: "10:00", title: "Cloud Native: Navegando las Nebulosas", speaker: "Por confirmar", type: "talk" },
-  { time: "10:45", title: "Coffee Break 🛸", speaker: "", type: "break" },
-  { time: "11:15", title: "CI/CD: Lanzamientos a la Velocidad de la Luz", speaker: "Por confirmar", type: "talk" },
-  { time: "12:00", title: "Panel: DevSecOps en Latinoamérica", speaker: "Panel", type: "talk" },
-  { time: "12:30", title: "Almuerzo 🍽️", speaker: "", type: "break" },
-  { time: "14:00", title: "Open Spaces", speaker: "Toda la comunidad", type: "workshop" },
-  { time: "16:00", title: "Keynote de Cierre + Sorteos 🎁", speaker: "Por confirmar", type: "keynote" },
-  { time: "17:00", title: "After Party 🎉", speaker: "", type: "break" },
+  // { time: "08:30", title: "Registro y Café ☕", speaker: "", type: "break" },
+  // { time: "09:00", title: "Keynote: Seguridad en la Frontera Final", speaker: "Por confirmar", type: "keynote" },
+  // { time: "10:00", title: "Cloud Native: Navegando las Nebulosas", speaker: "Por confirmar", type: "talk" },
+  // { time: "10:45", title: "Coffee Break 🛸", speaker: "", type: "break" },
+  // { time: "11:15", title: "CI/CD: Lanzamientos a la Velocidad de la Luz", speaker: "Por confirmar", type: "talk" },
+  // { time: "12:00", title: "Panel: DevSecOps en Latinoamérica", speaker: "Panel", type: "talk" },
+  // { time: "12:30", title: "Almuerzo 🍽️", speaker: "", type: "break" },
+  // { time: "14:00", title: "Open Spaces", speaker: "Toda la comunidad", type: "workshop" },
+  // { time: "16:00", title: "Keynote de Cierre + Sorteos 🎁", speaker: "Por confirmar", type: "keynote" },
+  // { time: "17:00", title: "After Party 🎉", speaker: "", type: "break" },
 ];
 
 const typeStyles: Record<string, string> = {
@@ -88,12 +88,12 @@ const AgendaPage = () => (
           <h1 className="text-4xl md:text-6xl font-black text-foreground mt-4 mb-4">
             Agenda de la <span className="text-gradient-space">Misión</span>
           </h1>
-          <p className="text-muted-foreground text-lg">15 y 16 de Octubre, 2026 — Santiago, Chile</p>
+          <p className="text-muted-foreground text-lg">8 y 9 de Septiembre, 2026 — Centro de Extensión UC, Santiago, Chile</p>
         </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-          <AgendaDay title="🛸 Día 1 — 15 de Octubre" items={day1} />
-          <AgendaDay title="🚀 Día 2 — 16 de Octubre" items={day2} />
+          <AgendaDay title="🛸 Día 1 — 8 de Septiembre" items={day1} />
+          <AgendaDay title="🚀 Día 2 — 9 de Septiembre" items={day2} />
         </div>
       </div>
     </div>

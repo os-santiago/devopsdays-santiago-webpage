@@ -1,26 +1,33 @@
 import { motion } from "framer-motion";
-import { Rocket, Star, Gem } from "lucide-react";
+import { Rocket, Star, Gem, Moon } from "lucide-react";
 
 const tickets = [
   {
     icon: Rocket,
-    name: "Early Bird 🛸",
-    price: "$30.000 CLP",
-    features: ["Acceso completo 2 días", "Almuerzo incluido", "Kit de bienvenida", "Networking"],
+    name: "Entrada 2 días 🛸",
+    price: "$25.000 CLP",
+    features: ["Acceso a los 2 días de evento", "Coffee breaks y Almuerzo", "Kit de bienvenida"],
     highlight: false,
   },
   {
     icon: Star,
-    name: "Comandante ⭐",
+    name: "Entrada VIP ⭐",
     price: "$50.000 CLP",
-    features: ["Todo Early Bird", "Asiento preferencial", "Camiseta exclusiva", "After party", "Certificado digital"],
+    features: ["Acceso a los 2 días de evento", "Coffee breaks y Almuerzo", "Kit de bienvenida", "Acceso a sector VIP", "Acceso a After Office", "Estacionamiento"],
     highlight: true,
   },
   {
     icon: Gem,
-    name: "Almirante 💎",
-    price: "$80.000 CLP",
-    features: ["Todo Comandante", "Acceso VIP", "Sesión de fotos con speakers", "Merchandising premium", "Cena con organizadores"],
+    name: "Entrada 2 días con Estacionamiento 💎",
+    price: "$30.000 CLP",
+    features: ["Acceso a los 2 días de evento", "Coffee breaks y Almuerzo", "Kit de bienvenida", "Estacionamiento"],
+    highlight: false,
+  },
+  {
+    icon: Moon,
+    name: "Entrada 1 día 🛠️",
+    price: "$15.000 CLP",
+    features: ["Acceso a 1 día de evento", "Coffee breaks y Almuerzo", "Kit de bienvenida"],
     highlight: false,
   },
 ];
@@ -69,7 +76,7 @@ const TicketsSection = () => (
               ))}
             </ul>
             <a
-              href="#"
+              href="https://ticketplus.cl/events/devopsdays-santiago-2026#select-tickets"
               className={`block text-center py-3 rounded-xl font-bold transition-transform hover:scale-105 ${
                 ticket.highlight
                   ? "bg-primary text-primary-foreground glow-red"

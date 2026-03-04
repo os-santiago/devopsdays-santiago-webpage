@@ -3,11 +3,19 @@ import { motion } from "framer-motion";
 const sponsorTiers = [
   {
     tier: "Platino 🪐",
-    logos: ["Sponsor Platino 1", "Sponsor Platino 2"],
+    logos: [
+      "Mondini IT", 
+      "Dynatrace",
+      "TG Native",
+    ],
   },
   {
     tier: "Oro ⭐",
-    logos: ["Sponsor Oro 1", "Sponsor Oro 2", "Sponsor Oro 3"],
+    logos: [
+      "Sponsor Oro 1", 
+      "Sponsor Oro 2", 
+      "Sponsor Oro 3"
+    ],
   },
   {
     tier: "Plata 🌙",
