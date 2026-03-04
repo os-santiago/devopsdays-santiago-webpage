@@ -6,7 +6,10 @@ header('Content-Type: application/json; charset=UTF-8');
 
 const RATE_LIMIT_MAX_REQUESTS = 5;
 const RATE_LIMIT_WINDOW_SECONDS = 900; // 15 minutes
-const SMTP_CONFIG_PATH_DEFAULT = '/home/<cpanel_user>/secure/contact_smtp.php';
+const SMTP_HOST_DEFAULT = 'mail.devopsdayschile.cl';
+const SMTP_PORT_DEFAULT = 465;
+const SMTP_USER_DEFAULT = 'contacto@devopsdayschile.cl';
+const SMTP_SECURE_DEFAULT = 'ssl';
 
 function json_response(int $status, array $payload): void
 {
@@ -32,6 +35,50 @@ function sanitize_header_value(string $value): string
 function rate_limit_file_path(): string
 {
     return rtrim(sys_get_temp_dir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'devopsdays_contact_rate_limit.json';
+}
+
+function smtp_config_candidates(): array
+{
+    $paths = [];
+
+    $home = getenv('HOME');
+    if (!is_string($home) || $home === '') {
+        $home = isset($_SERVER['HOME']) && is_string($_SERVER['HOME']) ? $_SERVER['HOME'] : '';
+    }
+
+    if ($home !== '') {
+        $paths[] = rtrim($home, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'secure' . DIRECTORY_SEPARATOR . 'contact_smtp.php';
+    }
+
+    $paths[] = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'secure' . DIRECTORY_SEPARATOR . 'contact_smtp.php';
+    $paths[] = __DIR__ . DIRECTORY_SEPARATOR . 'contact_smtp.php';
+
+    return array_values(array_unique($paths));
+}
+
+function load_smtp_config(): ?array
+{
+    $defaults = [
+        'SMTP_HOST' => SMTP_HOST_DEFAULT,
+        'SMTP_PORT' => SMTP_PORT_DEFAULT,
+        'SMTP_USER' => SMTP_USER_DEFAULT,
+        'SMTP_SECURE' => SMTP_SECURE_DEFAULT,
+    ];
+
+    foreach (smtp_config_candidates() as $path) {
+        if (!file_exists($path)) {
+            continue;
+        }
+
+        $loaded = require $path;
+        if (!is_array($loaded)) {
+            return null;
+        }
+
+        return array_merge($defaults, $loaded);
+    }
+
+    return null;
 }
 
 function is_rate_limited(string $ip, int $maxRequests, int $windowSeconds): bool
@@ -195,7 +242,7 @@ function smtp_send_mail(array $cfg, string $from, string $to, string $replyTo, s
             'From: ' . $from,
             'To: ' . $to,
             'Reply-To: ' . $replyTo,
-            'Subject: ' . $encodedSubject,
+            'Subject: DevOpsDays Santiago | Contacto desde la web - ' . $encodedSubject,
             'Date: ' . date('r'),
             'MIME-Version: 1.0',
             'Content-Type: text/plain; charset=UTF-8',
@@ -256,13 +303,8 @@ if (is_rate_limited($ip, RATE_LIMIT_MAX_REQUESTS, RATE_LIMIT_WINDOW_SECONDS)) {
     json_response(429, ['ok' => false, 'error' => 'rate_limited']);
 }
 
-$configPath = getenv('CONTACT_SMTP_CONFIG') ?: SMTP_CONFIG_PATH_DEFAULT;
-if (!is_string($configPath) || $configPath === '' || !file_exists($configPath)) {
-    json_response(500, ['ok' => false, 'error' => 'send_failed']);
-}
-
-$config = require $configPath;
-if (!is_array($config)) {
+$config = load_smtp_config();
+if ($config === null) {
     json_response(500, ['ok' => false, 'error' => 'send_failed']);
 }
 
