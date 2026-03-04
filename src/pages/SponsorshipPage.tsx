@@ -73,11 +73,11 @@ const SponsorshipPage = () => (
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        <div className="flex flex-wrap justify-center gap-6 max-w-7xl mx-auto">
           {levels.map((level, i) => (
             <motion.div
               key={level.name}
-              className={`rounded-2xl p-6 border flex flex-col ${level.color} ${
+              className={`w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] max-w-sm rounded-2xl p-6 border flex flex-col ${level.color} ${
                 level.highlight ? "bg-accent/5 glow-sky" : "bg-card/60"
               }`}
               initial={{ opacity: 0, y: 30 }}
