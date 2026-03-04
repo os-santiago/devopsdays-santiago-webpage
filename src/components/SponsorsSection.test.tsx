@@ -13,7 +13,7 @@ describe("SponsorsSection", () => {
 
     expect(screen.getByRole("link", { name: "Sitio web de Mondini IT" })).toHaveAttribute(
       "href",
-      "https://mondini.io",
+      "https://mondini-it.com/",
     );
     expect(screen.getByRole("link", { name: "Sitio web de Dynatrace" })).toHaveAttribute(
       "href",
@@ -21,7 +21,7 @@ describe("SponsorsSection", () => {
     );
     expect(screen.getByRole("link", { name: "Sitio web de TG Native" })).toHaveAttribute(
       "href",
-      "https://www.tgnative.com",
+      "https://tgcorp.tech/",
     );
 
     expect(screen.getAllByText("Espacio disponible")).toHaveLength(18);

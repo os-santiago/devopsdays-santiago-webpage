@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import dynatraceLogo from "@/assets/logo-dynatrace.png";
+import tgNativeLogo from "@/assets/logo-tgnative.png";
 
 type Sponsor = {
   name: string;
@@ -25,9 +26,9 @@ const sponsorTiers = [
     tier: "Platinium 🪐",
     capacity: 3,
     sponsors: [
-      { name: "Mondini IT", website: "https://mondini.io" },
+      { name: "Mondini IT", website: "https://mondini-it.com/" },
       { name: "Dynatrace", website: "https://www.dynatrace.com", logoSrc: dynatraceLogo },
-      { name: "TG Native", website: "https://www.tgnative.com" },
+      { name: "TG Native", website: "https://tgcorp.tech/", logoSrc: tgNativeLogo },
     ],
   },
   {
@@ -58,6 +59,27 @@ const toSlots = (tier: SponsorTier): SponsorSlot[] => {
   return [...filledSlots, ...availableSlots];
 };
 
+const getTierSizing = (tierName: string) => {
+  if (tierName === "Platinium 🪐") {
+    return {
+      cardClassName: "w-48 h-28",
+      logoClassName: "max-h-[4.75rem]",
+    };
+  }
+
+  if (tierName === "Oro ⭐") {
+    return {
+      cardClassName: "w-44 h-24",
+      logoClassName: "max-h-[4.25rem]",
+    };
+  }
+
+  return {
+    cardClassName: "w-40 h-[5.5rem]",
+    logoClassName: "max-h-16",
+  };
+};
+
 const SponsorsSection = () => (
   <section className="py-20 bg-secondary relative">
     <div className="container mx-auto px-4">
@@ -76,42 +98,46 @@ const SponsorsSection = () => (
       </motion.div>
 
       <div className="space-y-12 max-w-4xl mx-auto">
-        {sponsorTiers.map((tier) => (
-          <div key={tier.tier} className="text-center">
-            <h3 className="text-3xl font-bold text-muted-foreground mb-6">{tier.tier}</h3>
-            <div className="flex flex-wrap justify-center gap-6">
-              {toSlots(tier).map((slot) =>
-                slot.available ? (
-                  <div
-                    key={`${tier.tier}-${slot.name}`}
-                    className="w-40 h-20 rounded-xl bg-card/60 border border-border flex items-center justify-center px-3 text-xs text-muted-foreground font-semibold uppercase tracking-wide"
-                  >
-                    Espacio disponible
-                  </div>
-                ) : (
-                  <a
-                    key={`${tier.tier}-${slot.name}`}
-                    href={slot.website}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-44 h-24 rounded-xl bg-white border border-border/60 shadow-sm hover:shadow-md transition-all flex items-center justify-center p-3"
-                    aria-label={`Sitio web de ${slot.name}`}
-                  >
-                    {slot.logoSrc ? (
-                      <img
-                        src={slot.logoSrc}
-                        alt={`Logo ${slot.name}`}
-                        className="max-h-20 max-w-full object-contain"
-                      />
-                    ) : (
-                      <span className="text-sm text-slate-800 font-semibold text-center">{slot.name}</span>
-                    )}
-                  </a>
-                ),
-              )}
+        {sponsorTiers.map((tier) => {
+          const { cardClassName, logoClassName } = getTierSizing(tier.tier);
+
+          return (
+            <div key={tier.tier} className="text-center">
+              <h3 className="text-3xl font-bold text-muted-foreground mb-6">{tier.tier}</h3>
+              <div className="flex flex-wrap justify-center gap-6">
+                {toSlots(tier).map((slot) =>
+                  slot.available ? (
+                    <div
+                      key={`${tier.tier}-${slot.name}`}
+                      className={`${cardClassName} rounded-xl bg-card/60 border border-border flex items-center justify-center px-3 text-xs text-muted-foreground font-semibold uppercase tracking-wide`}
+                    >
+                      Espacio disponible
+                    </div>
+                  ) : (
+                    <a
+                      key={`${tier.tier}-${slot.name}`}
+                      href={slot.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={`${cardClassName} rounded-xl bg-white border border-border/60 shadow-sm hover:shadow-md transition-all flex items-center justify-center p-3`}
+                      aria-label={`Sitio web de ${slot.name}`}
+                    >
+                      {slot.logoSrc ? (
+                        <img
+                          src={slot.logoSrc}
+                          alt={`Logo ${slot.name}`}
+                          className={`${logoClassName} max-w-full object-contain`}
+                        />
+                      ) : (
+                        <span className="text-sm text-slate-800 font-semibold text-center">{slot.name}</span>
+                      )}
+                    </a>
+                  ),
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="text-center mt-12">
