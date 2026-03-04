@@ -266,7 +266,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          expected_meta="<meta name=\"app-version\" content=\"${EXPECTED_TAG}\">"
+          expected_meta="<meta name=\"app-version\" content=\"${EXPECTED_TAG}\" />"
           attempt=1
           max_attempts=12
 
