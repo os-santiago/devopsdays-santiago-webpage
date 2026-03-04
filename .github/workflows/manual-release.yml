@@ -16,6 +16,11 @@ on:
           - minor
           - major
         default: minor
+      debug_ssh:
+        description: "Enable verbose SSH diagnostics"
+        required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -29,6 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       rc_tag: ${{ steps.compute.outputs.rc_tag }}
+      rc_commit: ${{ steps.compute.outputs.rc_commit }}
       final_tag: ${{ steps.compute.outputs.final_tag }}
       release_type: ${{ steps.compute.outputs.release_type }}
       last_stable_tag: ${{ steps.compute.outputs.last_stable_tag }}
@@ -69,24 +75,19 @@ jobs:
             exit 1
           fi
 
-          if [[ "${release_type}" == "minor" ]]; then
-            if [[ "${latest_rc_tag}" =~ ^(v[0-9]+\.[0-9]+\.[0-9]+)-rc\.[0-9]+$ ]]; then
-              final_tag="${BASH_REMATCH[1]}"
-            else
-              echo "Invalid RC tag format: ${latest_rc_tag}"
-              exit 1
-            fi
-          elif [[ "${release_type}" == "major" ]]; then
-            if [[ -n "${latest_stable_tag}" && "${latest_stable_tag}" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
-              next_major="$((BASH_REMATCH[1] + 1))"
-              final_tag="v${next_major}.0.0"
-            else
-              final_tag="v1.0.0"
-            fi
-          else
+          if [[ ! "${latest_rc_tag}" =~ ^(v[0-9]+\.[0-9]+\.[0-9]+)-rc\.[0-9]+$ ]]; then
+            echo "Invalid RC tag format: ${latest_rc_tag}"
+            exit 1
+          fi
+
+          if [[ "${release_type}" != "minor" && "${release_type}" != "major" ]]; then
             echo "Unsupported release type: ${release_type}"
             exit 1
           fi
+
+          # Policy: both minor and major promote the active RC base.
+          final_tag="${BASH_REMATCH[1]}"
+          rc_commit="$(git rev-list -n 1 "${latest_rc_tag}")"
 
           if git rev-parse -q --verify "refs/tags/${final_tag}" >/dev/null; then
             echo "Final tag already exists: ${final_tag}"
@@ -94,6 +95,7 @@ jobs:
           fi
 
           echo "rc_tag=${latest_rc_tag}" >> "$GITHUB_OUTPUT"
+          echo "rc_commit=${rc_commit}" >> "$GITHUB_OUTPUT"
           echo "final_tag=${final_tag}" >> "$GITHUB_OUTPUT"
           echo "release_type=${release_type}" >> "$GITHUB_OUTPUT"
           echo "last_stable_tag=${latest_stable_tag}" >> "$GITHUB_OUTPUT"
@@ -131,6 +133,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.preflight.outputs.rc_commit }}
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -170,18 +175,93 @@ jobs:
         env:
           CPANEL_SSH_PRIVATE_KEY: ${{ secrets.CPANEL_SSH_PRIVATE_KEY }}
           CPANEL_SSH_HOST: ${{ secrets.CPANEL_SSH_HOST }}
+          CPANEL_SSH_USER: ${{ secrets.CPANEL_SSH_USER }}
           CPANEL_SSH_PORT: ${{ secrets.CPANEL_SSH_PORT }}
         run: |
           set -euo pipefail
+
+          log_file="${RUNNER_TEMP}/ssh_diagnostics.log"
+          : > "${log_file}"
+
+          if [[ -z "${CPANEL_SSH_HOST:-}" || -z "${CPANEL_SSH_USER:-}" || -z "${CPANEL_SSH_PRIVATE_KEY:-}" ]]; then
+            echo "Missing required CPANEL secrets (host/user/private key)." | tee -a "${log_file}"
+            exit 1
+          fi
 
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           printf "%s" "${CPANEL_SSH_PRIVATE_KEY}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
-          port="${CPANEL_SSH_PORT:-22}"
-          ssh-keyscan -p "${port}" -H "${CPANEL_SSH_HOST}" >> ~/.ssh/known_hosts
+          if ! ssh-keygen -y -f ~/.ssh/id_rsa >/dev/null 2>>"${log_file}"; then
+            echo "Invalid SSH private key." | tee -a "${log_file}"
+            exit 1
+          fi
+
+          port="${CPANEL_SSH_PORT:-21}"
+          echo "Using host=${CPANEL_SSH_HOST} user=${CPANEL_SSH_USER} port=${port}" | tee -a "${log_file}"
+
+          if getent hosts "${CPANEL_SSH_HOST}" >/dev/null 2>&1; then
+            echo "DNS resolution succeeded (getent)." | tee -a "${log_file}"
+          elif nslookup "${CPANEL_SSH_HOST}" >/dev/null 2>&1; then
+            echo "DNS resolution succeeded (nslookup)." | tee -a "${log_file}"
+          else
+            echo "DNS resolution failed for ${CPANEL_SSH_HOST}." | tee -a "${log_file}"
+            exit 1
+          fi
+
+          if ! nc -vz -w 5 "${CPANEL_SSH_HOST}" "${port}" >>"${log_file}" 2>&1; then
+            echo "TCP connectivity failed to ${CPANEL_SSH_HOST}:${port}." | tee -a "${log_file}"
+            exit 1
+          fi
+
+          for attempt in 1 2 3; do
+            if ssh-keyscan -T 10 -p "${port}" -H "${CPANEL_SSH_HOST}" >> ~/.ssh/known_hosts 2>>"${log_file}"; then
+              echo "ssh-keyscan succeeded on attempt ${attempt}." | tee -a "${log_file}"
+              break
+            fi
+            if [[ "${attempt}" -eq 3 ]]; then
+              echo "ssh-keyscan failed after ${attempt} attempts." | tee -a "${log_file}"
+              exit 1
+            fi
+            echo "ssh-keyscan attempt ${attempt} failed. Retrying..." | tee -a "${log_file}"
+            sleep 2
+          done
+
           chmod 644 ~/.ssh/known_hosts
+
+          {
+            echo "## SSH Configure Summary"
+            echo "- Host: ${CPANEL_SSH_HOST}"
+            echo "- User: ${CPANEL_SSH_USER}"
+            echo "- Port: ${port}"
+            echo "- Status: configure step completed"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Debug SSH connection
+        if: ${{ github.event.inputs.debug_ssh == 'true' }}
+        env:
+          CPANEL_SSH_HOST: ${{ secrets.CPANEL_SSH_HOST }}
+          CPANEL_SSH_USER: ${{ secrets.CPANEL_SSH_USER }}
+          CPANEL_SSH_PORT: ${{ secrets.CPANEL_SSH_PORT }}
+        run: |
+          set -euo pipefail
+          log_file="${RUNNER_TEMP}/ssh_debug.log"
+          port="${CPANEL_SSH_PORT:-21}"
+
+          ssh -vvv \
+            -p "${port}" \
+            -o BatchMode=yes \
+            -o ConnectTimeout=15 \
+            -o StrictHostKeyChecking=yes \
+            "${CPANEL_SSH_USER}@${CPANEL_SSH_HOST}" "echo ssh_ok" >"${log_file}" 2>&1 || true
+
+          {
+            echo "## SSH Debug Summary"
+            echo "- Debug enabled: true"
+            echo "- Command executed with verbose output"
+            echo "- Log path: ${log_file}"
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Deploy to cPanel
         env:
@@ -192,7 +272,19 @@ jobs:
           set -euo pipefail
 
           port="${CPANEL_SSH_PORT:-21}"
-          rsync -az --delete -e "ssh -p ${port}" dist/ "${CPANEL_SSH_USER}@${CPANEL_SSH_HOST}:devopsdayschile.cl/"
+          rsync -az --delete --timeout=30 --contimeout=15 \
+            -e "ssh -p ${port} -o ConnectTimeout=15 -o ServerAliveInterval=10 -o ServerAliveCountMax=3" \
+            dist/ "${CPANEL_SSH_USER}@${CPANEL_SSH_HOST}:devopsdayschile.cl/"
+
+      - name: Upload SSH diagnostics
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ssh-diagnostics
+          path: |
+            ${{ runner.temp }}/ssh_diagnostics.log
+            ${{ runner.temp }}/ssh_debug.log
+          if-no-files-found: ignore
 
   smoke-test:
     runs-on: ubuntu-latest
@@ -234,6 +326,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          ref: ${{ needs.preflight.outputs.rc_commit }}
           fetch-depth: 0
 
       - name: Configure git user
@@ -244,6 +337,7 @@ jobs:
       - name: Create and push tag
         env:
           FINAL_TAG: ${{ needs.preflight.outputs.final_tag }}
+          RC_COMMIT: ${{ needs.preflight.outputs.rc_commit }}
         run: |
           set -euo pipefail
           git fetch --tags --force
@@ -253,20 +347,21 @@ jobs:
             exit 1
           fi
 
-          git tag -a "${FINAL_TAG}" -m "Release ${FINAL_TAG}" "${GITHUB_SHA}"
+          git tag -a "${FINAL_TAG}" -m "Release ${FINAL_TAG}" "${RC_COMMIT}"
           git push origin "refs/tags/${FINAL_TAG}"
 
       - name: Generate changelog
         id: changelog
         env:
           LAST_STABLE_TAG: ${{ needs.preflight.outputs.last_stable_tag }}
+          RC_COMMIT: ${{ needs.preflight.outputs.rc_commit }}
         run: |
           set -euo pipefail
 
           if [[ -n "${LAST_STABLE_TAG}" ]]; then
-            git log --pretty=format:'- %h %s' "${LAST_STABLE_TAG}..${GITHUB_SHA}" > CHANGELOG_RELEASE.md
+            git log --pretty=format:'- %h %s' "${LAST_STABLE_TAG}..${RC_COMMIT}" > CHANGELOG_RELEASE.md
           else
-            git log --pretty=format:'- %h %s' "${GITHUB_SHA}" > CHANGELOG_RELEASE.md
+            git log --pretty=format:'- %h %s' "${RC_COMMIT}" > CHANGELOG_RELEASE.md
           fi
 
           if [[ ! -s CHANGELOG_RELEASE.md ]]; then
