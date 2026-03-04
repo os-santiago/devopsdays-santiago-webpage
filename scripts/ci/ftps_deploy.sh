@@ -28,6 +28,10 @@ fi
 log_file="${RUNNER_TEMP:-/tmp}/ftps_deploy.log"
 touch "${log_file}"
 
+log_info() {
+  echo "[ftps_deploy] $*" | tee -a "${log_file}"
+}
+
 write_lftp_script() {
   local file="$1"
   shift
@@ -54,16 +58,22 @@ EOF
 
 run_lftp_script() {
   local script_file="$1"
+  log_info "Executing lftp script: ${script_file}"
+  log_info "----- lftp commands begin -----"
+  sed -n '1,200p' "${script_file}" | tee -a "${log_file}"
+  log_info "----- lftp commands end -------"
   # Some lftp builds do not support -f; feed commands through stdin for compatibility.
   # Redact password if lftp echoes connection URL in logs.
   lftp -u "${CPANEL_FTP_USER},${CPANEL_FTP_PASSWORD}" -p "${port}" "${CPANEL_FTP_HOST}" < "${script_file}" 2>&1 \
-    | sed -E 's#(ftp://[^:]+:)[^@]+@#\1***@#g' >> "${log_file}"
+    | sed -E 's#(ftp://[^:]+:)[^@]+@#\1***@#g' \
+    | tee -a "${log_file}"
 }
 
 case "${phase}" in
   preflight)
+    log_info "Starting FTPS preflight (host=${CPANEL_FTP_HOST}, user=${CPANEL_FTP_USER}, port=${port}, remote_dir=${remote_dir})"
     if [[ "${verify_cert}" == "false" ]]; then
-      echo "WARNING: ssl:verify-certificate disabled by CPANEL_FTP_INSECURE=true" | tee -a "${log_file}"
+      log_info "WARNING: ssl:verify-certificate disabled by CPANEL_FTP_INSECURE=true"
     fi
 
     script_file="$(mktemp)"
@@ -72,6 +82,7 @@ case "${phase}" in
       "ls"
     run_lftp_script "${script_file}"
     rm -f "${script_file}"
+    log_info "FTPS preflight completed"
 
     {
       echo "## FTPS Deploy Summary"
@@ -86,6 +97,7 @@ case "${phase}" in
     ;;
 
   purge)
+    log_info "Starting FTPS purge (remote_dir=${remote_dir})"
     script_file="$(mktemp)"
     write_lftp_script "${script_file}" \
       "mkdir -p \"${remote_dir}\"" \
@@ -95,18 +107,21 @@ case "${phase}" in
     } >> "${GITHUB_STEP_SUMMARY}"
     run_lftp_script "${script_file}"
     rm -f "${script_file}"
+    log_info "FTPS purge completed"
     {
       echo "- Purge done: ${remote_dir}"
     } >> "${GITHUB_STEP_SUMMARY}"
     ;;
 
   upload)
+    log_info "Starting FTPS upload (dist -> ${remote_dir})"
     script_file="$(mktemp)"
     write_lftp_script "${script_file}" \
       "set xfer:clobber true" \
       "mirror -R --parallel=4 --verbose --ignore-time dist \"${remote_dir}\""
     run_lftp_script "${script_file}"
     rm -f "${script_file}"
+    log_info "FTPS upload completed"
     {
       echo "- Upload done: dist -> ${remote_dir}"
     } >> "${GITHUB_STEP_SUMMARY}"
