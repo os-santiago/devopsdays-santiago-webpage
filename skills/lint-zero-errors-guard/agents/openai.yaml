@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lint Zero Errors Guard"
+  short_description: "Ensure npm run lint has zero errors"
+  default_prompt: "Apply this skill to ensure repository changes do not introduce linting errors and validate with npm run lint."
