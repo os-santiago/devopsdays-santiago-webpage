@@ -45,7 +45,8 @@ EOF
 
 run_lftp_script() {
   local script_file="$1"
-  lftp -u "${CPANEL_FTP_USER},${CPANEL_FTP_PASSWORD}" -p "${port}" "${CPANEL_FTP_HOST}" -f "${script_file}" >> "${log_file}" 2>&1
+  # Some lftp builds do not support -f; feed commands through stdin for compatibility.
+  lftp -u "${CPANEL_FTP_USER},${CPANEL_FTP_PASSWORD}" -p "${port}" "${CPANEL_FTP_HOST}" < "${script_file}" >> "${log_file}" 2>&1
 }
 
 case "${phase}" in
