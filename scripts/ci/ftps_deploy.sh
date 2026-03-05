@@ -100,8 +100,9 @@ case "${phase}" in
     log_info "Starting FTPS purge (remote_dir=${remote_dir})"
     script_file="$(mktemp)"
     write_lftp_script "${script_file}" \
-      "mkdir -p \"${remote_dir}\"" \
-      "glob -a rm -rf \"${remote_dir}\"/*"
+      "cd \"${remote_dir}\" || mkdir \"${remote_dir}\"" \
+      "cd \"${remote_dir}\"" \
+      "glob -a rm -rf *"
     {
       echo "- Purge start: ${remote_dir}"
     } >> "${GITHUB_STEP_SUMMARY}"
