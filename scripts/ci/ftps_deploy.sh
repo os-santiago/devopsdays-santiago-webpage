@@ -100,7 +100,9 @@ case "${phase}" in
     log_info "Starting FTPS purge (remote_dir=${remote_dir})"
     script_file="$(mktemp)"
     write_lftp_script "${script_file}" \
-      "cd \"${remote_dir}\" || mkdir \"${remote_dir}\"" \
+      "set cmd:fail-exit false" \
+      "mkdir -p \"${remote_dir}\"" \
+      "set cmd:fail-exit true" \
       "cd \"${remote_dir}\"" \
       "glob -a rm -rf *"
     {
