@@ -23,9 +23,9 @@ const CFPSection = () => (
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
           {[
-            { icon: Lightbulb, title: "Temas", desc: "IA, DevOps, SRE, Platform Engineering, Cloud Native, Seguridad, Cultura" },
+            { icon: Lightbulb, title: "Temas", desc: "Inteligencia Artificial, DevOps, SRE, Platform Engineering, Cloud Native, Seguridad, Cultura" },
             { icon: Clock, title: "Formato", desc: "Charlas de 30 min, Lightning Talks de 15 min, Talleres 60 min, Panel 30 min" },
-            { icon: Send, title: "Deadline", desc: "30 de Mayo, 2026" },
+            { icon: Send, title: "Deadline", desc: "07 de Junio, 2026" },
           ].map((item, i) => (
             <motion.div
               key={item.title}

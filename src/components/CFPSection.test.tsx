@@ -10,7 +10,7 @@ describe("CFPSection", () => {
     expect(screen.getByText("Temas")).toBeInTheDocument();
     expect(screen.getByText("Formato")).toBeInTheDocument();
     expect(screen.getByText("Deadline")).toBeInTheDocument();
-    expect(screen.getByText("30 de Mayo, 2026")).toBeInTheDocument();
+    expect(screen.getByText("07 de Junio, 2026")).toBeInTheDocument();
   });
 
   it("renders external CFP link", () => {
