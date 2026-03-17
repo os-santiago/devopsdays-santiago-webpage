@@ -24,7 +24,7 @@ describe("SponsorsSection", () => {
       "https://tgcorp.tech/",
     );
 
-    expect(screen.getAllByText("Espacio disponible")).toHaveLength(18);
+    expect(screen.queryByText("Espacio disponible")).not.toBeInTheDocument();
   });
 
   it("links to sponsorship page", () => {

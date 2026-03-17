@@ -1,6 +1,9 @@
 import { motion } from "framer-motion";
-import dynatraceLogo from "@/assets/logo-dynatrace.png";
-import tgNativeLogo from "@/assets/logo-tgnative.png";
+import dynatraceLogo from "@/assets/logo-dynatrace.svg";
+import tgNativeLogo from "@/assets/logo-tgnative.svg";
+import redHatLogo from "@/assets/logo-redhat.svg";
+import technologySolutionsLogo from "@/assets/logo-techlatam.svg";
+import fluidAttacksLogo from "@/assets/logo-fluid-attack.svg";
 
 type Sponsor = {
   name: string;
@@ -33,13 +36,18 @@ const sponsorTiers = [
   },
   {
     tier: "Oro ⭐",
-    capacity: 10,
-    sponsors: [],
+    capacity: 2,
+    sponsors: [
+      { name: "Red Hat", website: "https://www.redhat.com", logoSrc: redHatLogo },
+      { name: "Technology Solutions", website: "https://technologylatam.com/", logoSrc: technologySolutionsLogo },
+    ],
   },
   {
     tier: "Plata 🌙",
-    capacity: 8,
-    sponsors: [],
+    capacity: 1,
+    sponsors: [
+      { name: "Fluid Attacks", website: "https://fluidattacks.com/", logoSrc: fluidAttacksLogo },
+    ],
   },
 ] satisfies SponsorTier[];
 
