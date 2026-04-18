@@ -254,9 +254,9 @@ const ContactPage = () => {
             Si tienes algún problema con el formulario, puedes escribirnos a{" "}
             <a
               className="font-semibold text-primary hover:underline"
-              href="mailto:contacto@devopsdayschile.cl"
+              href="mailto:santiago@devopsdays.org"
             >
-              contacto@devopsdayschile.cl
+              santiago@devopsdays.org
             </a>
             .
           </p>

@@ -35,9 +35,9 @@ describe("ContactPage", () => {
     const { container } = renderWithRouter(<ContactPage />, { route: "/contacto" });
 
     expect(screen.getByRole("heading", { name: /Comunícate con el/i })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "contacto@devopsdayschile.cl" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "santiago@devopsdays.org" })).toHaveAttribute(
       "href",
-      "mailto:contacto@devopsdayschile.cl",
+      "mailto:santiago@devopsdays.org",
     );
     expect(container.querySelector('input[name="website"]')).toBeInTheDocument();
   });
