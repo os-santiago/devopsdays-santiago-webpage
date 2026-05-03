@@ -4,6 +4,7 @@ import tgNativeLogo from "@/assets/logo-tgnative.svg";
 import redHatLogo from "@/assets/logo-redhat.svg";
 import technologySolutionsLogo from "@/assets/logo-techlatam.svg";
 import fluidAttacksLogo from "@/assets/logo-fluid-attack.svg";
+import mondiniLogo from "@/assets/logo-mondini.svg";
 
 type Sponsor = {
   name: string;
@@ -29,7 +30,7 @@ const sponsorTiers = [
     tier: "Platinium 🪐",
     capacity: 3,
     sponsors: [
-      { name: "Mondini IT", website: "https://mondini-it.com/" },
+      { name: "Mondini IT", website: "https://mondini-it.com/", logoSrc: mondiniLogo },
       { name: "Dynatrace", website: "https://www.dynatrace.com", logoSrc: dynatraceLogo },
       { name: "TG Native", website: "https://tgcorp.tech/", logoSrc: tgNativeLogo },
     ],
