@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import dynatraceLogo from "@/assets/logo-dynatrace.svg";
-import tgNativeLogo from "@/assets/logo-tgnative.svg";
+import tgNativeLogo from "@/assets/logo-tgnative.png";
 import redHatLogo from "@/assets/logo-redhat.svg";
 import technologySolutionsLogo from "@/assets/logo-techlatam.svg";
 import fluidAttacksLogo from "@/assets/logo-fluid-attack.svg";
@@ -71,8 +71,8 @@ const toSlots = (tier: SponsorTier): SponsorSlot[] => {
 const getTierSizing = (tierName: string) => {
   if (tierName === "Platinium 🪐") {
     return {
-      cardClassName: "w-48 h-28",
-      logoClassName: "max-h-[4.75rem]",
+      cardClassName: "w-56 h-32",
+      logoClassName: "max-h-[5.75rem]",
     };
   }
 
