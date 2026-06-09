@@ -8,7 +8,7 @@ describe("SponsorshipPage", () => {
     renderWithRouter(<SponsorshipPage />, { route: "/patrocinio" });
 
     expect(screen.getByRole("heading", { name: /Niveles de Patrocinio/i })).toBeInTheDocument();
-    expect(screen.getByText("Platinium 🪐")).toBeInTheDocument();
+    expect(screen.getByText("Platinum 🪐")).toBeInTheDocument();
     expect(screen.getByText("Gold 🌎")).toBeInTheDocument();
     expect(screen.getByText("Silver 🌙")).toBeInTheDocument();
 

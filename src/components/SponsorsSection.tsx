@@ -27,7 +27,7 @@ type SponsorSlot = {
 
 const sponsorTiers = [
   {
-    tier: "Platinium 🪐",
+    tier: "Platinum 🪐",
     capacity: 3,
     sponsors: [
       { name: "Mondini IT", website: "https://mondini-it.com/", logoSrc: mondiniLogo },
@@ -69,7 +69,7 @@ const toSlots = (tier: SponsorTier): SponsorSlot[] => {
 };
 
 const getTierSizing = (tierName: string) => {
-  if (tierName === "Platinium 🪐") {
+  if (tierName === "Platinum 🪐") {
     return {
       cardClassName: "w-56 h-32",
       logoClassName: "max-h-[5.75rem]",

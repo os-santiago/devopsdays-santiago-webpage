@@ -7,7 +7,7 @@ describe("SponsorsSection", () => {
   it("renders sponsor tiers, linked sponsors, and available slots", () => {
     renderWithRouter(<SponsorsSection />);
 
-    expect(screen.getByText("Platinium 🪐")).toBeInTheDocument();
+    expect(screen.getByText("Platinum 🪐")).toBeInTheDocument();
     expect(screen.getByText("Oro ⭐")).toBeInTheDocument();
     expect(screen.getByText("Plata 🌙")).toBeInTheDocument();
 

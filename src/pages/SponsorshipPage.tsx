@@ -6,7 +6,7 @@ import Footer from "@/components/Footer";
 const levels = [
   {
     icon: Rocket,
-    name: "Platinium 🪐",
+    name: "Platinum 🪐",
     price: "$8.000.000 CLP (~$8.920 USD)",
     color: "border-accent",
     highlight: true,
