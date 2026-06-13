@@ -11,6 +11,7 @@ describe("HeroSection", () => {
     expect(screen.getByText("8-9 Septiembre, 2026")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Comprar Entradas/i })).toHaveAttribute("href", "#entradas");
     expect(screen.getByRole("link", { name: /Postula tu Charla/i })).toHaveAttribute("href", "#cfp");
+    expect(screen.getByRole("link", { name: /Participa como Voluntario/i })).toHaveAttribute("href", "https://forms.gle/kfrbUgDVMSgYW9rs8");
   });
 
   it("contains location link to map", () => {

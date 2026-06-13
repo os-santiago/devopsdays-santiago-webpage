@@ -70,6 +70,12 @@ const HeroSection = () => (
             >
               Postula tu Charla
             </a>
+            <a
+              href="https://forms.gle/kfrbUgDVMSgYW9rs8"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-accent/10 text-accent border border-accent/30 font-bold text-base transition-all hover:bg-accent/20"
+            >
+              Participa como Voluntario
+            </a>
           </div>
         </motion.div>
 
