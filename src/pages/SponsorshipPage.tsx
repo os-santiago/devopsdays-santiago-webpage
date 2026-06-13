@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Check, Rocket, Star, Gem, Crown } from "lucide-react";
+import { Check, Rocket, Star, Gem, HeartHandshake } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
@@ -50,6 +50,19 @@ const levels = [
       "1 Estacionamiento",
     ],
   },
+  {
+    icon: HeartHandshake,
+    name: "Colaboraciones y Comunidades",
+    price: "Convocatoria abierta",
+    color: "border-border",
+    benefits: [
+      "Espacio para comunidades, media partners y colaboraciones",
+      "Presencia en redes sociales y página web",
+      "Articulación con la comunidad DevOpsDays Santiago",
+    ],
+    ctaLabel: "Participa en colaboraciones y comunidades",
+    ctaHref: "https://forms.gle/9ZsHh7n2mL8XoVhC6",
+  },
 ];
 
 const SponsorshipPage = () => (
@@ -96,6 +109,14 @@ const SponsorshipPage = () => (
                   </li>
                 ))}
               </ul>
+              {"ctaLabel" in level && (
+                <a
+                  href={level.ctaHref}
+                  className="inline-flex items-center justify-center px-4 py-3 rounded-xl font-bold bg-muted text-foreground hover:bg-accent hover:text-accent-foreground transition-all text-sm text-center"
+                >
+                  {level.ctaLabel}
+                </a>
+              )}
             </motion.div>
           ))}
         </div>

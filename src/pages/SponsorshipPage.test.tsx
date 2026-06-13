@@ -11,11 +11,17 @@ describe("SponsorshipPage", () => {
     expect(screen.getByText("Platinum 🪐")).toBeInTheDocument();
     expect(screen.getByText("Gold 🌎")).toBeInTheDocument();
     expect(screen.getByText("Silver 🌙")).toBeInTheDocument();
+    expect(screen.getByText("Colaboraciones y Comunidades")).toBeInTheDocument();
 
     const contactLinks = screen.getAllByRole("link", { name: "Contactar" });
     expect(contactLinks).toHaveLength(1);
     contactLinks.forEach((link) => {
       expect(link).toHaveAttribute("href", "/contacto");
     });
+
+    expect(screen.getByRole("link", { name: "Convocar colaboraciones y comunidades" })).toHaveAttribute(
+      "href",
+      "/contacto",
+    );
   });
 });
