@@ -10,6 +10,7 @@ const SMTP_HOST_DEFAULT = 'mail.devopsdayschile.cl';
 const SMTP_PORT_DEFAULT = 465;
 const SMTP_USER_DEFAULT = 'contacto@devopsdayschile.cl';
 const SMTP_SECURE_DEFAULT = 'ssl';
+const CONTACT_RECIPIENT = 'contacto@devopsdayschile.cl';
 
 function json_response(int $status, array $payload): void
 {
@@ -42,6 +43,29 @@ function str_length(string $value): int
 function sanitize_header_value(string $value): string
 {
     return trim(str_replace(["\r", "\n"], ' ', $value));
+}
+
+function log_contact_error(string $message, array $context = []): void
+{
+    $safeContext = [];
+
+    foreach ($context as $key => $value) {
+        if (stripos((string)$key, 'pass') !== false) {
+            continue;
+        }
+
+        if (is_scalar($value) || $value === null) {
+            $safeContext[$key] = $value;
+        }
+    }
+
+    $suffix = count($safeContext) > 0 ? ' ' . json_encode($safeContext, JSON_UNESCAPED_SLASHES) : '';
+    error_log('[contact-api] ' . $message . $suffix);
+}
+
+function mailbox_header(string $displayName, string $email): string
+{
+    return sanitize_header_value($displayName) . ' <' . sanitize_header_value($email) . '>';
 }
 
 function rate_limit_file_path(): string
@@ -360,6 +384,10 @@ if (is_rate_limited($ip, RATE_LIMIT_MAX_REQUESTS, RATE_LIMIT_WINDOW_SECONDS)) {
 
 $config = load_smtp_config();
 if ($config === null) {
+    log_contact_error('SMTP config not found or invalid.', [
+        'checked_paths' => implode(', ', smtp_config_candidates()),
+    ]);
+
     json_response(500, [
         'ok' => false,
         'error' => 'send_failed',
@@ -382,13 +410,14 @@ $mailBody = "Nuevo mensaje desde formulario de contacto\n\n"
     . "Fecha servidor: {$timestamp}\n";
 
 try {
-    $smtpEnvelopeFrom = isset($config['SMTP_USER']) ? (string)$config['SMTP_USER'] : 'contacto@devopsdayschile.cl';
+    $smtpEnvelopeFrom = isset($config['SMTP_USER']) ? (string)$config['SMTP_USER'] : CONTACT_RECIPIENT;
+    $fromHeader = mailbox_header('DevOpsDays Chile', $smtpEnvelopeFrom);
 
     smtp_send_mail(
         $config,
         $smtpEnvelopeFrom,
-        $email,
-        'contacto@devopsdayschile.cl',
+        $fromHeader,
+        CONTACT_RECIPIENT,
         $email,
         $mailSubject,
         $mailBody
@@ -396,6 +425,11 @@ try {
 
     json_response(200, ['ok' => true, 'message' => 'Mensaje enviado']);
 } catch (Throwable $exception) {
+    log_contact_error('SMTP delivery failed.', [
+        'exception' => get_class($exception),
+        'message' => $exception->getMessage(),
+    ]);
+
     json_response(500, [
         'ok' => false,
         'error' => 'send_failed',
