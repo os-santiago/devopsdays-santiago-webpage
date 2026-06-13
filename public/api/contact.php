@@ -10,7 +10,7 @@ const SMTP_HOST_DEFAULT = 'mail.devopsdayschile.cl';
 const SMTP_PORT_DEFAULT = 465;
 const SMTP_USER_DEFAULT = 'contacto@devopsdayschile.cl';
 const SMTP_SECURE_DEFAULT = 'ssl';
-const CONTACT_RECIPIENT = 'contacto@devopsdayschile.cl';
+const CONTACT_RECIPIENT = 'santiago@devopsdays.org';
 
 function json_response(int $status, array $payload): void
 {
