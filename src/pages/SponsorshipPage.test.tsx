@@ -19,9 +19,9 @@ describe("SponsorshipPage", () => {
       expect(link).toHaveAttribute("href", "/contacto");
     });
 
-    expect(screen.getByRole("link", { name: "Convocar colaboraciones y comunidades" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Participa en colaboraciones y comunidades" })).toHaveAttribute(
       "href",
-      "/contacto",
+      "https://forms.gle/PbDnyLSq1LdD8XPL6",
     );
   });
 });

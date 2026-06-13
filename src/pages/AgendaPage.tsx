@@ -4,28 +4,37 @@ import Footer from "@/components/Footer";
 import { Clock, Coffee, Mic2, Users, Rocket } from "lucide-react";
 
 const day1 = [
-  // { time: "08:30", title: "Registro y Café ☕", speaker: "", type: "break" },
-  // { time: "09:00", title: "Keynote: El Futuro del DevOps en la Era Espacial", speaker: "Por confirmar", type: "keynote" },
-  // { time: "10:00", title: "Platform Engineering: Construyendo la Estación Espacial", speaker: "Por confirmar", type: "talk" },
-  // { time: "10:45", title: "Coffee Break 🚀", speaker: "", type: "break" },
-  // { time: "11:15", title: "SRE: Manteniendo Satélites en Órbita", speaker: "Por confirmar", type: "talk" },
-  // { time: "12:00", title: "Ignite Talks (5 min c/u)", speaker: "Múltiples speakers", type: "ignite" },
-  // { time: "12:30", title: "Almuerzo 🍽️", speaker: "", type: "break" },
-  // { time: "14:00", title: "Open Spaces", speaker: "Toda la comunidad", type: "workshop" },
-  // { time: "16:00", title: "Cierre Día 1 + Networking", speaker: "", type: "break" },
+  { time: "08:00", title: "Registro y Café ☕ + Networking 🗣️", speaker: "", type: "break" },
+  { time: "08:45", title: "Apertura oficial 🎊", speaker: "Comité Organizador", type: "ignite" },
+  { time: "09:00", title: "Keynote: --", speaker: "Por confirmar", type: "keynote" },
+  { time: "09:30", title: "Panel Platinum: --", speaker: "Por confirmar", type: "talk" },
+  { time: "10:00", title: "Coffee Break, Patrocinadores, y Comunidades 🚀", speaker: "", type: "break" },
+  { time: "10:30", title: "Charla Platinum: --", speaker: "Por confirmar", type: "talk" },
+  { time: "11:00", title: "Conoce a nuestro Patrocinadores 🏆", speaker: "Mondini, Dynatrace, y TG Native", type: "ignite" },
+  { time: "11:30", title: "Charla Platinum: --", speaker: "Por confirmar", type: "talk" },
+  { time: "12:00", title: "Panel de Mujeres 👩🏼‍💻: --", speaker: "Karen Quijada", type: "ignite" },
+  { time: "13:00", title: "Almuerzo 🍽️", speaker: "", type: "break" },
+  { time: "15:00", title: "Charla: --", speaker: "Por confirmar", type: "talk" },
+  { time: "15:30", title: "Charla: --", speaker: "Por confirmar", type: "talk" },
+  { time: "16:00", title: "Cierre Día 1 + Anuncios + Llamado a Networking", speaker: "Comité Organizador", type: "ignite" },
 ];
 
 const day2 = [
-  // { time: "08:30", title: "Registro y Café ☕", speaker: "", type: "break" },
-  // { time: "09:00", title: "Keynote: Seguridad en la Frontera Final", speaker: "Por confirmar", type: "keynote" },
-  // { time: "10:00", title: "Cloud Native: Navegando las Nebulosas", speaker: "Por confirmar", type: "talk" },
-  // { time: "10:45", title: "Coffee Break 🛸", speaker: "", type: "break" },
-  // { time: "11:15", title: "CI/CD: Lanzamientos a la Velocidad de la Luz", speaker: "Por confirmar", type: "talk" },
-  // { time: "12:00", title: "Panel: DevSecOps en Latinoamérica", speaker: "Panel", type: "talk" },
-  // { time: "12:30", title: "Almuerzo 🍽️", speaker: "", type: "break" },
-  // { time: "14:00", title: "Open Spaces", speaker: "Toda la comunidad", type: "workshop" },
-  // { time: "16:00", title: "Keynote de Cierre + Sorteos 🎁", speaker: "Por confirmar", type: "keynote" },
-  // { time: "17:00", title: "After Party 🎉", speaker: "", type: "break" },
+  { time: "08:00", title: "Registro y Café ☕ + Networking 🗣️", speaker: "", type: "break" },
+  { time: "08:45", title: "Apertura oficial 🎊", speaker: "Comité Organizador", type: "ignite" },
+  { time: "09:00", title: "Keynote: --", speaker: "Por confirmar", type: "keynote" },
+  { time: "09:30", title: "Charla Platinum: --", speaker: "Por confirmar", type: "talk" },
+  { time: "10:00", title: "Coffee Break, Patrocinadores, y Comunidades 🚀", speaker: "", type: "break" },
+  { time: "10:30", title: "Keynote: --", speaker: "Por confirmar", type: "keynote" },
+  { time: "11:00", title: "Conoce a nuestro Patrocinadores 🏆", speaker: "Red Hat, Technology Solutions, y Manage Engine", type: "ignite" },
+  { time: "11:30", title: "Charla: --", speaker: "Por confirmar", type: "talk" },
+  { time: "12:00", title: "Charla: --", speaker: "Por confirmar", type: "talk" },
+  { time: "12:30", title: "Charla: --", speaker: "Por confirmar", type: "talk" },
+  { time: "13:00", title: "Almuerzo 🍽️", speaker: "", type: "break" },
+  { time: "14:30", title: "Sorteos 🎁", speaker: "Comité Organizador", type: "ignite" },
+  { time: "15:00", title: "Charla: --", speaker: "Por confirmar", type: "talk" },
+  { time: "15:30", title: "Charla: --", speaker: "Por confirmar", type: "talk" },
+  { time: "16:00", title: "Cierre Día 2", speaker: "Comité Organizador", type: "break" },
 ];
 
 const typeStyles: Record<string, string> = {
@@ -42,6 +51,7 @@ const typeIcons: Record<string, React.ElementType> = {
   ignite: Mic2,
   workshop: Users,
   break: Coffee,
+  panel: Users,
 };
 
 export type AgendaItem = {

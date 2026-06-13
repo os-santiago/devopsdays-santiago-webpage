@@ -61,7 +61,7 @@ const levels = [
       "Articulación con la comunidad DevOpsDays Santiago",
     ],
     ctaLabel: "Participa en colaboraciones y comunidades",
-    ctaHref: "https://forms.gle/9ZsHh7n2mL8XoVhC6",
+    ctaHref: "https://forms.gle/PbDnyLSq1LdD8XPL6",
   },
 ];
 
