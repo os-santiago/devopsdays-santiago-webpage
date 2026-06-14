@@ -12,7 +12,8 @@ vi.mock("@/lib/contact-api", () => ({
   sendContactForm: vi.fn(),
 }));
 
-import ContactPage, { submitContactForm } from "@/pages/ContactPage";
+import ContactPage from "@/pages/ContactPage";
+import { submitContactForm } from "@/pages/contact-form";
 import { sendContactForm } from "@/lib/contact-api";
 
 const sendContactFormMock = vi.mocked(sendContactForm);
