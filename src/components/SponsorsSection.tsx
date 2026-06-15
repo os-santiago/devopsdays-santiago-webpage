@@ -15,6 +15,7 @@ type Sponsor = {
   name: string;
   website: string;
   logoSrc?: string;
+  cardTheme?: "light" | "dark";
 };
 
 type SponsorTier = {
@@ -27,6 +28,7 @@ type SponsorSlot = {
   name: string;
   website?: string;
   logoSrc?: string;
+  cardTheme?: Sponsor["cardTheme"];
   available: boolean;
 };
 
@@ -54,8 +56,8 @@ const sponsorTiers = [
     capacity: 4,
     sponsors: [
       { name: "Fluid Attacks", website: "https://fluidattacks.com/", logoSrc: fluidAttacksLogo },
-      { name: "Unyko Talent", website: "https://unyko.cl/", logoSrc: unykoLogo },
-      { name: "Axmos", website: "https://www.axmos.tech/es", logoSrc: axmosLogo },
+      { name: "Unyko Talent", website: "https://unyko.cl/", logoSrc: unykoLogo, cardTheme: "dark" },
+      { name: "Axmos", website: "https://www.axmos.tech/es", logoSrc: axmosLogo, cardTheme: "dark" },
     ],
   },
   {
@@ -73,6 +75,7 @@ const toSlots = (tier: SponsorTier): SponsorSlot[] => {
     name: sponsor.name,
     website: sponsor.website,
     logoSrc: sponsor.logoSrc,
+    cardTheme: sponsor.cardTheme,
     available: false,
   }));
 
@@ -144,7 +147,11 @@ const SponsorsSection = () => (
                       href={slot.website}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className={`${cardClassName} rounded-xl bg-white border border-border/60 shadow-sm hover:shadow-md transition-all flex items-center justify-center p-3`}
+                      className={`${cardClassName} rounded-xl border shadow-sm hover:shadow-md transition-all flex items-center justify-center p-3 ${
+                        slot.cardTheme === "dark"
+                          ? "bg-slate-950 border-slate-700"
+                          : "bg-white border-border/60"
+                      }`}
                       aria-label={`Sitio web de ${slot.name}`}
                     >
                       {slot.logoSrc ? (

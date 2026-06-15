@@ -10,6 +10,7 @@ describe("SponsorsSection", () => {
     expect(screen.getByText("Platinum 🪐")).toBeInTheDocument();
     expect(screen.getByText("Oro ⭐")).toBeInTheDocument();
     expect(screen.getByText("Plata 🌙")).toBeInTheDocument();
+    expect(screen.getByText("Colaboraciones / Comunidades 🚀")).toBeInTheDocument();
 
     expect(screen.getByRole("link", { name: "Sitio web de Mondini IT" })).toHaveAttribute(
       "href",
@@ -24,7 +25,8 @@ describe("SponsorsSection", () => {
       "https://tgcorp.tech/",
     );
 
-    expect(screen.queryByText("Espacio disponible")).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Sitio web de Unyko Talent" })).toHaveClass("bg-slate-950");
+    expect(screen.getAllByText("Espacio disponible")).toHaveLength(6);
   });
 
   it("links to sponsorship page", () => {
