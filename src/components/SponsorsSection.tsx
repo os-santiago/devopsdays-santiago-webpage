@@ -5,6 +5,11 @@ import redHatLogo from "@/assets/logo-redhat.svg";
 import technologySolutionsLogo from "@/assets/logo-techlatam.svg";
 import fluidAttacksLogo from "@/assets/logo-fluid-attack.svg";
 import mondiniLogo from "@/assets/logo-mondini.svg";
+import manageEngineLogo from "@/assets/logo-manageengine.svg";
+import unykoLogo from "@/assets/logo-unykotalent.png";
+import axmosLogo from "@/assets/logo-axmos.png";
+import certJoinLogo from "@/assets/logo-certjoin.png";
+import avattarLogo from "@/assets/logo-avattar.png";
 
 type Sponsor = {
   name: string;
@@ -37,17 +42,28 @@ const sponsorTiers = [
   },
   {
     tier: "Oro ⭐",
-    capacity: 2,
+    capacity: 4,
     sponsors: [
       { name: "Red Hat", website: "https://www.redhat.com", logoSrc: redHatLogo },
       { name: "Technology Solutions", website: "https://technologylatam.com/", logoSrc: technologySolutionsLogo },
+      { name: "Manage Engine", website: "https://www.manageengine.com/", logoSrc: manageEngineLogo },
     ],
   },
   {
     tier: "Plata 🌙",
-    capacity: 1,
+    capacity: 4,
     sponsors: [
       { name: "Fluid Attacks", website: "https://fluidattacks.com/", logoSrc: fluidAttacksLogo },
+      { name: "Unyko Talent", website: "https://unyko.cl/", logoSrc: unykoLogo },
+      { name: "Axmos", website: "https://www.axmos.tech/es", logoSrc: axmosLogo },
+    ],
+  },
+  {
+    tier: "Colaboraciones / Comunidades 🚀",
+    capacity: 6,
+    sponsors: [
+      { name: "CertJoin", website: "https://certjoin.com/es/", logoSrc: certJoinLogo },
+      { name: "Avattar", website: "https://avattar.com/", logoSrc: avattarLogo },
     ],
   },
 ] satisfies SponsorTier[];
