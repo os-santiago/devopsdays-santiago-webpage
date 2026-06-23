@@ -25,8 +25,8 @@ describe("SponsorsSection", () => {
       "https://tgcorp.tech/",
     );
 
-    expect(screen.getByRole("link", { name: "Sitio web de Unyko Talent" })).toHaveClass("bg-slate-950");
-    expect(screen.getAllByText("Espacio disponible")).toHaveLength(6);
+    expect(screen.getByRole("link", { name: "Sitio web de Axmos" })).toHaveClass("bg-slate-950");
+    expect(screen.getAllByText("Espacio disponible")).toHaveLength(5);
   });
 
   it("links to sponsorship page", () => {

@@ -6,10 +6,14 @@ import technologySolutionsLogo from "@/assets/logo-techlatam.svg";
 import fluidAttacksLogo from "@/assets/logo-fluid-attack.svg";
 import mondiniLogo from "@/assets/logo-mondini.svg";
 import manageEngineLogo from "@/assets/logo-manageengine.svg";
-import unykoLogo from "@/assets/logo-unykotalent.png";
+import unykoLogo from "@/assets/logo-unyko.png";
 import axmosLogo from "@/assets/logo-axmos.png";
 import certJoinLogo from "@/assets/logo-certjoin.png";
 import avattarLogo from "@/assets/logo-avattar.png";
+import actiLogo from "@/assets/logo-acti.png";
+import invokeLogo from "@/assets/logo-invoke.png";
+import tsoftLogo from "@/assets/logo-tsoft.svg";
+import suseLogo from "@/assets/logo-suse.jpg";
 
 type Sponsor = {
   name: string;
@@ -44,20 +48,23 @@ const sponsorTiers = [
   },
   {
     tier: "Oro ⭐",
-    capacity: 4,
+    capacity: 6,
     sponsors: [
       { name: "Red Hat", website: "https://www.redhat.com", logoSrc: redHatLogo },
       { name: "Technology Solutions", website: "https://technologylatam.com/", logoSrc: technologySolutionsLogo },
       { name: "Manage Engine", website: "https://www.manageengine.com/", logoSrc: manageEngineLogo },
+      { name: "Axmos", website: "https://www.axmos.tech/es", logoSrc: axmosLogo, cardTheme: "dark" },
+      { name: "TSoft", website: "https://www.tsoftglobal.com/", logoSrc: tsoftLogo },
     ],
   },
   {
     tier: "Plata 🌙",
-    capacity: 4,
+    capacity: 5,
     sponsors: [
       { name: "Fluid Attacks", website: "https://fluidattacks.com/", logoSrc: fluidAttacksLogo },
-      { name: "Unyko Talent", website: "https://unyko.cl/", logoSrc: unykoLogo, cardTheme: "dark" },
-      { name: "Axmos", website: "https://www.axmos.tech/es", logoSrc: axmosLogo, cardTheme: "dark" },
+      { name: "Unyko Talent", website: "https://unyko.cl/", logoSrc: unykoLogo },
+      { name: "Suse", website: "https://www.suse.com/es-es/", logoSrc: suseLogo },
+      { name: "Invoke", website: "https://www.invoke.cl/", logoSrc: invokeLogo },
     ],
   },
   {
@@ -66,6 +73,7 @@ const sponsorTiers = [
     sponsors: [
       { name: "CertJoin", website: "https://certjoin.com/es/", logoSrc: certJoinLogo },
       { name: "Avattar", website: "https://avattar.com/", logoSrc: avattarLogo },
+      { name: "ACTI", website: "https://acti.cl/", logoSrc: actiLogo },
     ],
   },
 ] satisfies SponsorTier[];
