@@ -7,7 +7,7 @@ import fluidAttacksLogo from "@/assets/logo-fluid-attack.svg";
 import mondiniLogo from "@/assets/logo-mondini.svg";
 import manageEngineLogo from "@/assets/logo-manageengine.svg";
 import unykoLogo from "@/assets/logo-unykotalent.png";
-import axmosLogo from "@/assets/logo-axmos.png";
+import axmosLogo from "@/assets/logo-axmos.svg";
 import certJoinLogo from "@/assets/logo-certjoin.png";
 import avattarLogo from "@/assets/logo-avattar.png";
 import actiLogo from "@/assets/logo-acti.png";
@@ -44,7 +44,7 @@ const sponsorTiers = [
       { name: "Mondini IT", website: "https://mondini-it.com/", logoSrc: mondiniLogo },
       { name: "Dynatrace", website: "https://www.dynatrace.com", logoSrc: dynatraceLogo },
       { name: "TG Native", website: "https://tgcorp.tech/", logoSrc: tgNativeLogo },
-      { name: "Axmos", website: "https://www.axmos.tech/es", logoSrc: axmosLogo, cardTheme: "dark" },
+      { name: "Axmos", website: "https://www.axmos.tech/es", logoSrc: axmosLogo },
     ],
   },
   {
