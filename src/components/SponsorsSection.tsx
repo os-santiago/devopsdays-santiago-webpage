@@ -6,7 +6,7 @@ import technologySolutionsLogo from "@/assets/logo-techlatam.svg";
 import fluidAttacksLogo from "@/assets/logo-fluid-attack.svg";
 import mondiniLogo from "@/assets/logo-mondini.svg";
 import manageEngineLogo from "@/assets/logo-manageengine.svg";
-import unykoLogo from "@/assets/logo-unyko.png";
+import unykoLogo from "@/assets/logo-unykotalent.png";
 import axmosLogo from "@/assets/logo-axmos.png";
 import certJoinLogo from "@/assets/logo-certjoin.png";
 import avattarLogo from "@/assets/logo-avattar.png";
@@ -39,11 +39,12 @@ type SponsorSlot = {
 const sponsorTiers = [
   {
     tier: "Platinum 🪐",
-    capacity: 3,
+    capacity: 4,
     sponsors: [
       { name: "Mondini IT", website: "https://mondini-it.com/", logoSrc: mondiniLogo },
       { name: "Dynatrace", website: "https://www.dynatrace.com", logoSrc: dynatraceLogo },
       { name: "TG Native", website: "https://tgcorp.tech/", logoSrc: tgNativeLogo },
+      { name: "Axmos", website: "https://www.axmos.tech/es", logoSrc: axmosLogo, cardTheme: "dark" },
     ],
   },
   {
@@ -53,7 +54,6 @@ const sponsorTiers = [
       { name: "Red Hat", website: "https://www.redhat.com", logoSrc: redHatLogo },
       { name: "Technology Solutions", website: "https://technologylatam.com/", logoSrc: technologySolutionsLogo },
       { name: "Manage Engine", website: "https://www.manageengine.com/", logoSrc: manageEngineLogo },
-      { name: "Axmos", website: "https://www.axmos.tech/es", logoSrc: axmosLogo, cardTheme: "dark" },
       { name: "TSoft", website: "https://www.tsoftglobal.com/", logoSrc: tsoftLogo },
     ],
   },
