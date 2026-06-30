@@ -10,6 +10,7 @@ const levels = [
     price: "$8.000.000 CLP (~$8.920 USD)",
     color: "border-accent",
     highlight: true,
+    soldOut: true,
     benefits: [
       "Stand 4x2 mtrs tipo isla",
       "Mucha más visibilidad",
@@ -90,7 +91,7 @@ const SponsorshipPage = () => (
           {levels.map((level, i) => (
             <motion.div
               key={level.name}
-              className={`w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] max-w-sm rounded-2xl p-6 border flex flex-col ${level.color} ${
+              className={`relative overflow-hidden w-full md:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] max-w-sm rounded-2xl p-6 border flex flex-col ${level.color} ${
                 level.highlight ? "bg-accent/5 glow-sky" : "bg-card/60"
               }`}
               initial={{ opacity: 0, y: 30 }}
@@ -98,6 +99,11 @@ const SponsorshipPage = () => (
               viewport={{ once: true }}
               transition={{ delay: i * 0.1 }}
             >
+              {"soldOut" in level && level.soldOut && (
+                <span className="absolute top-6 -right-12 w-44 rotate-45 bg-destructive py-1 text-center text-sm font-black tracking-widest text-destructive-foreground shadow-lg">
+                  SOLD OUT!
+                </span>
+              )}
               <level.icon className={`w-10 h-10 mb-4 ${level.highlight ? "text-accent" : "text-muted-foreground"}`} />
               <p className="text-3xl font-black text-foreground mb-1">{level.name}</p>
               <h3 className="text-xl font-bold text-foreground mb-6">{level.price}</h3>
