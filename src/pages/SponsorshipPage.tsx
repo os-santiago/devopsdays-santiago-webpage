@@ -28,6 +28,7 @@ const levels = [
     name: "Gold 🌎",
     price: "$5.000.000 CLP (~$5.575 USD)",
     color: "border-muted-foreground",
+    remaining: 1,
     benefits: [
       "Stand 3x2 mtrs",
       "Mayor visibilidad",
@@ -43,6 +44,7 @@ const levels = [
     name: "Silver 🌙",
     price: "$3.000.000 CLP (~$3.345 USD)",
     color: "border-border",
+    remaining: 1,
     benefits: [
       "Stand 2x2 mtrs",
       "Publicidad en redes sociales y página web",
@@ -102,6 +104,11 @@ const SponsorshipPage = () => (
               {"soldOut" in level && level.soldOut && (
                 <span className="absolute top-6 -right-12 w-44 rotate-45 bg-destructive py-1 text-center text-sm font-black tracking-widest text-destructive-foreground shadow-lg">
                   SOLD OUT!
+                </span>
+              )}
+              {"remaining" in level && (
+                <span className="absolute top-4 right-4 rounded-full border border-amber-400/40 bg-amber-400/15 px-3 py-1 text-xs font-black tracking-wide text-amber-300">
+                  {level.remaining} CUPO DISPONIBLE
                 </span>
               )}
               <level.icon className={`w-10 h-10 mb-4 ${level.highlight ? "text-accent" : "text-muted-foreground"}`} />
