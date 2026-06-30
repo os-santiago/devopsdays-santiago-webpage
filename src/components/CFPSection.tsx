@@ -42,15 +42,17 @@ const CFPSection = () => (
           ))}
         </div>
 
-        <a
-          href="https://homedir.opensourcesantiago.io/event/devopsdays-santiago-2026/cfp"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-accent text-accent-foreground font-bold glow-sky transition-transform hover:scale-105"
+        <p className="mb-4 text-lg font-bold text-accent">
+          El plazo para postular ya finalizó
+        </p>
+        <button
+          type="button"
+          disabled
+          className="inline-flex cursor-not-allowed items-center gap-2 rounded-xl bg-muted px-8 py-4 font-bold text-muted-foreground opacity-70"
         >
           <Send className="w-5 h-5" />
-          Postula tu Charla
-        </a>
+          Postulaciones cerradas
+        </button>
       </motion.div>
     </div>
   </section>

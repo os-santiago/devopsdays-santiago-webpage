@@ -13,15 +13,10 @@ describe("CFPSection", () => {
     expect(screen.getByText("07 de Junio, 2026")).toBeInTheDocument();
   });
 
-  it("renders external CFP link", () => {
+  it("shows that CFP submissions are closed", () => {
     renderWithRouter(<CFPSection />);
 
-    const cfpLink = screen.getByRole("link", { name: /Postula tu Charla/i });
-    expect(cfpLink).toHaveAttribute(
-      "href",
-      "https://homedir.opensourcesantiago.io/event/devopsdays-santiago-2026/cfp",
-    );
-    expect(cfpLink).toHaveAttribute("target", "_blank");
-    expect(cfpLink).toHaveAttribute("rel", "noopener noreferrer");
+    expect(screen.getByText("El plazo para postular ya finalizó")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Postulaciones cerradas/i })).toBeDisabled();
   });
 });
