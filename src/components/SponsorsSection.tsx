@@ -49,7 +49,7 @@ const sponsorTiers = [
   },
   {
     tier: "Oro ⭐",
-    capacity: 6,
+    capacity: 5,
     sponsors: [
       { name: "Red Hat", website: "https://www.redhat.com", logoSrc: redHatLogo },
       { name: "Technology Solutions", website: "https://technologylatam.com/", logoSrc: technologySolutionsLogo },
