@@ -24,9 +24,7 @@ describe("SponsorsSection", () => {
       "href",
       "https://tgcorp.tech/",
     );
-
-    expect(screen.getByRole("link", { name: "Sitio web de Axmos" })).toHaveClass("bg-slate-950");
-    expect(screen.getAllByText("Espacio disponible")).toHaveLength(5);
+    expect(screen.getAllByText("Espacio disponible")).toHaveLength(9);
   });
 
   it("links to sponsorship page", () => {

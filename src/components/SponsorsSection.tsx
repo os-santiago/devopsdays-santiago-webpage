@@ -5,15 +5,15 @@ import redHatLogo from "@/assets/logo-redhat.svg";
 import technologySolutionsLogo from "@/assets/logo-techlatam.svg";
 import fluidAttacksLogo from "@/assets/logo-fluid-attack.svg";
 import mondiniLogo from "@/assets/logo-mondini.svg";
-import manageEngineLogo from "@/assets/logo-manageengine.svg";
 import unykoLogo from "@/assets/logo-unykotalent.png";
-import axmosLogo from "@/assets/logo-axmos.svg";
+import axmosLogo from "@/assets/logo-axmosdatadog.svg";
 import certJoinLogo from "@/assets/logo-certjoin.png";
 import avattarLogo from "@/assets/logo-avattar.png";
 import actiLogo from "@/assets/logo-acti.png";
-import invokeLogo from "@/assets/logo-invoke.png";
-import tsoftLogo from "@/assets/logo-tsoft.svg";
-import suseLogo from "@/assets/logo-suse.jpg";
+// import invokeLogo from "@/assets/logo-invoke.png";
+// import tsoftLogo from "@/assets/logo-tsoft.svg";
+// import suseLogo from "@/assets/logo-suse.jpg";
+// import manageEngineLogo from "@/assets/logo-manageengine.svg";
 
 type Sponsor = {
   name: string;
@@ -53,8 +53,8 @@ const sponsorTiers = [
     sponsors: [
       { name: "Red Hat", website: "https://www.redhat.com", logoSrc: redHatLogo },
       { name: "Technology Solutions", website: "https://technologylatam.com/", logoSrc: technologySolutionsLogo },
-      { name: "Manage Engine", website: "https://www.manageengine.com/", logoSrc: manageEngineLogo },
-      { name: "TSoft", website: "https://www.tsoftglobal.com/", logoSrc: tsoftLogo },
+      // { name: "Manage Engine", website: "https://www.manageengine.com/", logoSrc: manageEngineLogo },
+      // { name: "TSoft", website: "https://www.tsoftglobal.com/", logoSrc: tsoftLogo },
     ],
   },
   {
@@ -63,8 +63,8 @@ const sponsorTiers = [
     sponsors: [
       { name: "Fluid Attacks", website: "https://fluidattacks.com/", logoSrc: fluidAttacksLogo },
       { name: "Unyko Talent", website: "https://unyko.cl/", logoSrc: unykoLogo },
-      { name: "Suse", website: "https://www.suse.com/es-es/", logoSrc: suseLogo },
-      { name: "Invoke", website: "https://www.invoke.cl/", logoSrc: invokeLogo },
+      // { name: "Suse", website: "https://www.suse.com/es-es/", logoSrc: suseLogo },
+      // { name: "Invoke", website: "https://www.invoke.cl/", logoSrc: invokeLogo },
     ],
   },
   {
