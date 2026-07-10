@@ -1,40 +1,30 @@
 import { describe, expect, it } from "vitest";
 import { screen } from "@testing-library/react";
-import AgendaPage, { AgendaDay } from "@/pages/AgendaPage";
+import AgendaPage from "@/pages/AgendaPage";
 import { renderWithRouter } from "@/test/test-utils";
 
 describe("AgendaPage", () => {
-  it("renders agenda headers and day sections", () => {
+  it("renders agenda tabs, room lanes, capacities, and shared events", () => {
     renderWithRouter(<AgendaPage />, { route: "/agenda" });
 
     expect(screen.getByRole("heading", { name: /Agenda de la Misión/i })).toBeInTheDocument();
     expect(screen.getByText(/8 y 9 de Septiembre, 2026/i)).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /Día 1/i })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /Día 2/i })).toBeInTheDocument();
-    // expect(
-    //   screen.getAllByText(/Estamos trabajando para elaborar la mejor experiencia espacial\./i),
-    // ).toHaveLength(2);
-  });
+    expect(screen.getByRole("tab", { name: /Día 1/i })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /Día 2/i })).toBeInTheDocument();
 
-  it("renders agenda items with icon styles and optional speaker", () => {
-    renderWithRouter(
-      <AgendaDay
-        title="Prueba"
-        items={[
-          { time: "09:00", title: "Keynote", speaker: "Jane Doe", type: "keynote" },
-          { time: "10:00", title: "Coffee Break", speaker: "", type: "break" },
-        ]}
-      />,
-    );
+    expect(screen.getAllByText("Auditorio Principal").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Sala A").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Sala B").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("700+ personas").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("100 personas").length).toBeGreaterThanOrEqual(2);
 
-    expect(screen.getByRole("heading", { name: "Prueba" })).toBeInTheDocument();
-    expect(screen.getByText("09:00")).toBeInTheDocument();
-    expect(screen.getByText("Keynote")).toBeInTheDocument();
-    expect(screen.getByText("Jane Doe")).toBeInTheDocument();
-    expect(screen.getByText("10:00")).toBeInTheDocument();
-    expect(screen.getByText("Coffee Break")).toBeInTheDocument();
-    // expect(
-    //   screen.queryByText(/Estamos trabajando para elaborar la mejor experiencia espacial\./i),
-    // ).not.toBeInTheDocument();
+    expect(screen.getAllByText("Panel de Mujeres 👩🏼‍💻: --").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Taller: --").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Sala cerrada").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Registro y Café ☕ + Networking 🗣️").length).toBeGreaterThan(0);
+    expect(screen.getByRole("heading", { name: "Salas" })).toBeInTheDocument();
+    expect(
+      screen.getByText(/Sala principal donde tendremos las actividades principales para un público de 700\+ personas\./i),
+    ).toBeInTheDocument();
   });
 });

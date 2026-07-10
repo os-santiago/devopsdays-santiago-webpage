@@ -1,40 +1,98 @@
 import { motion } from "framer-motion";
+import { Fragment } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { Clock, Coffee, Mic2, Users, Rocket } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Clock, Coffee, MapPin, Mic2, Rocket, Users } from "lucide-react";
 
-const day1 = [
-  { time: "08:00", title: "Registro y Café ☕ + Networking 🗣️", speaker: "", type: "break" },
-  { time: "08:45", title: "Apertura oficial 🎊", speaker: "Comité Organizador", type: "ignite" },
-  { time: "09:00", title: "Keynote: --", speaker: "Por confirmar", type: "keynote" },
-  { time: "09:30", title: "Panel Platinum: --", speaker: "Por confirmar", type: "talk" },
-  { time: "10:00", title: "Coffee Break, Patrocinadores, y Comunidades 🚀", speaker: "", type: "break" },
-  { time: "10:30", title: "Charla Platinum: --", speaker: "Por confirmar", type: "talk" },
-  { time: "11:00", title: "Conoce a nuestro Patrocinadores 🏆", speaker: "Mondini, Dynatrace, y TG Native", type: "ignite" },
-  { time: "11:30", title: "Charla Platinum: --", speaker: "Por confirmar", type: "talk" },
-  { time: "12:00", title: "Panel de Mujeres 👩🏼‍💻: --", speaker: "Karen Quijada", type: "ignite" },
-  { time: "13:00", title: "Almuerzo 🍽️", speaker: "", type: "break" },
-  { time: "15:00", title: "Charla: --", speaker: "Por confirmar", type: "talk" },
-  { time: "15:30", title: "Charla: --", speaker: "Por confirmar", type: "talk" },
-  { time: "16:00", title: "Cierre Día 1 + Anuncios + Llamado a Networking", speaker: "Comité Organizador", type: "ignite" },
-];
+const days = [
+  { id: "day-1", label: "Día 1", title: "8 de Septiembre", icon: "🛸" },
+  { id: "day-2", label: "Día 2", title: "9 de Septiembre", icon: "🚀" },
+] as const;
 
-const day2 = [
-  { time: "08:00", title: "Registro y Café ☕ + Networking 🗣️", speaker: "", type: "break" },
-  { time: "08:45", title: "Apertura oficial 🎊", speaker: "Comité Organizador", type: "ignite" },
-  { time: "09:00", title: "Keynote: --", speaker: "Por confirmar", type: "keynote" },
-  { time: "09:30", title: "Charla Platinum: --", speaker: "Por confirmar", type: "talk" },
-  { time: "10:00", title: "Coffee Break, Patrocinadores, y Comunidades 🚀", speaker: "", type: "break" },
-  { time: "10:30", title: "Keynote: --", speaker: "Por confirmar", type: "keynote" },
-  { time: "11:00", title: "Conoce a nuestro Patrocinadores 🏆", speaker: "Axmos + Datadog, Red Hat, Technology Solutions, y Manage Engine", type: "ignite" },
-  { time: "11:30", title: "Charla: --", speaker: "Por confirmar", type: "talk" },
-  { time: "12:00", title: "Charla: --", speaker: "Por confirmar", type: "talk" },
-  { time: "12:30", title: "Charla: --", speaker: "Por confirmar", type: "talk" },
-  { time: "13:00", title: "Almuerzo 🍽️", speaker: "", type: "break" },
-  { time: "14:30", title: "Sorteos 🎁", speaker: "Comité Organizador", type: "ignite" },
-  { time: "15:00", title: "Charla: --", speaker: "Por confirmar", type: "talk" },
-  { time: "15:30", title: "Charla: --", speaker: "Por confirmar", type: "talk" },
-  { time: "16:00", title: "Cierre Día 2", speaker: "Comité Organizador", type: "break" },
+const rooms = [
+  {
+    id: "main",
+    name: "Auditorio Principal",
+    capacity: "700+ personas",
+    description: "Sala principal donde tendremos las actividades principales para un público de 700+ personas.",
+    laneClassName: "md:col-span-2",
+    gridColumn: "2 / span 2",
+  },
+  {
+    id: "room-a",
+    name: "Sala A",
+    capacity: "100 personas",
+    description: "Sala para charlas o talleres para un público de 100 personas.",
+    laneClassName: "md:col-span-1",
+    gridColumn: "4 / span 1",
+  },
+  {
+    id: "room-b",
+    name: "Sala B",
+    capacity: "100 personas",
+    description: "Sala para charlas o talleres para un público de 100 personas.",
+    laneClassName: "md:col-span-1",
+    gridColumn: "5 / span 1",
+  },
+] as const;
+
+type DayId = (typeof days)[number]["id"];
+type SessionRoomId = (typeof rooms)[number]["id"];
+type RoomId = SessionRoomId | "all";
+
+export type AgendaItem = {
+  day: DayId;
+  time: string;
+  title: string;
+  speaker: string;
+  type: string;
+  room: RoomId;
+  durationSlots?: number;
+};
+
+const agendaItems: AgendaItem[] = [
+  { day: "day-1", time: "08:00", title: "Registro y Café ☕ + Networking 🗣️", speaker: "", type: "break", room: "all" },
+  { day: "day-1", time: "08:45", title: "Apertura oficial 🎊", speaker: "Comité Organizador", type: "ignite", room: "all" },
+  { day: "day-1", time: "09:00", title: "Keynote: --", speaker: "Por confirmar", type: "keynote", room: "main" },
+  { day: "day-1", time: "09:30", title: "Panel Platinum: --", speaker: "Por confirmar", type: "talk", room: "main" },
+  { day: "day-1", time: "10:00", title: "Coffee Break, Patrocinadores, y Comunidades 🚀", speaker: "", type: "break", room: "all" },
+  { day: "day-1", time: "10:30", title: "Charla Platinum: --", speaker: "Por confirmar", type: "talk", room: "main" },
+  { day: "day-1", time: "11:00", title: "Conoce a nuestro Patrocinadores 🏆", speaker: "Mondini, Dynatrace, y TG Native", type: "ignite", room: "main" },
+  { day: "day-1", time: "11:30", title: "Charla Platinum: --", speaker: "Por confirmar", type: "talk", room: "main" },
+  { day: "day-1", time: "12:00", title: "Panel de Mujeres 👩🏼‍💻: --", speaker: "Karen Quijada", type: "ignite", room: "main", durationSlots: 2 },
+  { day: "day-1", time: "12:00", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "room-a" },
+  { day: "day-1", time: "12:30", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "room-a" },
+  { day: "day-1", time: "12:00", title: "Taller: --", speaker: "Por confirmar", type: "workshop", room: "room-b", durationSlots: 2 },
+  { day: "day-1", time: "13:00", title: "Almuerzo 🍽️", speaker: "", type: "break", room: "all" },
+  { day: "day-1", time: "15:00", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "main" },
+  { day: "day-1", time: "15:00", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "room-a" },
+  { day: "day-1", time: "15:30", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "room-a" },
+  { day: "day-1", time: "15:00", title: "Taller: --", speaker: "Por confirmar", type: "workshop", room: "room-b", durationSlots: 2 },
+  { day: "day-1", time: "15:30", title: "Charla Suse: --", speaker: "Por confirmar", type: "talk", room: "main" },
+  { day: "day-1", time: "16:00", title: "Cierre Día 1 + Anuncios + Llamado a Networking", speaker: "Comité Organizador", type: "ignite", room: "all" },
+
+  { day: "day-2", time: "08:00", title: "Registro y Café ☕ + Networking 🗣️", speaker: "", type: "break", room: "all" },
+  { day: "day-2", time: "08:45", title: "Apertura oficial 🎊", speaker: "Comité Organizador", type: "ignite", room: "all" },
+  { day: "day-2", time: "09:00", title: "Keynote: --", speaker: "Por confirmar", type: "keynote", room: "main" },
+  { day: "day-2", time: "09:30", title: "Charla Platinum: --", speaker: "Por confirmar", type: "talk", room: "main" },
+  { day: "day-2", time: "10:00", title: "Coffee Break, Patrocinadores, y Comunidades 🚀", speaker: "", type: "break", room: "all" },
+  { day: "day-2", time: "10:30", title: "Keynote: --", speaker: "Por confirmar", type: "keynote", room: "main" },
+  { day: "day-2", time: "11:00", title: "Conoce a nuestro Patrocinadores 🏆", speaker: "Axmos + Datadog, Red Hat, Technology Solutions, y Manage Engine", type: "ignite", room: "main" },
+  { day: "day-2", time: "11:30", title: "Charla Platinum: --", speaker: "Por confirmar", type: "talk", room: "main" },
+  { day: "day-2", time: "12:00", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "main" },
+  { day: "day-2", time: "12:00", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "room-a" },
+  { day: "day-2", time: "12:30", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "room-a" },
+  { day: "day-2", time: "12:00", title: "Taller: --", speaker: "Por confirmar", type: "workshop", room: "room-b", durationSlots: 2 },
+  { day: "day-2", time: "12:30", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "main" },
+  { day: "day-2", time: "13:00", title: "Almuerzo 🍽️", speaker: "", type: "break", room: "all" },
+  { day: "day-2", time: "14:30", title: "Sorteos 🎁", speaker: "Comité Organizador", type: "ignite", room: "all" },
+  { day: "day-2", time: "15:00", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "main" },
+  { day: "day-2", time: "15:00", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "room-a" },
+  { day: "day-2", time: "15:30", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "room-a" },
+  { day: "day-2", time: "15:00", title: "Taller: --", speaker: "Por confirmar", type: "workshop", room: "room-b", durationSlots: 2 },
+  { day: "day-2", time: "15:30", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "main" },
+  { day: "day-2", time: "16:00", title: "Cierre Día 2", speaker: "Comité Organizador", type: "break", room: "all" },
 ];
 
 const typeStyles: Record<string, string> = {
@@ -54,45 +112,191 @@ const typeIcons: Record<string, React.ElementType> = {
   panel: Users,
 };
 
-export type AgendaItem = {
-  time: string;
-  title: string;
-  speaker: string;
-  type: string;
+const getRoom = (roomId: SessionRoomId) => rooms.find((room) => room.id === roomId);
+
+const getDayTimes = (dayId: DayId) =>
+  Array.from(new Set(agendaItems.filter((item) => item.day === dayId).map((item) => item.time)));
+
+const getItemsForTime = (dayId: DayId, time: string) =>
+  agendaItems.filter((item) => item.day === dayId && item.time === time);
+
+const getDurationSlots = (item: AgendaItem) => item.durationSlots ?? 1;
+
+const isCoveredByEarlierItem = (dayId: DayId, timeIndex: number, times: string[], roomId?: SessionRoomId) =>
+  agendaItems.some((item) => {
+    if (item.day !== dayId || (roomId ? item.room !== roomId : item.room !== "all")) {
+      return false;
+    }
+
+    const itemStartIndex = times.indexOf(item.time);
+    return itemStartIndex >= 0 && itemStartIndex < timeIndex && itemStartIndex + getDurationSlots(item) > timeIndex;
+  });
+
+const AgendaCard = ({ item, index, showRoom = false }: { item: AgendaItem; index: number; showRoom?: boolean }) => {
+  const Icon = typeIcons[item.type] || Clock;
+  const room = item.room !== "all" ? getRoom(item.room) : undefined;
+
+  return (
+    <motion.div
+      className={`h-full rounded-xl border p-4 ${typeStyles[item.type] ?? "border-border bg-card/60"}`}
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.03 }}
+    >
+      <div className="flex items-start gap-3">
+        <Icon className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" />
+        <div className="min-w-0">
+          {showRoom && room && (
+            <p className="mb-1 text-xs font-bold uppercase tracking-wide text-accent">
+              {room.name} · {room.capacity}
+            </p>
+          )}
+          <p className="font-semibold text-foreground">{item.title}</p>
+          {item.speaker && <p className="mt-1 text-sm text-muted-foreground">{item.speaker}</p>}
+        </div>
+      </div>
+    </motion.div>
+  );
 };
 
-export const AgendaDay = ({ title, items }: { title: string; items: AgendaItem[] }) => (
-  <div>
-    <h3 className="text-2xl font-bold text-foreground mb-6">{title}</h3>
-    {items.length === 0 ? (
+export const AgendaDay = ({ dayId }: { dayId: DayId }) => {
+  const times = getDayTimes(dayId);
+
+  if (times.length === 0) {
+    return (
       <div className="rounded-xl border border-border bg-muted/20 p-4 text-sm text-muted-foreground">
         Estamos trabajando para elaborar la mejor experiencia espacial.
       </div>
-    ) : (
-      <div className="space-y-3">
-        {items.map((item, i) => {
-          const Icon = typeIcons[item.type] || Clock;
-          return (
-            <motion.div
-              key={i}
-              className={`flex items-start gap-4 p-4 rounded-xl border ${typeStyles[item.type]}`}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
+    );
+  }
+
+  return (
+    <div>
+      <div className="hidden md:block">
+        <div
+          className="grid grid-cols-[5rem_repeat(4,minmax(0,1fr))] gap-3"
+          style={{ gridTemplateRows: `auto repeat(${times.length}, minmax(5.75rem, auto))` }}
+        >
+          <div aria-hidden="true" style={{ gridColumn: 1, gridRow: 1 }} />
+          {rooms.map((room) => (
+            <div
+              key={room.id}
+              className={`rounded-xl border border-border bg-card/60 p-4 ${room.laneClassName} ${
+                room.id === "main" ? "border-primary/50 bg-primary/5" : ""
+              }`}
+              style={{ gridColumn: room.gridColumn, gridRow: 1 }}
             >
-              <span className="text-sm font-mono font-bold text-muted-foreground min-w-[50px]">{item.time}</span>
-              <Icon className="w-5 h-5 text-muted-foreground mt-0.5 shrink-0" />
-              <div>
-                <p className="font-semibold text-foreground">{item.title}</p>
-                {item.speaker && <p className="text-sm text-muted-foreground">{item.speaker}</p>}
+              <div className="flex items-start gap-2">
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                <div>
+                  <h3 className="font-bold text-foreground">{room.name}</h3>
+                  <p className="text-sm text-muted-foreground">{room.capacity}</p>
+                </div>
               </div>
-            </motion.div>
+            </div>
+          ))}
+
+          {times.map((time, timeIndex) => {
+            const items = getItemsForTime(dayId, time);
+            const sharedItem = items.find((item) => item.room === "all");
+            const gridRow = timeIndex + 2;
+
+            return (
+              <Fragment key={`${dayId}-${time}`}>
+                <div
+                  key={`${dayId}-${time}-label`}
+                  className="py-4 text-sm font-mono font-bold text-muted-foreground"
+                  style={{ gridColumn: 1, gridRow }}
+                >
+                  {time}
+                </div>
+
+                {sharedItem && !isCoveredByEarlierItem(dayId, timeIndex, times) && (
+                  <div
+                    key={`${dayId}-${time}-shared`}
+                    style={{ gridColumn: "2 / span 4", gridRow: `${gridRow} / span ${getDurationSlots(sharedItem)}` }}
+                  >
+                    <AgendaCard item={sharedItem} index={timeIndex} />
+                  </div>
+                )}
+
+                {!sharedItem &&
+                  !isCoveredByEarlierItem(dayId, timeIndex, times) &&
+                  rooms.map((room) => {
+                    if (isCoveredByEarlierItem(dayId, timeIndex, times, room.id)) {
+                      return null;
+                    }
+
+                    const roomItem = items.find((item) => item.room === room.id);
+
+                    return (
+                      <div
+                        key={`${time}-${room.id}`}
+                        style={{
+                          gridColumn: room.gridColumn,
+                          gridRow: roomItem ? `${gridRow} / span ${getDurationSlots(roomItem)}` : gridRow,
+                        }}
+                      >
+                        {roomItem ? (
+                          <AgendaCard item={roomItem} index={timeIndex} />
+                        ) : (
+                          <div className="h-full rounded-xl border border-dashed border-border/70 bg-muted/10 p-4 text-sm text-muted-foreground">
+                            Sala cerrada
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+              </Fragment>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="space-y-4 md:hidden">
+        {times.map((time, timeIndex) => {
+          const items = getItemsForTime(dayId, time);
+
+          return (
+            <div key={`${dayId}-${time}-mobile`} className="rounded-xl border border-border bg-card/40 p-4">
+              <p className="mb-3 text-sm font-mono font-bold text-muted-foreground">{time}</p>
+              <div className="space-y-3">
+                {items.map((item) => (
+                  <AgendaCard key={`${item.time}-${item.room}-${item.title}`} item={item} index={timeIndex} showRoom />
+                ))}
+              </div>
+            </div>
           );
         })}
       </div>
-    )}
-  </div>
+    </div>
+  );
+};
+
+const RoomsOverview = () => (
+  <section className="mx-auto mt-14 max-w-6xl">
+    <h2 className="mb-6 text-3xl font-black text-foreground">Salas</h2>
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+      {rooms.map((room) => (
+        <div
+          key={room.id}
+          className={`rounded-xl border p-5 ${room.laneClassName} ${
+            room.id === "main" ? "border-primary/50 bg-primary/5" : "border-border bg-card/60"
+          }`}
+        >
+          <div className="mb-3 flex items-start gap-3">
+            <MapPin className="mt-1 h-5 w-5 shrink-0 text-accent" />
+            <div>
+              <h3 className="text-xl font-bold text-foreground">{room.name}</h3>
+              <p className="text-sm font-semibold text-accent">{room.capacity}</p>
+            </div>
+          </div>
+          <p className="text-sm text-muted-foreground">{room.description}</p>
+        </div>
+      ))}
+    </div>
+  </section>
 );
 
 const AgendaPage = () => (
@@ -111,13 +315,33 @@ const AgendaPage = () => (
           <h1 className="text-4xl md:text-6xl font-black text-foreground mt-4 mb-4">
             Agenda de la <span className="text-gradient-space">Misión</span>
           </h1>
-          <p className="text-muted-foreground text-lg">8 y 9 de Septiembre, 2026 — Centro de Extensión UC, Santiago, Chile</p>
+          <p className="text-muted-foreground text-lg">
+            8 y 9 de Septiembre, 2026 — Centro de Extensión UC, Santiago, Chile
+          </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-          <AgendaDay title="🛸 Día 1 — 8 de Septiembre" items={day1} />
-          <AgendaDay title="🚀 Día 2 — 9 de Septiembre" items={day2} />
-        </div>
+        <Tabs defaultValue="day-1" className="mx-auto max-w-6xl">
+          <div className="mb-8 flex justify-center">
+            <TabsList className="h-auto flex-wrap">
+              {days.map((day) => (
+                <TabsTrigger key={day.id} value={day.id} className="px-5 py-2 text-base">
+                  {day.icon} {day.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </div>
+
+          {days.map((day) => (
+            <TabsContent key={day.id} value={day.id} className="mt-0">
+              <h2 className="mb-6 text-2xl font-bold text-foreground">
+                {day.icon} {day.label} — {day.title}
+              </h2>
+              <AgendaDay dayId={day.id} />
+            </TabsContent>
+          ))}
+        </Tabs>
+
+        <RoomsOverview />
       </div>
     </div>
     <Footer />
