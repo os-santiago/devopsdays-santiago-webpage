@@ -2,8 +2,16 @@ import { motion } from "framer-motion";
 import { Fragment } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Clock, Coffee, MapPin, Mic2, Rocket, Users } from "lucide-react";
+import { Clock, Coffee, ExternalLink, MapPin, Mic2, Rocket, Users } from "lucide-react";
 
 const days = [
   { id: "day-1", label: "Día 1", title: "8 de Septiembre", icon: "🛸" },
@@ -48,12 +56,17 @@ export type AgendaItem = {
   speaker: string;
   type: string;
   room: RoomId;
+  description?: string;
+  speakerRole?: string;
+  speakerPhoto?: string;
+  speakerSocialUrl?: string;
+  topics?: string[];
   durationSlots?: number;
 };
 
 const agendaItems: AgendaItem[] = [
   { day: "day-1", time: "08:00", title: "Registro y Café ☕ + Networking 🗣️", speaker: "", type: "break", room: "all" },
-  { day: "day-1", time: "08:45", title: "Apertura oficial 🎊", speaker: "Comité Organizador", type: "ignite", room: "all" },
+  { day: "day-1", time: "08:45", title: "Apertura oficial 🎊", speaker: "Comité Organizador", type: "ignite", room: "main" },
   { day: "day-1", time: "09:00", title: "Keynote: --", speaker: "Por confirmar", type: "keynote", room: "main" },
   { day: "day-1", time: "09:30", title: "Panel Platinum: --", speaker: "Por confirmar", type: "talk", room: "main" },
   { day: "day-1", time: "10:00", title: "Coffee Break, Patrocinadores, y Comunidades 🚀", speaker: "", type: "break", room: "all" },
@@ -70,10 +83,10 @@ const agendaItems: AgendaItem[] = [
   { day: "day-1", time: "15:30", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "room-a" },
   { day: "day-1", time: "15:00", title: "Taller: --", speaker: "Por confirmar", type: "workshop", room: "room-b", durationSlots: 2 },
   { day: "day-1", time: "15:30", title: "Charla Suse: --", speaker: "Por confirmar", type: "talk", room: "main" },
-  { day: "day-1", time: "16:00", title: "Cierre Día 1 + Anuncios + Llamado a Networking", speaker: "Comité Organizador", type: "ignite", room: "all" },
+  { day: "day-1", time: "16:00", title: "Cierre Día 1 + Anuncios + Llamado a Networking", speaker: "Comité Organizador", type: "ignite", room: "main" },
 
   { day: "day-2", time: "08:00", title: "Registro y Café ☕ + Networking 🗣️", speaker: "", type: "break", room: "all" },
-  { day: "day-2", time: "08:45", title: "Apertura oficial 🎊", speaker: "Comité Organizador", type: "ignite", room: "all" },
+  { day: "day-2", time: "08:45", title: "Apertura oficial 🎊", speaker: "Comité Organizador", type: "ignite", room: "main" },
   { day: "day-2", time: "09:00", title: "Keynote: --", speaker: "Por confirmar", type: "keynote", room: "main" },
   { day: "day-2", time: "09:30", title: "Charla Platinum: --", speaker: "Por confirmar", type: "talk", room: "main" },
   { day: "day-2", time: "10:00", title: "Coffee Break, Patrocinadores, y Comunidades 🚀", speaker: "", type: "break", room: "all" },
@@ -92,7 +105,7 @@ const agendaItems: AgendaItem[] = [
   { day: "day-2", time: "15:30", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "room-a" },
   { day: "day-2", time: "15:00", title: "Taller: --", speaker: "Por confirmar", type: "workshop", room: "room-b", durationSlots: 2 },
   { day: "day-2", time: "15:30", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "main" },
-  { day: "day-2", time: "16:00", title: "Cierre Día 2", speaker: "Comité Organizador", type: "break", room: "all" },
+  { day: "day-2", time: "16:00", title: "Cierre Día 2", speaker: "Comité Organizador", type: "break", room: "main" },
 ];
 
 const typeStyles: Record<string, string> = {
@@ -112,7 +125,18 @@ const typeIcons: Record<string, React.ElementType> = {
   panel: Users,
 };
 
+const typeLabels: Record<string, string> = {
+  keynote: "Keynote",
+  talk: "Charla",
+  ignite: "Actividad",
+  workshop: "Taller",
+  break: "Networking",
+  panel: "Panel",
+};
+
 const getRoom = (roomId: SessionRoomId) => rooms.find((room) => room.id === roomId);
+
+const getDay = (dayId: DayId) => days.find((day) => day.id === dayId);
 
 const getDayTimes = (dayId: DayId) =>
   Array.from(new Set(agendaItems.filter((item) => item.day === dayId).map((item) => item.time)));
@@ -132,31 +156,99 @@ const isCoveredByEarlierItem = (dayId: DayId, timeIndex: number, times: string[]
     return itemStartIndex >= 0 && itemStartIndex < timeIndex && itemStartIndex + getDurationSlots(item) > timeIndex;
   });
 
+const SessionDetailsDialog = ({ item }: { item: AgendaItem }) => {
+  const day = getDay(item.day);
+  const room = item.room !== "all" ? getRoom(item.room) : undefined;
+  const description = item.description ?? "Pronto publicaremos más detalles de esta actividad.";
+  const speaker = item.speaker || "Por confirmar";
+  const speakerRole = item.speakerRole ?? "Por confirmar";
+  const topics = item.topics?.length ? item.topics : [typeLabels[item.type] ?? item.type];
+
+  return (
+    <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+      <DialogHeader>
+        <DialogTitle className="pr-8 text-2xl leading-tight">{item.title}</DialogTitle>
+        <DialogDescription>
+          {day?.title} · {item.time} · {room?.name ?? "Plaza Principal"}
+        </DialogDescription>
+      </DialogHeader>
+
+      <div className="space-y-6">
+        <p className="text-sm leading-6 text-muted-foreground">{description}</p>
+
+        <div className="flex flex-col gap-4 rounded-xl border border-border bg-card/60 p-4 sm:flex-row sm:items-center">
+          <img
+            src={item.speakerPhoto ?? "/placeholder.svg"}
+            alt={`Foto de ${speaker}`}
+            className="h-24 w-24 shrink-0 rounded-full border border-border object-cover bg-muted"
+          />
+          <div className="min-w-0">
+            <p className="text-sm font-semibold uppercase tracking-wide text-accent">Speaker</p>
+            <p className="text-lg font-bold text-foreground">{speaker}</p>
+            <p className="text-sm text-muted-foreground">{speakerRole}</p>
+            {item.speakerSocialUrl && (
+              <a
+                href={item.speakerSocialUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-accent hover:text-accent/80"
+              >
+                Redes sociales
+                <ExternalLink className="h-4 w-4" />
+              </a>
+            )}
+          </div>
+        </div>
+
+        <div>
+          <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Temáticas</p>
+          <div className="flex flex-wrap gap-2">
+            {topics.map((topic) => (
+              <span
+                key={topic}
+                className="rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs font-semibold text-accent"
+              >
+                {topic}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </DialogContent>
+  );
+};
+
 const AgendaCard = ({ item, index, showRoom = false }: { item: AgendaItem; index: number; showRoom?: boolean }) => {
   const Icon = typeIcons[item.type] || Clock;
   const room = item.room !== "all" ? getRoom(item.room) : undefined;
 
   return (
-    <motion.div
-      className={`h-full rounded-xl border p-4 ${typeStyles[item.type] ?? "border-border bg-card/60"}`}
-      initial={{ opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay: index * 0.03 }}
-    >
-      <div className="flex items-start gap-3">
-        <Icon className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" />
-        <div className="min-w-0">
-          {showRoom && room && (
-            <p className="mb-1 text-xs font-bold uppercase tracking-wide text-accent">
-              {room.name} · {room.capacity}
-            </p>
-          )}
-          <p className="font-semibold text-foreground">{item.title}</p>
-          {item.speaker && <p className="mt-1 text-sm text-muted-foreground">{item.speaker}</p>}
-        </div>
-      </div>
-    </motion.div>
+    <Dialog>
+      <DialogTrigger asChild>
+        <motion.button
+          type="button"
+          className={`h-full w-full rounded-xl border p-4 text-left transition-colors hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${typeStyles[item.type] ?? "border-border bg-card/60"}`}
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: index * 0.03 }}
+        >
+          <div className="flex items-start gap-3">
+            <Icon className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" />
+            <div className="min-w-0">
+              {showRoom && room && (
+                <p className="mb-1 text-xs font-bold uppercase tracking-wide text-accent">
+                  {room.name} · {room.capacity}
+                </p>
+              )}
+              <p className="font-semibold text-foreground">{item.title}</p>
+              {item.speaker && <p className="mt-1 text-sm text-muted-foreground">{item.speaker}</p>}
+            </div>
+          </div>
+        </motion.button>
+      </DialogTrigger>
+      <SessionDetailsDialog item={item} />
+    </Dialog>
   );
 };
 
@@ -324,8 +416,8 @@ const AgendaPage = () => (
           <div className="mb-8 flex justify-center">
             <TabsList className="h-auto flex-wrap">
               {days.map((day) => (
-                <TabsTrigger key={day.id} value={day.id} className="px-5 py-2 text-base">
-                  {day.icon} {day.label}
+                <TabsTrigger key={day.id} value={day.id} className="px-5 py-2 text-2xl font-semibold">
+                  {day.icon} {day.label} — {day.title}
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -333,9 +425,6 @@ const AgendaPage = () => (
 
           {days.map((day) => (
             <TabsContent key={day.id} value={day.id} className="mt-0">
-              <h2 className="mb-6 text-2xl font-bold text-foreground">
-                {day.icon} {day.label} — {day.title}
-              </h2>
               <AgendaDay dayId={day.id} />
             </TabsContent>
           ))}
