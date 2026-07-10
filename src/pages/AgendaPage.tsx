@@ -26,7 +26,7 @@ const day2 = [
   { time: "09:30", title: "Charla Platinum: --", speaker: "Por confirmar", type: "talk" },
   { time: "10:00", title: "Coffee Break, Patrocinadores, y Comunidades 🚀", speaker: "", type: "break" },
   { time: "10:30", title: "Keynote: --", speaker: "Por confirmar", type: "keynote" },
-  { time: "11:00", title: "Conoce a nuestro Patrocinadores 🏆", speaker: "Red Hat, Technology Solutions, y Manage Engine", type: "ignite" },
+  { time: "11:00", title: "Conoce a nuestro Patrocinadores 🏆", speaker: "Axmos + Datadog, Red Hat, Technology Solutions, y Manage Engine", type: "ignite" },
   { time: "11:30", title: "Charla: --", speaker: "Por confirmar", type: "talk" },
   { time: "12:00", title: "Charla: --", speaker: "Por confirmar", type: "talk" },
   { time: "12:30", title: "Charla: --", speaker: "Por confirmar", type: "talk" },

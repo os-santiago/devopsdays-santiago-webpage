@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import dynatraceLogo from "@/assets/logo-dynatrace.svg";
-import tgNativeLogo from "@/assets/logo-tgnative.png";
+import tgNativeLogo from "@/assets/logo-tgnative.svg";
 import redHatLogo from "@/assets/logo-redhat.svg";
 import technologySolutionsLogo from "@/assets/logo-techlatam.svg";
 import fluidAttacksLogo from "@/assets/logo-fluid-attack.svg";
@@ -10,10 +10,10 @@ import axmosLogo from "@/assets/logo-axmosdatadog.svg";
 import certJoinLogo from "@/assets/logo-certjoin.png";
 import avattarLogo from "@/assets/logo-avattar.png";
 import actiLogo from "@/assets/logo-acti.png";
-// import invokeLogo from "@/assets/logo-invoke.png";
-// import tsoftLogo from "@/assets/logo-tsoft.svg";
-// import suseLogo from "@/assets/logo-suse.jpg";
-// import manageEngineLogo from "@/assets/logo-manageengine.svg";
+import invokeLogo from "@/assets/logo-invoke.png";
+import suseLogo from "@/assets/logo-suse.png";
+import manageEngineLogo from "@/assets/logo-manageengine.svg";
+import ardanLabsLogo from "@/assets/logo-ardanlabs.svg";
 
 type Sponsor = {
   name: string;
@@ -49,22 +49,21 @@ const sponsorTiers = [
   },
   {
     tier: "Oro ⭐",
-    capacity: 5,
+    capacity: 4,
     sponsors: [
       { name: "Red Hat", website: "https://www.redhat.com", logoSrc: redHatLogo },
       { name: "Technology Solutions", website: "https://technologylatam.com/", logoSrc: technologySolutionsLogo },
-      // { name: "Manage Engine", website: "https://www.manageengine.com/", logoSrc: manageEngineLogo },
-      // { name: "TSoft", website: "https://www.tsoftglobal.com/", logoSrc: tsoftLogo },
+      { name: "Manage Engine", website: "https://www.manageengine.com/", logoSrc: manageEngineLogo },
     ],
   },
   {
     tier: "Plata 🌙",
-    capacity: 5,
+    capacity: 4,
     sponsors: [
       { name: "Fluid Attacks", website: "https://fluidattacks.com/", logoSrc: fluidAttacksLogo },
       { name: "Unyko Talent", website: "https://unyko.cl/", logoSrc: unykoLogo },
-      // { name: "Suse", website: "https://www.suse.com/es-es/", logoSrc: suseLogo },
-      // { name: "Invoke", website: "https://www.invoke.cl/", logoSrc: invokeLogo },
+      { name: "Suse", website: "https://www.suse.com/es-es/", logoSrc: suseLogo },
+      { name: "Invoke", website: "https://www.invoke.cl/", logoSrc: invokeLogo },
     ],
   },
   {
@@ -74,6 +73,7 @@ const sponsorTiers = [
       { name: "CertJoin", website: "https://certjoin.com/es/", logoSrc: certJoinLogo },
       { name: "Avattar", website: "https://avattar.com/", logoSrc: avattarLogo },
       { name: "ACTI", website: "https://acti.cl/", logoSrc: actiLogo },
+      { name: "Ardan Labs", website: "https://ardanlabs.com/", logoSrc: ardanLabsLogo },
     ],
   },
 ] satisfies SponsorTier[];
