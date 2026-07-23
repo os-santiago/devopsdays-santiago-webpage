@@ -7,6 +7,7 @@ import logo from "@/assets/logo-devopsdays.png";
 const navItems = [
   { label: "Inicio", path: "/" },
   { label: "Agenda", path: "/agenda" },
+  { label: "Speakers", path: "/speakers" },
   { label: "Patrocinio", path: "/patrocinio" },
   { label: "Contacto", path: "/contacto" },
 ];

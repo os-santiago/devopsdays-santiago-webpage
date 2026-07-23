@@ -65,10 +65,10 @@ const HeroSection = () => (
               Comprar Entradas
             </a>
             <a
-              href="#cfp"
+              href="/agenda"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-accent/10 text-accent border border-accent/30 font-bold text-base transition-all hover:bg-accent/20"
             >
-              Postula tu Charla
+              Descubre nuestra agenda
             </a>
             <a
               href="https://homedir.opensourcesantiago.io/event/devopsdays-santiago-2026/volunteers"

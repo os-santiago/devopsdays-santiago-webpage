@@ -8,8 +8,7 @@ const levels = [
     icon: Rocket,
     name: "Platinum 🪐",
     price: "$8.000.000 CLP (~$8.920 USD)",
-    color: "border-accent",
-    highlight: true,
+    color: "border-border",
     soldOut: true,
     benefits: [
       "Stand 4x2 mtrs tipo isla",
@@ -27,7 +26,8 @@ const levels = [
     icon: Star,
     name: "Gold 🌎",
     price: "$5.000.000 CLP (~$5.575 USD)",
-    color: "border-muted-foreground",
+    color: "border-accent",
+    highlight: true,
     remaining: 1,
     benefits: [
       "Stand 3x2 mtrs",
@@ -44,7 +44,7 @@ const levels = [
     name: "Silver 🌙",
     price: "$3.000.000 CLP (~$3.345 USD)",
     color: "border-border",
-    remaining: 1,
+    soldOut: true,
     benefits: [
       "Stand 2x2 mtrs",
       "Publicidad en redes sociales y página web",
@@ -58,6 +58,7 @@ const levels = [
     name: "Colaboraciones y Comunidades",
     price: "Convocatoria abierta",
     color: "border-border",
+    highlight: true,
     benefits: [
       "Espacio para comunidades, media partners y colaboraciones",
       "Presencia en redes sociales y página web",

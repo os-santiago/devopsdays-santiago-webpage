@@ -28,6 +28,13 @@ describe("App routes", () => {
     expect(screen.getByRole("heading", { name: /Agenda de la Misión/i })).toBeInTheDocument();
   });
 
+  it("renders speakers route", () => {
+    window.history.pushState({}, "", "/speakers");
+    render(<App />);
+
+    expect(screen.getByRole("heading", { name: /Voces de la Misión/i })).toBeInTheDocument();
+  });
+
   it("renders not found route", () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 

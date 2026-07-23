@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, Coffee, ExternalLink, MapPin, Mic2, Rocket, Users } from "lucide-react";
+import { agendaItems, type AgendaItem, type DayId, type SessionRoomId } from "@/data/event";
 
 const days = [
   { id: "day-1", label: "Día 1", title: "8 de Septiembre", icon: "🛸" },
@@ -45,68 +46,6 @@ const rooms = [
   },
 ] as const;
 
-type DayId = (typeof days)[number]["id"];
-type SessionRoomId = (typeof rooms)[number]["id"];
-type RoomId = SessionRoomId | "all";
-
-export type AgendaItem = {
-  day: DayId;
-  time: string;
-  title: string;
-  speaker: string;
-  type: string;
-  room: RoomId;
-  description?: string;
-  speakerRole?: string;
-  speakerPhoto?: string;
-  speakerSocialUrl?: string;
-  topics?: string[];
-  durationSlots?: number;
-};
-
-const agendaItems: AgendaItem[] = [
-  { day: "day-1", time: "08:00", title: "Registro y Café ☕ + Networking 🗣️", speaker: "", type: "break", room: "all" },
-  { day: "day-1", time: "08:45", title: "Apertura oficial 🎊", speaker: "Comité Organizador", type: "ignite", room: "main" },
-  { day: "day-1", time: "09:00", title: "Keynote: --", speaker: "Por confirmar", type: "keynote", room: "main" },
-  { day: "day-1", time: "09:30", title: "Panel Platinum: --", speaker: "Por confirmar", type: "talk", room: "main" },
-  { day: "day-1", time: "10:00", title: "Coffee Break, Patrocinadores, y Comunidades 🚀", speaker: "", type: "break", room: "all" },
-  { day: "day-1", time: "10:30", title: "Charla Platinum: --", speaker: "Por confirmar", type: "talk", room: "main" },
-  { day: "day-1", time: "11:00", title: "Conoce a nuestro Patrocinadores 🏆", speaker: "Mondini, Dynatrace, y TG Native", type: "ignite", room: "main" },
-  { day: "day-1", time: "11:30", title: "Charla Platinum: --", speaker: "Por confirmar", type: "talk", room: "main" },
-  { day: "day-1", time: "12:00", title: "Panel de Mujeres 👩🏼‍💻: --", speaker: "Karen Quijada", type: "ignite", room: "main", durationSlots: 2 },
-  { day: "day-1", time: "12:00", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "room-a" },
-  { day: "day-1", time: "12:30", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "room-a" },
-  { day: "day-1", time: "12:00", title: "Taller: --", speaker: "Por confirmar", type: "workshop", room: "room-b", durationSlots: 2 },
-  { day: "day-1", time: "13:00", title: "Almuerzo 🍽️", speaker: "", type: "break", room: "all" },
-  { day: "day-1", time: "15:00", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "main" },
-  { day: "day-1", time: "15:00", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "room-a" },
-  { day: "day-1", time: "15:30", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "room-a" },
-  { day: "day-1", time: "15:00", title: "Taller: --", speaker: "Por confirmar", type: "workshop", room: "room-b", durationSlots: 2 },
-  { day: "day-1", time: "15:30", title: "Charla Suse: --", speaker: "Por confirmar", type: "talk", room: "main" },
-  { day: "day-1", time: "16:00", title: "Cierre Día 1 + Anuncios + Llamado a Networking", speaker: "Comité Organizador", type: "ignite", room: "main" },
-
-  { day: "day-2", time: "08:00", title: "Registro y Café ☕ + Networking 🗣️", speaker: "", type: "break", room: "all" },
-  { day: "day-2", time: "08:45", title: "Apertura oficial 🎊", speaker: "Comité Organizador", type: "ignite", room: "main" },
-  { day: "day-2", time: "09:00", title: "Keynote: --", speaker: "Por confirmar", type: "keynote", room: "main" },
-  { day: "day-2", time: "09:30", title: "Charla Platinum: --", speaker: "Por confirmar", type: "talk", room: "main" },
-  { day: "day-2", time: "10:00", title: "Coffee Break, Patrocinadores, y Comunidades 🚀", speaker: "", type: "break", room: "all" },
-  { day: "day-2", time: "10:30", title: "Keynote: --", speaker: "Por confirmar", type: "keynote", room: "main" },
-  { day: "day-2", time: "11:00", title: "Conoce a nuestro Patrocinadores 🏆", speaker: "Axmos + Datadog, Red Hat, Technology Solutions, y Manage Engine", type: "ignite", room: "main" },
-  { day: "day-2", time: "11:30", title: "Charla Platinum: --", speaker: "Por confirmar", type: "talk", room: "main" },
-  { day: "day-2", time: "12:00", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "main" },
-  { day: "day-2", time: "12:00", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "room-a" },
-  { day: "day-2", time: "12:30", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "room-a" },
-  { day: "day-2", time: "12:00", title: "Taller: --", speaker: "Por confirmar", type: "workshop", room: "room-b", durationSlots: 2 },
-  { day: "day-2", time: "12:30", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "main" },
-  { day: "day-2", time: "13:00", title: "Almuerzo 🍽️", speaker: "", type: "break", room: "all" },
-  { day: "day-2", time: "14:30", title: "Sorteos 🎁", speaker: "Comité Organizador", type: "ignite", room: "all" },
-  { day: "day-2", time: "15:00", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "main" },
-  { day: "day-2", time: "15:00", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "room-a" },
-  { day: "day-2", time: "15:30", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "room-a" },
-  { day: "day-2", time: "15:00", title: "Taller: --", speaker: "Por confirmar", type: "workshop", room: "room-b", durationSlots: 2 },
-  { day: "day-2", time: "15:30", title: "Charla: --", speaker: "Por confirmar", type: "talk", room: "main" },
-  { day: "day-2", time: "16:00", title: "Cierre Día 2", speaker: "Comité Organizador", type: "break", room: "main" },
-];
 
 const typeStyles: Record<string, string> = {
   keynote: "border-primary bg-primary/10",
@@ -408,7 +347,7 @@ const AgendaPage = () => (
             Agenda de la <span className="text-gradient-space">Misión</span>
           </h1>
           <p className="text-muted-foreground text-lg">
-            8 y 9 de Septiembre, 2026 — Centro de Extensión UC, Santiago, Chile
+            8 y 9 de Septiembre, 2026 — Horario  — Centro de Extensión UC, Santiago, Chile
           </p>
         </motion.div>
 

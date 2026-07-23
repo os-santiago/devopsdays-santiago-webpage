@@ -1,0 +1,147 @@
+import { motion } from "framer-motion";
+import { ExternalLink } from "lucide-react";
+import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { agendaItems, speakers, type AgendaItem, type Speaker, type SpeakerCategory } from "@/data/event";
+
+const sections: { category: SpeakerCategory; title: string; description: string }[] = [
+  {
+    category: "keynote",
+    title: "Keynotes",
+    description: "Referentes de nuestra comunidad con mensajes capaces de inspirar y movilizar a quienes construyen el futuro de DevOps.",
+  },
+  {
+    category: "sponsor",
+    title: "Patrocinadores",
+    description: "Representantes de las marcas que hacen posible el evento, compartiendo su visión y experiencia en DevOps.",
+  },
+  {
+    category: "accepted",
+    title: "Postulantes Aceptados",
+    description: "Propuestas seleccionadas por el comité por su mirada innovadora y su aporte a la comunidad.",
+  },
+];
+
+const dayLabels = { "day-1": "8 de Septiembre", "day-2": "9 de Septiembre" };
+
+const SpeakerDialog = ({ speaker, session }: { speaker: Speaker; session: AgendaItem }) => (
+  <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
+    <DialogHeader>
+      <DialogTitle className="pr-8 text-2xl leading-tight">{session.title}</DialogTitle>
+      <DialogDescription>{dayLabels[session.day]} · {session.time}</DialogDescription>
+    </DialogHeader>
+
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 rounded-xl border border-border bg-card/60 p-4 sm:flex-row sm:items-center">
+        <img src={speaker.photo} alt={`Foto de ${speaker.name}`} className="h-24 w-24 shrink-0 rounded-full object-cover" />
+        <div>
+          <p className="text-xl font-bold">{speaker.name}</p>
+          <p className="text-sm text-muted-foreground">{speaker.role}</p>
+          {speaker.company && <p className="mt-1 text-sm font-semibold text-accent">{speaker.company}</p>}
+          <div className="mt-3 flex flex-wrap gap-3">
+            {speaker.socials.map((social) => (
+              <a key={social.url} href={social.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-accent hover:text-accent/80">
+                {social.label}<ExternalLink className="h-3.5 w-3.5" />
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <p className="text-sm leading-6 text-muted-foreground">{session.description}</p>
+      <div>
+        <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Temáticas</p>
+        <div className="flex flex-wrap gap-2">
+          {session.topics?.map((topic) => (
+            <span key={topic} className="rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">{topic}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </DialogContent>
+);
+
+const SpeakerCard = ({ speaker, session }: { speaker: Speaker; session: AgendaItem }) => (
+  <Dialog>
+    <DialogTrigger asChild>
+      <motion.button
+        type="button"
+        className={`group overflow-hidden rounded-2xl border border-border bg-card/70 text-left transition hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+          speaker.category === "keynote" ? "w-full" : speaker.category === "sponsor" ? "w-full max-w-sm" : "w-full max-w-xs"
+        }`}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+      >
+        {speaker.category === "keynote" ? (
+          <img src={speaker.banner} alt={`Gráfica promocional de ${speaker.name}`} className="aspect-[2/1] w-full object-cover md:aspect-[3/1]" />
+        ) : (
+          <div className="p-5">
+            <div className="flex items-center gap-4">
+              <img src={speaker.photo} alt={`Foto de ${speaker.name}`} className={speaker.category === "sponsor" ? "h-28 w-28 rounded-xl object-cover" : "h-24 w-24 rounded-full object-cover"} />
+              {speaker.category === "sponsor" && (
+                <img src={speaker.companyLogo} alt={`Logo de ${speaker.company}`} className="max-h-16 min-w-0 flex-1 object-contain" />
+              )}
+            </div>
+            <p className="mt-5 text-xl font-bold">{speaker.name}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{speaker.role}</p>
+            <p className="mt-3 text-sm font-semibold text-accent">{speaker.socials.map((social) => social.label).join(" · ")}</p>
+          </div>
+        )}
+      </motion.button>
+    </DialogTrigger>
+    <SpeakerDialog speaker={speaker} session={session} />
+  </Dialog>
+);
+
+export const SpeakersContent = ({ speakerList, sessions }: { speakerList: Speaker[]; sessions: AgendaItem[] }) => (
+  <div className="space-y-20">
+    {sections.map((section) => {
+      const categorySpeakers = speakerList.filter((speaker) => speaker.category === section.category);
+
+      return (
+        <section key={section.category} aria-labelledby={`${section.category}-title`}>
+          <div className="mx-auto mb-8 max-w-3xl text-center">
+            <h2 id={`${section.category}-title`} className="text-3xl font-black md:text-4xl">{section.title}</h2>
+            <p className="mt-3 text-muted-foreground">{section.description}</p>
+          </div>
+          {categorySpeakers.length ? (
+            <div className={`flex flex-wrap justify-center gap-6 ${section.category === "keynote" ? "mx-auto max-w-5xl" : ""}`}>
+              {categorySpeakers.map((speaker) => {
+                const session = sessions.find((item) => item.id === speaker.sessionId);
+                return session ? <SpeakerCard key={speaker.id} speaker={speaker} session={session} /> : null;
+              })}
+            </div>
+          ) : (
+            <p className="text-center text-sm text-muted-foreground">Próximamente anunciaremos a quienes participarán en esta categoría.</p>
+          )}
+        </section>
+      );
+    })}
+  </div>
+);
+
+const SpeakersPage = () => (
+  <div className="min-h-screen bg-background">
+    <Navbar />
+    <main className="container mx-auto px-4 pb-20 pt-24">
+      <motion.div className="mb-16 text-center" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
+        <span className="rounded-full border border-accent/30 bg-accent/20 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-accent">Speakers</span>
+        <h1 className="mt-4 text-4xl font-black md:text-6xl">Voces de la <span className="text-gradient-space">Misión</span></h1>
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-muted-foreground">Conoce a las personas que compartirán ideas, experiencias y nuevas perspectivas en DevOpsDays Santiago 2026.</p>
+      </motion.div>
+      <SpeakersContent speakerList={speakers} sessions={agendaItems} />
+    </main>
+    <Footer />
+  </div>
+);
+
+export default SpeakersPage;

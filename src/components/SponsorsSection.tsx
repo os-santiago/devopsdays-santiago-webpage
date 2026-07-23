@@ -14,6 +14,7 @@ import invokeLogo from "@/assets/logo-invoke.png";
 import suseLogo from "@/assets/logo-suse.png";
 import manageEngineLogo from "@/assets/logo-manageengine.svg";
 import ardanLabsLogo from "@/assets/logo-ardanlabs.svg";
+import aedaLogo from "@/assets/logo-aedait.png";
 
 type Sponsor = {
   name: string;
@@ -74,6 +75,7 @@ const sponsorTiers = [
       { name: "Avattar", website: "https://avattar.com/", logoSrc: avattarLogo },
       { name: "ACTI", website: "https://acti.cl/", logoSrc: actiLogo },
       { name: "Ardan Labs", website: "https://ardanlabs.com/", logoSrc: ardanLabsLogo },
+      { name: "World AEDA IT", website: "https://worldaedait.com.mx/", logoSrc: aedaLogo },
     ],
   },
 ] satisfies SponsorTier[];

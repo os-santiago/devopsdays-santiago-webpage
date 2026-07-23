@@ -10,6 +10,7 @@ describe("Navbar", () => {
 
     expect(screen.getAllByRole("link", { name: "Inicio" }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: "Agenda" }).length).toBeGreaterThan(0);
+    expect(screen.getAllByRole("link", { name: "Speakers" }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: "Patrocinio" }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: "Contacto" }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: /Entradas/i }).length).toBeGreaterThan(0);
@@ -20,6 +21,12 @@ describe("Navbar", () => {
 
     const agendaLink = screen.getAllByRole("link", { name: "Agenda" })[0];
     expect(agendaLink.className).toContain("bg-primary");
+  });
+
+  it("marks speakers route as active", () => {
+    renderWithRouter(<Navbar />, { route: "/speakers" });
+
+    expect(screen.getAllByRole("link", { name: "Speakers" })[0].className).toContain("bg-primary");
   });
 
   it("toggles mobile menu", async () => {

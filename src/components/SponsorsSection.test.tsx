@@ -24,7 +24,7 @@ describe("SponsorsSection", () => {
       "href",
       "https://tgcorp.tech/",
     );
-    expect(screen.getAllByText("Espacio disponible")).toHaveLength(3);
+    expect(screen.getAllByText("Espacio disponible")).toHaveLength(2);
   });
 
   it("links to sponsorship page", () => {
