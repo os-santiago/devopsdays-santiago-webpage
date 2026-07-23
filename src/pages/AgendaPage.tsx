@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Fragment } from "react";
+import { useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import {
@@ -8,11 +9,10 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Clock, Coffee, ExternalLink, MapPin, Mic2, Rocket, Users } from "lucide-react";
-import { agendaItems, type AgendaItem, type DayId, type SessionRoomId } from "@/data/event";
+import { agendaItems, speakers, type AgendaItem, type DayId, type SessionRoomId, type Speaker } from "@/data/event";
 
 const days = [
   { id: "day-1", label: "Día 1", title: "8 de Septiembre", icon: "🛸" },
@@ -85,6 +85,8 @@ const getItemsForTime = (dayId: DayId, time: string) =>
 
 const getDurationSlots = (item: AgendaItem) => item.durationSlots ?? 1;
 
+const getSessionId = (item: AgendaItem) => item.id ?? `${item.day}-${item.time.replace(":", "")}-${item.room}`;
+
 const isCoveredByEarlierItem = (dayId: DayId, timeIndex: number, times: string[], roomId?: SessionRoomId) =>
   agendaItems.some((item) => {
     if (item.day !== dayId || (roomId ? item.room !== roomId : item.room !== "all")) {
@@ -95,12 +97,14 @@ const isCoveredByEarlierItem = (dayId: DayId, timeIndex: number, times: string[]
     return itemStartIndex >= 0 && itemStartIndex < timeIndex && itemStartIndex + getDurationSlots(item) > timeIndex;
   });
 
-const SessionDetailsDialog = ({ item }: { item: AgendaItem }) => {
+const getSpeakers = (item: AgendaItem, speakerList: Speaker[]) =>
+  item.speakerIds?.map((id) => speakerList.find((speaker) => speaker.id === id)).filter((speaker): speaker is Speaker => Boolean(speaker)) ?? [];
+
+export const SessionDetailsDialog = ({ item, speakerList }: { item: AgendaItem; speakerList: Speaker[] }) => {
   const day = getDay(item.day);
   const room = item.room !== "all" ? getRoom(item.room) : undefined;
   const description = item.description ?? "Pronto publicaremos más detalles de esta actividad.";
-  const speaker = item.speaker || "Por confirmar";
-  const speakerRole = item.speakerRole ?? "Por confirmar";
+  const sessionSpeakers = getSpeakers(item, speakerList);
   const topics = item.topics?.length ? item.topics : [typeLabels[item.type] ?? item.type];
 
   return (
@@ -113,31 +117,40 @@ const SessionDetailsDialog = ({ item }: { item: AgendaItem }) => {
       </DialogHeader>
 
       <div className="space-y-6">
-        <p className="text-sm leading-6 text-muted-foreground">{description}</p>
+        <p className="whitespace-pre-line text-sm leading-6 text-muted-foreground">{description}</p>
 
-        <div className="flex flex-col gap-4 rounded-xl border border-border bg-card/60 p-4 sm:flex-row sm:items-center">
-          <img
-            src={item.speakerPhoto ?? "/placeholder.svg"}
-            alt={`Foto de ${speaker}`}
-            className="h-24 w-24 shrink-0 rounded-full border border-border object-cover bg-muted"
-          />
-          <div className="min-w-0">
-            <p className="text-sm font-semibold uppercase tracking-wide text-accent">Speaker</p>
-            <p className="text-lg font-bold text-foreground">{speaker}</p>
-            <p className="text-sm text-muted-foreground">{speakerRole}</p>
-            {item.speakerSocialUrl && (
-              <a
-                href={item.speakerSocialUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-accent hover:text-accent/80"
-              >
-                Redes sociales
-                <ExternalLink className="h-4 w-4" />
-              </a>
-            )}
-          </div>
-        </div>
+        {item.type !== "break" && <div className="space-y-4 rounded-xl border border-border bg-card/60 p-4">
+          {sessionSpeakers.length ? sessionSpeakers.map((speaker) => (
+            <div key={speaker.id} className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <img
+                src={speaker.photo}
+                alt={`Foto de ${speaker.name}`}
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null;
+                  currentTarget.src = "/placeholder.svg";
+                }}
+                className="h-24 w-24 shrink-0 rounded-full border border-border bg-muted object-cover"
+              />
+              <div className="min-w-0">
+                <p className="text-sm font-semibold uppercase tracking-wide text-accent">Speaker</p>
+                <p className="text-lg font-bold text-foreground">{speaker.name}</p>
+                <p className="text-sm text-muted-foreground">{speaker.role}</p>
+                <div className="mt-3 flex flex-wrap gap-3">
+                  {speaker.socials.map((social) => (
+                    <a key={social.url} href={social.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-accent hover:text-accent/80">
+                      {social.label}<ExternalLink className="h-4 w-4" />
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )) : (
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-wide text-accent">Speaker</p>
+              <p className="text-lg font-bold text-foreground">{item.host || "Por confirmar"}</p>
+            </div>
+          )}
+        </div>}
 
         <div>
           <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Temáticas</p>
@@ -157,41 +170,39 @@ const SessionDetailsDialog = ({ item }: { item: AgendaItem }) => {
   );
 };
 
-const AgendaCard = ({ item, index, showRoom = false }: { item: AgendaItem; index: number; showRoom?: boolean }) => {
+const AgendaCard = ({ item, index, onSelect, showRoom = false }: { item: AgendaItem; index: number; onSelect: (item: AgendaItem) => void; showRoom?: boolean }) => {
   const Icon = typeIcons[item.type] || Clock;
   const room = item.room !== "all" ? getRoom(item.room) : undefined;
+  const sessionSpeakers = getSpeakers(item, speakers);
+  const byline = sessionSpeakers.map((speaker) => speaker.name).join(", ") || item.host;
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <motion.button
-          type="button"
-          className={`h-full w-full rounded-xl border p-4 text-left transition-colors hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${typeStyles[item.type] ?? "border-border bg-card/60"}`}
-          initial={{ opacity: 0, y: 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: index * 0.03 }}
-        >
-          <div className="flex items-start gap-3">
-            <Icon className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" />
-            <div className="min-w-0">
-              {showRoom && room && (
-                <p className="mb-1 text-xs font-bold uppercase tracking-wide text-accent">
-                  {room.name} · {room.capacity}
-                </p>
-              )}
-              <p className="font-semibold text-foreground">{item.title}</p>
-              {item.speaker && <p className="mt-1 text-sm text-muted-foreground">{item.speaker}</p>}
-            </div>
-          </div>
-        </motion.button>
-      </DialogTrigger>
-      <SessionDetailsDialog item={item} />
-    </Dialog>
+    <motion.button
+      type="button"
+      onClick={() => onSelect(item)}
+      className={`h-full w-full rounded-xl border p-4 text-left transition-colors hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 ${typeStyles[item.type] ?? "border-border bg-card/60"}`}
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.03 }}
+    >
+      <div className="flex items-start gap-3">
+        <Icon className="mt-0.5 h-5 w-5 shrink-0 text-muted-foreground" />
+        <div className="min-w-0">
+          {showRoom && room && (
+            <p className="mb-1 text-xs font-bold uppercase tracking-wide text-accent">
+              {room.name} · {room.capacity}
+            </p>
+          )}
+          <p className="font-semibold text-foreground">{item.title}</p>
+          {byline && <p className="mt-1 text-sm text-muted-foreground">{byline}</p>}
+        </div>
+      </div>
+    </motion.button>
   );
 };
 
-export const AgendaDay = ({ dayId }: { dayId: DayId }) => {
+export const AgendaDay = ({ dayId, onSelect = () => {} }: { dayId: DayId; onSelect?: (item: AgendaItem) => void }) => {
   const times = getDayTimes(dayId);
 
   if (times.length === 0) {
@@ -248,7 +259,7 @@ export const AgendaDay = ({ dayId }: { dayId: DayId }) => {
                     key={`${dayId}-${time}-shared`}
                     style={{ gridColumn: "2 / span 4", gridRow: `${gridRow} / span ${getDurationSlots(sharedItem)}` }}
                   >
-                    <AgendaCard item={sharedItem} index={timeIndex} />
+                    <AgendaCard item={sharedItem} index={timeIndex} onSelect={onSelect} />
                   </div>
                 )}
 
@@ -270,7 +281,7 @@ export const AgendaDay = ({ dayId }: { dayId: DayId }) => {
                         }}
                       >
                         {roomItem ? (
-                          <AgendaCard item={roomItem} index={timeIndex} />
+                          <AgendaCard item={roomItem} index={timeIndex} onSelect={onSelect} />
                         ) : (
                           <div className="h-full rounded-xl border border-dashed border-border/70 bg-muted/10 p-4 text-sm text-muted-foreground">
                             Sala cerrada
@@ -294,7 +305,7 @@ export const AgendaDay = ({ dayId }: { dayId: DayId }) => {
               <p className="mb-3 text-sm font-mono font-bold text-muted-foreground">{time}</p>
               <div className="space-y-3">
                 {items.map((item) => (
-                  <AgendaCard key={`${item.time}-${item.room}-${item.title}`} item={item} index={timeIndex} showRoom />
+                  <AgendaCard key={`${item.time}-${item.room}-${item.title}`} item={item} index={timeIndex} onSelect={onSelect} showRoom />
                 ))}
               </div>
             </div>
@@ -330,8 +341,21 @@ const RoomsOverview = () => (
   </section>
 );
 
-const AgendaPage = () => (
-  <div className="min-h-screen bg-background">
+const AgendaPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedItem = agendaItems.find((item) => getSessionId(item) === searchParams.get("session"));
+  const selectItem = (item: AgendaItem) => setSearchParams((current) => {
+    const next = new URLSearchParams(current);
+    next.set("session", getSessionId(item));
+    return next;
+  });
+  const closeDialog = () => setSearchParams((current) => {
+    const next = new URLSearchParams(current);
+    next.delete("session");
+    return next;
+  });
+
+  return <div className="min-h-screen bg-background">
     <Navbar />
     <div className="pt-24 pb-20">
       <div className="container mx-auto px-4">
@@ -351,7 +375,7 @@ const AgendaPage = () => (
           </p>
         </motion.div>
 
-        <Tabs defaultValue="day-1" className="mx-auto max-w-6xl">
+        <Tabs defaultValue={selectedItem?.day ?? "day-1"} className="mx-auto max-w-6xl">
           <div className="mb-8 flex justify-center">
             <TabsList className="h-auto flex-wrap">
               {days.map((day) => (
@@ -364,7 +388,7 @@ const AgendaPage = () => (
 
           {days.map((day) => (
             <TabsContent key={day.id} value={day.id} className="mt-0">
-              <AgendaDay dayId={day.id} />
+              <AgendaDay dayId={day.id} onSelect={selectItem} />
             </TabsContent>
           ))}
         </Tabs>
@@ -372,8 +396,11 @@ const AgendaPage = () => (
         <RoomsOverview />
       </div>
     </div>
+    <Dialog open={Boolean(selectedItem)} onOpenChange={(open) => !open && closeDialog()}>
+      {selectedItem && <SessionDetailsDialog item={selectedItem} speakerList={speakers} />}
+    </Dialog>
     <Footer />
   </div>
-);
+};
 
 export default AgendaPage;

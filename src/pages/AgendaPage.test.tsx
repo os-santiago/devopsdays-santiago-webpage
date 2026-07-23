@@ -1,8 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { screen, within } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import AgendaPage from "@/pages/AgendaPage";
+import AgendaPage, { SessionDetailsDialog } from "@/pages/AgendaPage";
+import { Dialog } from "@/components/ui/dialog";
 import { renderWithRouter } from "@/test/test-utils";
+import type { AgendaItem, Speaker } from "@/data/event";
+
+const speakerList: Speaker[] = [
+  { id: "ada", category: "accepted", name: "Ada", role: "SRE", photo: "https://example.com/ada.jpg", socials: [{ label: "LinkedIn", url: "https://linkedin.com/in/ada" }] },
+  { id: "grace", category: "accepted", name: "Grace", role: "Platform Lead", photo: "https://example.com/grace.jpg", socials: [] },
+];
 
 describe("AgendaPage", () => {
   it("renders agenda tabs, room lanes, capacities, and shared events", () => {
@@ -44,8 +51,78 @@ describe("AgendaPage", () => {
     expect(dialogContent.getByText("8 de Septiembre · 12:00 · Auditorio Principal")).toBeInTheDocument();
     expect(dialogContent.getByText("Pronto publicaremos más detalles de esta actividad.")).toBeInTheDocument();
     expect(dialogContent.getByText("Karen Quijada")).toBeInTheDocument();
-    expect(dialogContent.getByText("Por confirmar")).toBeInTheDocument();
     expect(dialogContent.getByText("Actividad")).toBeInTheDocument();
-    expect(dialogContent.getByAltText("Foto de Karen Quijada")).toHaveAttribute("src", "/placeholder.svg");
+  });
+
+  it("opens a session directly from its URL id", () => {
+    renderWithRouter(<AgendaPage />, { route: "/agenda?session=day-1-0900-main" });
+
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(screen.getByRole("heading", {
+      name: "DevOps ha muerto, larga vida al DevOps: de servir aplicaciones a servir modelos",
+    })).toBeInTheDocument();
+  });
+
+  it.each([
+    ["sin speaker", { host: "Comité Organizador" }, ["Comité Organizador"]],
+    ["con un speaker", { speakerIds: ["ada"] }, ["Ada", "SRE"]],
+    ["con varios speakers", { speakerIds: ["ada", "grace"] }, ["Ada", "Grace"]],
+  ])("renders a session %s", (_, speakerData, expectedTexts) => {
+    const item: AgendaItem = {
+      id: "session",
+      day: "day-1",
+      time: "09:00",
+      title: "Sesión compartida",
+      type: "talk",
+      room: "main",
+      ...speakerData,
+    };
+
+    render(
+      <Dialog open>
+        <SessionDetailsDialog item={item} speakerList={speakerList} />
+      </Dialog>,
+    );
+
+    expectedTexts.forEach((text) => expect(within(screen.getByRole("dialog")).getByText(text)).toBeInTheDocument());
+  });
+
+  it("does not render speaker details for breaks", () => {
+    const item: AgendaItem = {
+      day: "day-1",
+      time: "10:00",
+      title: "Coffee Break",
+      type: "break",
+      room: "all",
+    };
+
+    render(
+      <Dialog open>
+        <SessionDetailsDialog item={item} speakerList={speakerList} />
+      </Dialog>,
+    );
+
+    expect(within(screen.getByRole("dialog")).queryByText("Speaker")).not.toBeInTheDocument();
+  });
+
+  it("preserves line breaks in session descriptions", () => {
+    const item: AgendaItem = {
+      day: "day-1",
+      time: "09:00",
+      title: "Keynote",
+      description: "Primer párrafo.\nSegundo párrafo.",
+      type: "keynote",
+      room: "main",
+    };
+
+    render(
+      <Dialog open>
+        <SessionDetailsDialog item={item} speakerList={speakerList} />
+      </Dialog>,
+    );
+
+    const description = screen.getByRole("dialog").querySelector(".whitespace-pre-line");
+    expect(description?.textContent).toBe(item.description);
+    expect(description).toHaveClass("whitespace-pre-line");
   });
 });

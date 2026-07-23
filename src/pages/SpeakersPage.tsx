@@ -32,16 +32,24 @@ const sections: { category: SpeakerCategory; title: string; description: string 
 
 const dayLabels = { "day-1": "8 de Septiembre", "day-2": "9 de Septiembre" };
 
-const SpeakerDialog = ({ speaker, session }: { speaker: Speaker; session: AgendaItem }) => (
+const SpeakerDialog = ({ speaker, sessions }: { speaker: Speaker; sessions: AgendaItem[] }) => (
   <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
     <DialogHeader>
-      <DialogTitle className="pr-8 text-2xl leading-tight">{session.title}</DialogTitle>
-      <DialogDescription>{dayLabels[session.day]} · {session.time}</DialogDescription>
+      <DialogTitle className="pr-8 text-2xl leading-tight">{speaker.name}</DialogTitle>
+      <DialogDescription>{speaker.role}</DialogDescription>
     </DialogHeader>
 
     <div className="space-y-6">
       <div className="flex flex-col gap-4 rounded-xl border border-border bg-card/60 p-4 sm:flex-row sm:items-center">
-        <img src={speaker.photo} alt={`Foto de ${speaker.name}`} className="h-24 w-24 shrink-0 rounded-full object-cover" />
+        <img
+          src={speaker.photo}
+          alt={`Foto de ${speaker.name}`}
+          onError={({ currentTarget }) => {
+            currentTarget.onerror = null;
+            currentTarget.src = "/placeholder.svg";
+          }}
+          className="h-24 w-24 shrink-0 rounded-full object-cover"
+        />
         <div>
           <p className="text-xl font-bold">{speaker.name}</p>
           <p className="text-sm text-muted-foreground">{speaker.role}</p>
@@ -56,20 +64,25 @@ const SpeakerDialog = ({ speaker, session }: { speaker: Speaker; session: Agenda
         </div>
       </div>
 
-      <p className="text-sm leading-6 text-muted-foreground">{session.description}</p>
-      <div>
-        <p className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">Temáticas</p>
-        <div className="flex flex-wrap gap-2">
-          {session.topics?.map((topic) => (
-            <span key={topic} className="rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">{topic}</span>
-          ))}
+      {sessions.map((session) => (
+        <div key={session.id ?? `${session.day}-${session.time}-${session.room}`} className="space-y-3">
+          <div>
+            <p className="text-lg font-bold">{session.title}</p>
+            <p className="text-sm text-muted-foreground">{dayLabels[session.day]} · {session.time}</p>
+          </div>
+          <p className="whitespace-pre-line text-sm leading-6 text-muted-foreground">{session.description}</p>
+          <div className="flex flex-wrap gap-2">
+            {session.topics?.map((topic) => (
+              <span key={topic} className="rounded-full border border-accent/30 bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">{topic}</span>
+            ))}
+          </div>
         </div>
-      </div>
+      ))}
     </div>
   </DialogContent>
 );
 
-const SpeakerCard = ({ speaker, session }: { speaker: Speaker; session: AgendaItem }) => (
+const SpeakerCard = ({ speaker, sessions }: { speaker: Speaker; sessions: AgendaItem[] }) => (
   <Dialog>
     <DialogTrigger asChild>
       <motion.button
@@ -86,7 +99,15 @@ const SpeakerCard = ({ speaker, session }: { speaker: Speaker; session: AgendaIt
         ) : (
           <div className="p-5">
             <div className="flex items-center gap-4">
-              <img src={speaker.photo} alt={`Foto de ${speaker.name}`} className={speaker.category === "sponsor" ? "h-28 w-28 rounded-xl object-cover" : "h-24 w-24 rounded-full object-cover"} />
+              <img
+                src={speaker.photo}
+                alt={`Foto de ${speaker.name}`}
+                onError={({ currentTarget }) => {
+                  currentTarget.onerror = null;
+                  currentTarget.src = "/placeholder.svg";
+                }}
+                className={speaker.category === "sponsor" ? "h-28 w-28 rounded-xl object-cover" : "h-24 w-24 rounded-full object-cover"}
+              />
               {speaker.category === "sponsor" && (
                 <img src={speaker.companyLogo} alt={`Logo de ${speaker.company}`} className="max-h-16 min-w-0 flex-1 object-contain" />
               )}
@@ -98,7 +119,7 @@ const SpeakerCard = ({ speaker, session }: { speaker: Speaker; session: AgendaIt
         )}
       </motion.button>
     </DialogTrigger>
-    <SpeakerDialog speaker={speaker} session={session} />
+    <SpeakerDialog speaker={speaker} sessions={sessions} />
   </Dialog>
 );
 
@@ -116,8 +137,8 @@ export const SpeakersContent = ({ speakerList, sessions }: { speakerList: Speake
           {categorySpeakers.length ? (
             <div className={`flex flex-wrap justify-center gap-6 ${section.category === "keynote" ? "mx-auto max-w-5xl" : ""}`}>
               {categorySpeakers.map((speaker) => {
-                const session = sessions.find((item) => item.id === speaker.sessionId);
-                return session ? <SpeakerCard key={speaker.id} speaker={speaker} session={session} /> : null;
+                const speakerSessions = sessions.filter((item) => item.speakerIds?.includes(speaker.id));
+                return speakerSessions.length ? <SpeakerCard key={speaker.id} speaker={speaker} sessions={speakerSessions} /> : null;
               })}
             </div>
           ) : (
