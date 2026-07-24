@@ -42,7 +42,7 @@ const SpeakerDialog = ({ speaker, sessions }: { speaker: Speaker; sessions: Agen
     <div className="space-y-6">
       <div className="flex flex-col gap-4 rounded-xl border border-border bg-card/60 p-4 sm:flex-row sm:items-center">
         <img
-          src={speaker.photo}
+          src={speaker.photo || "/placeholder.svg"}
           alt={`Foto de ${speaker.name}`}
           onError={({ currentTarget }) => {
             currentTarget.onerror = null;
@@ -95,12 +95,12 @@ const SpeakerCard = ({ speaker, sessions }: { speaker: Speaker; sessions: Agenda
         viewport={{ once: true }}
       >
         {speaker.category === "keynote" ? (
-          <img src={speaker.banner} alt={`Gráfica promocional de ${speaker.name}`} className="aspect-[2/1] w-full object-cover md:aspect-[3/1]" />
+          <img src={speaker.banner || "/placeholder.svg"} alt={`Gráfica promocional de ${speaker.name}`} className="aspect-[2/1] w-full object-cover md:aspect-[3/1]" />
         ) : (
           <div className="p-5">
             <div className="flex items-center gap-4">
               <img
-                src={speaker.photo}
+                src={speaker.photo || "/placeholder.svg"}
                 alt={`Foto de ${speaker.name}`}
                 onError={({ currentTarget }) => {
                   currentTarget.onerror = null;
@@ -109,7 +109,7 @@ const SpeakerCard = ({ speaker, sessions }: { speaker: Speaker; sessions: Agenda
                 className={speaker.category === "sponsor" ? "h-28 w-28 rounded-xl object-cover" : "h-24 w-24 rounded-full object-cover"}
               />
               {speaker.category === "sponsor" && (
-                <img src={speaker.companyLogo} alt={`Logo de ${speaker.company}`} className="max-h-16 min-w-0 flex-1 object-contain" />
+                <img src={speaker.companyLogo || "/placeholder.svg"} alt={`Logo de ${speaker.company}`} className="max-h-16 min-w-0 flex-1 object-contain" />
               )}
             </div>
             <p className="mt-5 text-xl font-bold">{speaker.name}</p>

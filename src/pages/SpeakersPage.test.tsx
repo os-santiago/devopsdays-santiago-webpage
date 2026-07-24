@@ -58,4 +58,19 @@ describe("SpeakersContent", () => {
 
     expect(photo).toHaveAttribute("src", "/placeholder.svg");
   });
+
+  it("uses placeholders for undeclared speaker images", () => {
+    const speakersWithoutImages = speakerList.map((speaker) => ({
+      ...speaker,
+      photo: "",
+      banner: undefined,
+      companyLogo: undefined,
+    }));
+
+    render(<SpeakersContent speakerList={speakersWithoutImages} sessions={sessions} />);
+
+    expect(screen.getByAltText("Gráfica promocional de Ada")).toHaveAttribute("src", "/placeholder.svg");
+    expect(screen.getByAltText("Foto de Grace")).toHaveAttribute("src", "/placeholder.svg");
+    expect(screen.getByAltText("Logo de Acme")).toHaveAttribute("src", "/placeholder.svg");
+  });
 });
