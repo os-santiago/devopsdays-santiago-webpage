@@ -10,7 +10,7 @@ describe("HeroSection", () => {
     expect(screen.getByRole("heading", { name: /DevOpsDays/i })).toBeInTheDocument();
     expect(screen.getByText("8-9 Septiembre, 2026")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Comprar Entradas/i })).toHaveAttribute("href", "#entradas");
-    expect(screen.getByRole("link", { name: /Postula tu Charla/i })).toHaveAttribute("href", "#cfp");
+    expect(screen.getByRole("link", { name: /Descubre nuestra agenda/i })).toHaveAttribute("href", "/agenda");
     expect(screen.getByRole("link", { name: /Participa como Voluntario/i })).toHaveAttribute("href", "https://homedir.opensourcesantiago.io/event/devopsdays-santiago-2026/volunteers");
   });
 

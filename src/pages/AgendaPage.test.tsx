@@ -26,8 +26,8 @@ describe("AgendaPage", () => {
     expect(screen.getAllByText("700+ personas").length).toBeGreaterThan(0);
     expect(screen.getAllByText("100 personas").length).toBeGreaterThanOrEqual(2);
 
-    expect(screen.getAllByText("Panel de Mujeres 👩🏼‍💻: --").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Taller: --").length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Organizadores - Más allá de la IA/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/El pod que tumbó la cadena/).length).toBeGreaterThan(0);
     expect(screen.getAllByText("Taller").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Sala cerrada").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Registro y Café ☕ + Networking 🗣️").length).toBeGreaterThan(0);
@@ -42,21 +42,21 @@ describe("AgendaPage", () => {
 
     renderWithRouter(<AgendaPage />, { route: "/agenda" });
 
-    await user.click(screen.getAllByRole("button", { name: /Panel de Mujeres/i })[0]);
+    await user.click(screen.getAllByRole("button", { name: /Organizadores - Más allá de la IA/i })[0]);
 
     const dialog = screen.getByRole("dialog");
     const dialogContent = within(dialog);
 
     expect(dialog).toBeInTheDocument();
-    expect(dialogContent.getByRole("heading", { name: "Panel de Mujeres 👩🏼‍💻: --" })).toBeInTheDocument();
+    expect(dialogContent.getByRole("heading", { name: "Organizadores - Más allá de la IA: la evolución de las comunidades DevOps en LATAM en un mundo de IA" })).toBeInTheDocument();
     expect(dialogContent.getByText("8 de Septiembre · 12:00 · Auditorio Principal")).toBeInTheDocument();
-    expect(dialogContent.getByText("Pronto publicaremos más detalles de esta actividad.")).toBeInTheDocument();
+    expect(dialogContent.getByText(/La Inteligencia Artificial está transformando/)).toBeInTheDocument();
     expect(dialogContent.getByText("Karen Quijada")).toBeInTheDocument();
-    expect(dialogContent.getAllByText("Panel")).toHaveLength(2);
+    expect(dialogContent.getByText("Panel")).toBeInTheDocument();
   });
 
   it("opens a session directly from its URL id", () => {
-    renderWithRouter(<AgendaPage />, { route: "/agenda?session=day-1-0900-main" });
+    renderWithRouter(<AgendaPage />, { route: "/agenda?session=keynote-matias-sonnleitner" });
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
     expect(screen.getByRole("heading", {

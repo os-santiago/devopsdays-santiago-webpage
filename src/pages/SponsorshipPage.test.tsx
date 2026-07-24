@@ -9,10 +9,10 @@ describe("SponsorshipPage", () => {
 
     expect(screen.getByRole("heading", { name: /Niveles de Patrocinio/i })).toBeInTheDocument();
     expect(screen.getByText("Platinum 🪐")).toBeInTheDocument();
-    expect(screen.getByText("SOLD OUT!")).toBeInTheDocument();
+    expect(screen.getAllByText("SOLD OUT!")).toHaveLength(2);
     expect(screen.getByText("Gold 🌎")).toBeInTheDocument();
     expect(screen.getByText("Silver 🌙")).toBeInTheDocument();
-    expect(screen.getAllByText("1 CUPO DISPONIBLE")).toHaveLength(2);
+    expect(screen.getByText("1 CUPO DISPONIBLE")).toBeInTheDocument();
     expect(screen.getByText("Colaboraciones y Comunidades")).toBeInTheDocument();
 
     const contactLinks = screen.getAllByRole("link", { name: "Contactar" });
