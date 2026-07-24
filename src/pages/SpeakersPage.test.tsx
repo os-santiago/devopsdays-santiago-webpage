@@ -25,6 +25,8 @@ describe("SpeakersContent", () => {
     expect(headings[0].compareDocumentPosition(headings[1]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(headings[1].compareDocumentPosition(headings[2]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(screen.getByAltText("Gráfica promocional de Ada")).toHaveAttribute("src", "/ada-banner.jpg");
+    expect(screen.getByAltText("Gráfica promocional de Ada")).toHaveClass("h-auto", "w-full");
+    expect(screen.getByAltText("Gráfica promocional de Ada")).not.toHaveClass("object-cover");
     expect(screen.getByAltText("Logo de Acme")).toHaveAttribute("src", "/acme.svg");
     expect(screen.getByRole("button", { name: /Ada/ })).not.toHaveClass("max-w-sm", "max-w-xs");
     expect(screen.getByRole("button", { name: /Grace/ })).toHaveClass("max-w-sm", "bg-white", "border-slate-200");
@@ -60,7 +62,7 @@ describe("SpeakersContent", () => {
     expect(photo).toHaveAttribute("src", "/placeholder.svg");
   });
 
-  it("uses placeholders for undeclared speaker images", () => {
+  it("hides keynotes without banners and uses placeholders for other undeclared images", () => {
     const speakersWithoutImages = speakerList.map((speaker) => ({
       ...speaker,
       photo: "",
@@ -70,7 +72,7 @@ describe("SpeakersContent", () => {
 
     render(<SpeakersContent speakerList={speakersWithoutImages} sessions={sessions} />);
 
-    expect(screen.getByAltText("Gráfica promocional de Ada")).toHaveAttribute("src", "/placeholder.svg");
+    expect(screen.queryByAltText("Gráfica promocional de Ada")).not.toBeInTheDocument();
     expect(screen.getByAltText("Foto de Grace")).toHaveAttribute("src", "/placeholder.svg");
     expect(screen.getByAltText("Logo de Acme")).toHaveAttribute("src", "/placeholder.svg");
   });

@@ -99,7 +99,7 @@ const SpeakerCard = ({ speaker, sessions }: { speaker: Speaker; sessions: Agenda
         viewport={{ once: true }}
       >
         {speaker.category === "keynote" ? (
-          <img src={speaker.banner || "/placeholder.svg"} alt={`Gráfica promocional de ${speaker.name}`} className="aspect-[2/1] w-full object-cover md:aspect-[3/1]" />
+          <img src={speaker.banner || "/placeholder.svg"} alt={`Gráfica promocional de ${speaker.name}`} className="block h-auto w-full" />
         ) : (
           <div className="p-5">
             <div className="flex items-center gap-4">
@@ -130,7 +130,9 @@ const SpeakerCard = ({ speaker, sessions }: { speaker: Speaker; sessions: Agenda
 export const SpeakersContent = ({ speakerList, sessions }: { speakerList: Speaker[]; sessions: AgendaItem[] }) => (
   <div className="space-y-20">
     {sections.map((section) => {
-      const categorySpeakers = speakerList.filter((speaker) => speaker.category === section.category);
+      const categorySpeakers = speakerList.filter(
+        (speaker) => speaker.category === section.category && (speaker.category !== "keynote" || Boolean(speaker.banner)),
+      );
 
       return (
         <section key={section.category} aria-labelledby={`${section.category}-title`}>

@@ -1,3 +1,8 @@
+import axmosLogo from "@/assets/logo-axmosdatadog.svg";
+import dynatraceLogo from "@/assets/logo-dynatrace.svg";
+import mondiniLogo from "@/assets/logo-mondini.svg";
+import tgNativeLogo from "@/assets/logo-tgnative.svg";
+
 export type DayId = "day-1" | "day-2";
 export type SessionRoomId = "main" | "room-a" | "room-b";
 export type RoomId = SessionRoomId | "all";
@@ -90,10 +95,10 @@ export const speakers: Speaker[] = [
   { id: "jorge-valenzuela", category: "comite", name: "Jorge Valenzuela", company: "Depósito Central de Valores", role: "Ingeniero DevOps & Organizador de DevOpsDays Santiago", photo: "/speakers/jorge-valenzuela.png", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/jorgevalenzueladiaz/" }] },
   { id: "caco", category: "comite", name: "Juan José Mendez", company: "Red Hat", role: "Marketing Specialist & Organizador de DevOpsDays Santiago", photo: "/speakers/caco.png", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/juan-jos%C3%A9-mendez-r/" }] },
   { id: "matias-sonnleitner", category: "keynote", name: "Matías Sonnleitner", company: "SoftServe", role: "Cloud & DevOps Cluster Lead", photo: "/speakers/matias-sonnleitner.jpeg", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/msonnlef/" }] },
-  { id: "speaker-mondini", category: "sponsor", company: "Mondini IT", companyLogo: "/src/assets/logo-mondini.svg", name: "Invitado de Mondini IT", role: "", photo: "", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/company/mondini-it-br/" }] },
-  { id: "speaker-dynatrace", category: "sponsor", name: "Invitado de Dynatrace", role: "", photo: "", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/company/dynatrace/" }] },
-  { id: "leonardo-ramirez", category: "sponsor", company: "TG Corp", companyLogo: "/src/assets/logo-tgnative.svg", name: "Leonardo Ramirez", role: "COO & Co-founder / SRE", photo: "/speakers/leonardo-ramirez.jpeg", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/leonardo-a-ramirez-l/" }] },
-  { id: "christian-onetto", category: "sponsor", name: "Christian Onetto", company: "Avanxa", role: "CEO & Co-founder", photo: "", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/christianonetto/" }] },
+  { id: "speaker-mondini", category: "sponsor", company: "Mondini IT", companyLogo: mondiniLogo, name: "Invitado de Mondini IT", role: "", photo: "", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/company/mondini-it-br/" }] },
+  { id: "speaker-dynatrace", category: "sponsor", company: "Dynatrace", companyLogo: dynatraceLogo, name: "Invitado de Dynatrace", role: "", photo: "", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/company/dynatrace/" }] },
+  { id: "leonardo-ramirez", category: "sponsor", company: "TG Corp", companyLogo: tgNativeLogo, name: "Leonardo Ramirez", role: "COO & Co-founder / SRE", photo: "/speakers/leonardo-ramirez.jpeg", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/leonardo-a-ramirez-l/" }] },
+  { id: "christian-onetto", category: "sponsor", companyLogo: axmosLogo, name: "Christian Onetto", company: "Avanxa", role: "CEO & Co-founder", photo: "", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/christianonetto/" }] },
   { id: "cami-punk", category: "accepted", name: "Camilla Martins", company: "Storyblok", role: "Senior SRE & Organizadora del DevOpsDays Rio de Janeiro", photo: "/speakers/cami-punk.jpeg", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/camilla-martins-603344115/" }] },
   { id: "axel-labruna", category: "accepted", name: "Axel Labruna", company: "Nubiral", role: "Arquitecto de Soluciones & Organizador del DevOpsDays Buenos Aires", photo: "/speakers/axel-labruna.jpeg", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/axelglabruna/" }] },
   { id: "alvaro-navarro", category: "accepted", name: "Alvaro Nicolas Navarro Castro", company: "Latam", role: "SRE", photo: "/speakers/alvaro-navarro.png", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/alvaronicolasnavarrocastro/" }] },
@@ -102,7 +107,7 @@ export const speakers: Speaker[] = [
   { id: "xavier-llauca", category: "accepted", name: "Xavier Llauca", company: "Confidencial", role: "Cloud Infrastructure Specialist", photo: "/speakers/xavier-llauca.jpg", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/xllauca/" }] },
   { id: "cesar-lorca", category: "accepted", name: "César Lorca Bacian", company: "SUSE", role: "Pre-sales Engineer SOLA", photo: "/speakers/cesar-lorca.jpeg", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/cesarlorca/" }] },
   { id: "carlos-estay", category: "accepted", name: "Carlos Estay González", company: "Red Hat", role: "Associate Principal AI Specialist SA", photo: "/speakers/carlos-estay.jpeg", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/cestayg/" }] },
-  { id: "andres-barrientos", category: "keynote", name: "Andres Barrientos", role: "Keynote Speaker", photo: "/speakers/andres-barrientos.jpeg", socials: [] },
+  { id: "andres-barrientos", category: "keynote", banner: "/speakers/keynote-andres-barrientos.png", name: "Andres Barrientos", role: "CTO", company: "Cyber-Protection.cl", photo: "/speakers/andres-barrientos.jpeg", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/andresbarrientosc/" }] },
   { id: "johan-prieto", category: "keynote", banner: "/speakers/keynote-johan-prieto.png", name: "Johan Prieto", company: "CredibanCo", role: "Lider DevSecOps", photo: "/speakers/johan-prieto.jpeg", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/johanhprietob/" }] },
   { id: "melisa-arenas", category: "accepted", name: "Melisa Arenas", company: "Axmos", role: "SRE & Internal Ops Manager", photo: "/speakers/melisa-arenas.jpeg", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/meliarenas/" }] },
   { id: "alonso-utreras", category: "accepted", name: "Alonso Utreras", company: "Frust", role: "Principal Product Engineer", photo: "/speakers/alonso-utreras.jpeg", socials: [{ label: "LinkedIn", url: "https://www.linkedin.com/in/alonso-utreras-8979b21bb/" }] },
