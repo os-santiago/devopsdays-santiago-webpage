@@ -87,7 +87,11 @@ const SpeakerCard = ({ speaker, sessions }: { speaker: Speaker; sessions: Agenda
     <DialogTrigger asChild>
       <motion.button
         type="button"
-        className={`group overflow-hidden rounded-2xl border border-border bg-card/70 text-left transition hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+        className={`group overflow-hidden rounded-2xl border text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+          speaker.category === "sponsor"
+            ? "border-slate-200 bg-white shadow-sm hover:border-accent hover:shadow-md"
+            : "border-border bg-card/70 hover:border-accent"
+        } ${
           speaker.category === "keynote" ? "w-full" : speaker.category === "sponsor" ? "w-full max-w-sm" : "w-full max-w-xs"
         }`}
         initial={{ opacity: 0, y: 20 }}
@@ -112,9 +116,9 @@ const SpeakerCard = ({ speaker, sessions }: { speaker: Speaker; sessions: Agenda
                 <img src={speaker.companyLogo || "/placeholder.svg"} alt={`Logo de ${speaker.company}`} className="max-h-16 min-w-0 flex-1 object-contain" />
               )}
             </div>
-            <p className="mt-5 text-xl font-bold">{speaker.name}</p>
-            <p className="mt-1 text-sm text-muted-foreground">{speaker.role}</p>
-            <p className="mt-3 text-sm font-semibold text-accent">{speaker.socials.map((social) => social.label).join(" · ")}</p>
+            <p className={`mt-5 text-xl font-bold ${speaker.category === "sponsor" ? "text-secondary" : "text-foreground"}`}>{speaker.name}</p>
+            <p className={`mt-1 text-sm ${speaker.category === "sponsor" ? "text-slate-600" : "text-muted-foreground"}`}>{speaker.role}</p>
+            <p className={`mt-3 text-sm font-semibold ${speaker.category === "sponsor" ? "text-secondary" : "text-accent"}`}>{speaker.socials.map((social) => social.label).join(" · ")}</p>
           </div>
         )}
       </motion.button>
