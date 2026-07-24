@@ -28,6 +28,7 @@ describe("AgendaPage", () => {
 
     expect(screen.getAllByText("Panel de Mujeres 👩🏼‍💻: --").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Taller: --").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Taller").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Sala cerrada").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Registro y Café ☕ + Networking 🗣️").length).toBeGreaterThan(0);
     expect(screen.getByRole("heading", { name: "Salas" })).toBeInTheDocument();
@@ -51,7 +52,7 @@ describe("AgendaPage", () => {
     expect(dialogContent.getByText("8 de Septiembre · 12:00 · Auditorio Principal")).toBeInTheDocument();
     expect(dialogContent.getByText("Pronto publicaremos más detalles de esta actividad.")).toBeInTheDocument();
     expect(dialogContent.getByText("Karen Quijada")).toBeInTheDocument();
-    expect(dialogContent.getByText("Actividad")).toBeInTheDocument();
+    expect(dialogContent.getAllByText("Panel")).toHaveLength(2);
   });
 
   it("opens a session directly from its URL id", () => {

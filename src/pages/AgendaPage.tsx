@@ -51,6 +51,7 @@ const typeStyles: Record<string, string> = {
   keynote: "border-primary bg-primary/10",
   talk: "border-accent bg-accent/10",
   ignite: "border-space-star bg-space-star/10",
+  panel: "border-space-star bg-space-star/10",
   workshop: "border-accent bg-accent/5",
   break: "border-border bg-muted/30",
 };
@@ -110,6 +111,9 @@ export const SessionDetailsDialog = ({ item, speakerList }: { item: AgendaItem; 
   return (
     <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
       <DialogHeader>
+        <p className="pr-8 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {typeLabels[item.type] ?? item.type}
+        </p>
         <DialogTitle className="pr-8 text-2xl leading-tight">{item.title}</DialogTitle>
         <DialogDescription>
           {day?.title} · {item.time} · {room?.name ?? "Plaza Principal"}
@@ -194,6 +198,9 @@ const AgendaCard = ({ item, index, onSelect, showRoom = false }: { item: AgendaI
               {room.name} · {room.capacity}
             </p>
           )}
+          <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+            {typeLabels[item.type] ?? item.type}
+          </p>
           <p className="font-semibold text-foreground">{item.title}</p>
           {byline && <p className="mt-1 text-sm text-muted-foreground">{byline}</p>}
         </div>
