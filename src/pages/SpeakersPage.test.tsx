@@ -31,6 +31,8 @@ describe("SpeakersContent", () => {
     expect(screen.getByRole("button", { name: /Ada/ })).not.toHaveClass("max-w-sm", "max-w-xs");
     expect(screen.getByRole("button", { name: /Grace/ })).toHaveClass("max-w-sm", "bg-white", "border-slate-200");
     expect(screen.getByText("Platform Lead")).toHaveClass("text-slate-600");
+    expect(screen.getByText("Acme")).toBeInTheDocument();
+    expect(screen.queryByText("LinkedIn")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Linus/ })).toHaveClass("max-w-xs");
     expect(screen.getByRole("button", { name: /Linus/ })).not.toHaveTextContent("Acme");
   });
