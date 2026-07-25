@@ -27,6 +27,7 @@ describe("SpeakersContent", () => {
     expect(screen.getByAltText("Gráfica promocional de Ada")).toHaveAttribute("src", "/ada-banner.jpg");
     expect(screen.getByAltText("Gráfica promocional de Ada")).toHaveClass("h-auto", "w-full");
     expect(screen.getByAltText("Gráfica promocional de Ada")).not.toHaveClass("object-cover");
+    expect(screen.getByAltText("Gráfica promocional de Ada").closest("section")?.querySelector(".grid")).toHaveClass("grid-cols-1", "min-[900px]:grid-cols-2");
     expect(screen.getByAltText("Logo de Acme")).toHaveAttribute("src", "/acme.svg");
     expect(screen.getByRole("button", { name: /Ada/ })).not.toHaveClass("max-w-sm", "max-w-xs");
     expect(screen.getByRole("button", { name: /Grace/ })).toHaveClass("max-w-sm", "bg-white", "border-slate-200");

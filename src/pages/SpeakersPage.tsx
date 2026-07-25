@@ -143,7 +143,7 @@ export const SpeakersContent = ({ speakerList, sessions }: { speakerList: Speake
             <p className="mt-3 text-muted-foreground">{section.description}</p>
           </div>
           {categorySpeakers.length ? (
-            <div className={`flex flex-wrap justify-center gap-6 ${section.category === "keynote" ? "mx-auto max-w-5xl" : ""}`}>
+            <div className={section.category === "keynote" ? "mx-auto grid max-w-7xl grid-cols-1 gap-6 min-[900px]:grid-cols-2" : "flex flex-wrap justify-center gap-6"}>
               {categorySpeakers.map((speaker) => {
                 const speakerSessions = sessions.filter((item) => item.speakerIds?.includes(speaker.id));
                 return speakerSessions.length ? <SpeakerCard key={speaker.id} speaker={speaker} sessions={speakerSessions} /> : null;
