@@ -58,14 +58,14 @@ const levels = [
     name: "Colaboraciones y Comunidades",
     price: "Convocatoria abierta",
     color: "border-border",
-    highlight: true,
+    soldOut: true,
     benefits: [
       "Espacio para comunidades, media partners y colaboraciones",
       "Presencia en redes sociales y página web",
       "Articulación con la comunidad DevOpsDays Santiago",
     ],
-    ctaLabel: "Participa en colaboraciones y comunidades",
-    ctaHref: "https://forms.gle/PbDnyLSq1LdD8XPL6",
+    // ctaLabel: "Participa en colaboraciones y comunidades",
+    // ctaHref: "https://forms.gle/PbDnyLSq1LdD8XPL6",
   },
 ];
 
