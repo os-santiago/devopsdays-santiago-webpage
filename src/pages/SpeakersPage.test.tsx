@@ -21,7 +21,7 @@ describe("SpeakersContent", () => {
   it("renders the three categories in order with their distinct card content", () => {
     render(<SpeakersContent speakerList={speakerList} sessions={sessions} />);
 
-    const headings = ["Keynotes", "Patrocinadores", "Postulantes Aceptados"].map((name) => screen.getByRole("heading", { name }));
+    const headings = ["Keynotes", "Panelistas Platinum", "Nuestros Speakers"].map((name) => screen.getByRole("heading", { name }));
     expect(headings[0].compareDocumentPosition(headings[1]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(headings[1].compareDocumentPosition(headings[2]) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(screen.getByAltText("Gráfica promocional de Ada")).toHaveAttribute("src", "/ada-banner.jpg");
