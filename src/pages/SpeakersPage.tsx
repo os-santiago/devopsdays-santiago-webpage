@@ -20,12 +20,12 @@ const sections: { category: SpeakerCategory; title: string; description: string 
   },
   {
     category: "sponsor",
-    title: "Patrocinadores",
+    title: "Panelistas Platinum",
     description: "Representantes de las marcas que hacen posible el evento, compartiendo su visión y experiencia en DevOps.",
   },
   {
     category: "accepted",
-    title: "Postulantes Aceptados",
+    title: "Nuestros Speakers",
     description: "Propuestas seleccionadas por el comité por su mirada innovadora y su aporte a la comunidad.",
   },
 ];
