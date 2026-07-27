@@ -117,9 +117,9 @@ const SpeakerCard = ({ speaker, sessions }: { speaker: Speaker; sessions: Agenda
               )}
             </div>
             <p className={`mt-5 text-xl font-bold ${speaker.category === "sponsor" ? "text-secondary" : "text-foreground"}`}>{speaker.name}</p>
-            <p className={`mt-1 text-sm ${speaker.category === "sponsor" ? "text-slate-600" : "text-muted-foreground"}`}>{speaker.role}</p>
-            {speaker.company && (
-              <p className={`mt-3 text-sm font-semibold ${speaker.category === "sponsor" ? "text-secondary" : "text-accent"}`}>{speaker.company}</p>
+            {/* <p className={`mt-1 text-sm ${speaker.category === "sponsor" ? "text-slate-600" : "text-muted-foreground"}`}>{speaker.role}</p> */}
+            {speaker.role && (
+              <p className={`mt-3 text-sm font-semibold ${speaker.category === "sponsor" ? "text-secondary" : "text-accent"}`}>{speaker.role}</p>
             )}
           </div>
         )}
