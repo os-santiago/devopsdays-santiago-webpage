@@ -139,6 +139,7 @@ export const SessionDetailsDialog = ({ item, speakerList }: { item: AgendaItem; 
                 <p className="text-sm font-semibold uppercase tracking-wide text-accent">Speaker</p>
                 <p className="text-lg font-bold text-foreground">{speaker.name}</p>
                 <p className="text-sm text-muted-foreground">{speaker.role}</p>
+                <p className="text-sm text-muted-foreground font-semibold">{speaker.company}</p>
                 <div className="mt-3 flex flex-wrap gap-3">
                   {speaker.socials.map((social) => (
                     <a key={social.url} href={social.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm font-semibold text-accent hover:text-accent/80">
