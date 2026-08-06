@@ -3,7 +3,7 @@ import dynatraceLogo from "@/assets/logo-dynatrace.svg";
 import tgNativeLogo from "@/assets/logo-tgnative.svg";
 import redHatLogo from "@/assets/logo-redhat.svg";
 import technologySolutionsLogo from "@/assets/logo-techlatam.svg";
-import fluidAttacksLogo from "@/assets/logo-fluid-attack.svg";
+import fluidAttacksLogo from "@/assets/logo-fluid-attack.png";
 import mondiniLogo from "@/assets/logo-mondini.svg";
 import unykoLogo from "@/assets/logo-unykotalent.png";
 import axmosLogo from "@/assets/logo-axmosdatadog.svg";
@@ -16,6 +16,10 @@ import manageEngineLogo from "@/assets/logo-manageengine.svg";
 import ardanLabsLogo from "@/assets/logo-ardanlabs.svg";
 import aedaLogo from "@/assets/logo-aedait.png";
 import bukLogo from "@/assets/logo-buk.svg";
+import clickHouseLogo from "@/assets/logo-clickhouse.svg";
+import ninasProLogo from "@/assets/logo-ninaspro.png";
+import ossLogo from "@/assets/logo-oss.svg";
+import culturaAnimalLogo from "@/assets/logo-culturaanimal.png";
 
 type Sponsor = {
   name: string;
@@ -56,6 +60,7 @@ const sponsorTiers = [
       { name: "Red Hat", website: "https://www.redhat.com", logoSrc: redHatLogo },
       { name: "Technology Solutions", website: "https://technologylatam.com/", logoSrc: technologySolutionsLogo },
       { name: "Manage Engine", website: "https://www.manageengine.com/", logoSrc: manageEngineLogo },
+      { name: "ClickHouse", website: "https://www.clickhouse.com/", logoSrc: clickHouseLogo },
     ],
   },
   {
@@ -70,7 +75,7 @@ const sponsorTiers = [
   },
   {
     tier: "Colaboraciones / Comunidades 🚀",
-    capacity: 6,
+    capacity: 9,
     sponsors: [
       { name: "CertJoin", website: "https://certjoin.com/es/", logoSrc: certJoinLogo },
       { name: "Avattar", website: "https://avattar.com/", logoSrc: avattarLogo },
@@ -78,6 +83,9 @@ const sponsorTiers = [
       { name: "Ardan Labs", website: "https://ardanlabs.com/", logoSrc: ardanLabsLogo },
       { name: "World AEDA IT", website: "https://worldaedait.com.mx/", logoSrc: aedaLogo },
       { name: "Buk", website: "https://www.buk.cl/", logoSrc: bukLogo },
+      { name: "NiñasPro", website: "https://ninaspro.cl/", logoSrc: ninasProLogo },
+      { name: "OpenSource Santiago", website: "https://homedir.opensourcesantiago.io/", logoSrc: ossLogo },
+      { name: "Cultura Animal", website: "https://www.culturanimal.cl/", logoSrc: culturaAnimalLogo },
     ],
   },
 ] satisfies SponsorTier[];

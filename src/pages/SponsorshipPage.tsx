@@ -9,6 +9,7 @@ const levels = [
     name: "Platinum 🪐",
     price: "$8.000.000 CLP (~$8.920 USD)",
     color: "border-border",
+    highlight: true,
     soldOut: true,
     benefits: [
       "Stand 4x2 mtrs tipo isla",
@@ -26,9 +27,8 @@ const levels = [
     icon: Star,
     name: "Gold 🌎",
     price: "$5.000.000 CLP (~$5.575 USD)",
-    color: "border-accent",
-    highlight: true,
-    remaining: 1,
+    color: "border-border",
+    soldOut: true,
     benefits: [
       "Stand 3x2 mtrs",
       "Mayor visibilidad",
