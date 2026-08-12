@@ -10,16 +10,17 @@ import axmosLogo from "@/assets/logo-axmosdatadog.svg";
 import certJoinLogo from "@/assets/logo-certjoin.png";
 import avattarLogo from "@/assets/logo-avattar.png";
 import actiLogo from "@/assets/logo-acti.png";
-import invokeLogo from "@/assets/logo-invoke.png";
+import invokeLogo from "@/assets/logo-rhinvokenexys.svg";
 import suseLogo from "@/assets/logo-suse.png";
 import manageEngineLogo from "@/assets/logo-manageengine.svg";
 import ardanLabsLogo from "@/assets/logo-ardanlabs.svg";
 import aedaLogo from "@/assets/logo-aedait.png";
 import bukLogo from "@/assets/logo-buk.svg";
 import clickHouseLogo from "@/assets/logo-clickhouse.svg";
-import ninasProLogo from "@/assets/logo-ninaspro.png";
+import ninasProLogo from "@/assets/logo-ninaspro.svg";
 import ossLogo from "@/assets/logo-oss.svg";
 import culturaAnimalLogo from "@/assets/logo-culturaanimal.png";
+import cchiaLogo from "@/assets/logo-cchia.png"
 
 type Sponsor = {
   name: string;
@@ -75,7 +76,7 @@ const sponsorTiers = [
   },
   {
     tier: "Colaboraciones / Comunidades 🚀",
-    capacity: 9,
+    capacity: 10,
     sponsors: [
       { name: "CertJoin", website: "https://certjoin.com/es/", logoSrc: certJoinLogo },
       { name: "Avattar", website: "https://avattar.com/", logoSrc: avattarLogo },
@@ -86,6 +87,7 @@ const sponsorTiers = [
       { name: "NiñasPro", website: "https://ninaspro.cl/", logoSrc: ninasProLogo },
       { name: "OpenSource Santiago", website: "https://homedir.opensourcesantiago.io/", logoSrc: ossLogo },
       { name: "Cultura Animal", website: "https://www.culturanimal.cl/", logoSrc: culturaAnimalLogo },
+      { name: "Camara Chilena de IA", website: "https://cchia.cl/", logoSrc: cchiaLogo },
     ],
   },
 ] satisfies SponsorTier[];
