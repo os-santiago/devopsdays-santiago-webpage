@@ -31,7 +31,7 @@ describe("HeroSection", () => {
     await userEvent.click(screen.getByRole("button", { name: "¿Cómo llegar?" }));
 
     expect(screen.getByRole("heading", { name: "¿Cómo llegar al evento?" })).toBeInTheDocument();
-    expect(screen.getByText("Av. Alameda Libertador Bernardo O'Higgins 390, 8331150 Santiago, Región Metropolitana")).toBeInTheDocument();
+    expect(screen.getByText("Entrar por Av. Alameda Libertador Bernardo O'Higgins 390, 8331150 Santiago, Región Metropolitana.")).toBeInTheDocument();
     expect(screen.getByTitle("Mapa del lugar del evento")).toHaveAttribute("src", expect.stringContaining("google.com/maps"));
   });
 });
