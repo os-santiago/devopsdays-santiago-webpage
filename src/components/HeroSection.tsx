@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { Rocket, CalendarDays, MapPin } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import heroBg from "@/assets/hero-space-bg.jpg";
-import mascot from "@/assets/mascot-astronaut.png";
+import mascot from "@/assets/mascot-astronaut.svg";
 import logo from "@/assets/logo-devopsdays.png";
 
 const HeroSection = () => (
@@ -70,12 +71,29 @@ const HeroSection = () => (
             >
               Descubre nuestra agenda
             </a>
-            <a
-              href="https://homedir.opensourcesantiago.io/event/devopsdays-santiago-2026/volunteers"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-accent/10 text-accent border border-accent/30 font-bold text-base transition-all hover:bg-accent/20"
-            >
-              Participa como Voluntario
-            </a>
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-accent text-accent-foreground border border-accent font-bold text-base glow-sky motion-safe:animate-pulse transition-transform hover:scale-105">
+                  ¿Cómo llegar?
+                </button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-2xl">
+                <DialogHeader>
+                  <DialogTitle>¿Cómo llegar al evento?</DialogTitle>
+                  <DialogDescription>
+                    Entrar por Av. Alameda Libertador Bernardo O'Higgins 390, 8331150 Santiago, Región Metropolitana.
+                  </DialogDescription>
+                </DialogHeader>
+                <iframe
+                  title="Mapa del lugar del evento"
+                  src="https://www.google.com/maps?q=Av.%20Alameda%20Libertador%20Bernardo%20O%27Higgins%20390%2C%208331150%20Santiago%2C%20Regi%C3%B3n%20Metropolitana&output=embed"
+                  className="h-80 w-full rounded-lg border-0"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
+              </DialogContent>
+            </Dialog>
           </div>
         </motion.div>
 

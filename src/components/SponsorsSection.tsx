@@ -20,6 +20,7 @@ import clickHouseLogo from "@/assets/logo-clickhouse.svg";
 import ninasProLogo from "@/assets/logo-ninaspro.svg";
 import ossLogo from "@/assets/logo-oss.svg";
 import cchiaLogo from "@/assets/logo-cchia.png"
+import awsSbgLogo from "@/assets/logo-awssbg.svg"
 
 type Sponsor = {
   name: string;
@@ -75,7 +76,7 @@ const sponsorTiers = [
   },
   {
     tier: "Colaboraciones / Comunidades 🚀",
-    capacity: 9,
+    capacity: 10,
     sponsors: [
       { name: "CertJoin", website: "https://certjoin.com/es/", logoSrc: certJoinLogo },
       { name: "Avattar", website: "https://avattar.com/", logoSrc: avattarLogo },
@@ -85,7 +86,8 @@ const sponsorTiers = [
       { name: "Buk", website: "https://www.buk.cl/", logoSrc: bukLogo },
       { name: "NiñasPro", website: "https://ninaspro.cl/", logoSrc: ninasProLogo },
       { name: "OpenSource Santiago", website: "https://homedir.opensourcesantiago.io/", logoSrc: ossLogo },
-      { name: "Camara Chilena de IA", website: "https://cchia.cl/", logoSrc: cchiaLogo }
+      { name: "Camara Chilena de IA", website: "https://cchia.cl/", logoSrc: cchiaLogo },
+      { name: "AWS SBG", website: "https://builder.aws.com/community/student-builder-groups", logoSrc: awsSbgLogo }
     ],
   },
 ] satisfies SponsorTier[];
