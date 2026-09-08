@@ -45,9 +45,9 @@ const TicketsSection = () => (
           Entradas
         </span>
         <h2 className="text-4xl md:text-5xl font-black text-foreground mt-4 mb-4">
-          Reserva tu <span className="text-gradient-space">Asiento</span>
+          <span className="text-gradient-space">SOLD OUT!</span>
         </h2>
-        <p className="text-muted-foreground text-lg">Elige tu nivel de tripulación para la misión DevOps 2026</p>
+        <p className="text-muted-foreground text-lg">La venta de entradas está cerrada. ¡Gracias por ser parte de la misión DevOps 2026!</p>
       </motion.div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto justify-items-center">
@@ -75,16 +75,9 @@ const TicketsSection = () => (
                 </li>
               ))}
             </ul>
-            <a
-              href="https://ticketplus.cl/events/devopsdays-santiago-2026#select-tickets"
-              className={`block text-center py-3 rounded-xl font-bold transition-transform hover:scale-105 ${
-                ticket.highlight
-                  ? "bg-primary text-primary-foreground glow-red"
-                  : "bg-muted text-foreground hover:bg-accent hover:text-accent-foreground"
-              }`}
-            >
-              Comprar
-            </a>
+            <button disabled className="block text-center py-3 rounded-xl font-bold bg-muted text-foreground cursor-not-allowed">
+              SOLD OUT!
+            </button>
           </motion.div>
         ))}
       </div>

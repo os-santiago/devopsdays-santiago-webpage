@@ -10,7 +10,7 @@ describe("HeroSection", () => {
 
     expect(screen.getByRole("heading", { name: /DevOpsDays/i })).toBeInTheDocument();
     expect(screen.getByText("8-9 Septiembre, 2026")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /Comprar Entradas/i })).toHaveAttribute("href", "#entradas");
+    expect(screen.getByRole("button", { name: "SOLD OUT!" })).toBeDisabled();
     expect(screen.getByRole("link", { name: /Descubre nuestra agenda/i })).toHaveAttribute("href", "/agenda");
   });
 

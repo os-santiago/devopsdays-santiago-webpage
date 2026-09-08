@@ -58,13 +58,13 @@ const HeroSection = () => (
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4">
-            <a
-              href="#entradas"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-primary text-primary-foreground font-bold text-base glow-red transition-transform hover:scale-105"
+            <button
+              disabled
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-primary text-primary-foreground font-bold text-base glow-red cursor-not-allowed"
             >
               <Rocket className="w-5 h-5" />
-              Comprar Entradas
-            </a>
+              SOLD OUT!
+            </button>
             <a
               href="/agenda"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-accent/10 text-accent border border-accent/30 font-bold text-base transition-all hover:bg-accent/20"

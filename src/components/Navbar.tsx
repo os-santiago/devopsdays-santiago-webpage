@@ -42,13 +42,13 @@ const Navbar = () => {
               {item.label}
             </Link>
           ))}
-          <a
-            href="https://ticketplus.cl/events/devopsdays-santiago-2026#select-tickets"
-            className="ml-3 px-5 py-2 rounded-lg text-sm font-bold bg-primary text-primary-foreground glow-red transition-transform hover:scale-105"
+          <button
+            disabled
+            className="ml-3 px-5 py-2 rounded-lg text-sm font-bold bg-primary text-primary-foreground glow-red cursor-not-allowed"
           >
             <Rocket className="inline-block w-4 h-4 mr-1 -mt-0.5" />
-            Entradas
-          </a>
+            SOLD OUT!
+          </button>
         </div>
 
         {/* Mobile toggle */}
@@ -85,13 +85,12 @@ const Navbar = () => {
                   {item.label}
                 </Link>
               ))}
-              <a
-                href="https://ticketplus.cl/events/devopsdays-santiago-2026#select-tickets"
-                onClick={() => setIsOpen(false)}
-                className="px-4 py-3 rounded-lg text-sm font-bold bg-primary text-primary-foreground text-center"
+              <button
+                disabled
+                className="px-4 py-3 rounded-lg text-sm font-bold bg-primary text-primary-foreground text-center cursor-not-allowed"
               >
-                🚀 Entradas
-              </a>
+                SOLD OUT!
+              </button>
             </div>
           </motion.div>
         )}

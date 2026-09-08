@@ -14,7 +14,7 @@ describe("Navbar", () => {
     expect(screen.getAllByRole("link", { name: "Patrocinio" }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: "Contacto" }).length).toBeGreaterThan(0);
     expect(screen.getByRole("link", { name: "Código de conducta" })).toHaveAttribute("href", "/codigo-de-conducta");
-    expect(screen.getAllByRole("link", { name: /Entradas/i }).length).toBeGreaterThan(0);
+    expect(screen.getByRole("button", { name: "SOLD OUT!" })).toBeDisabled();
   });
 
   it("marks active route", () => {
@@ -45,9 +45,8 @@ describe("Navbar", () => {
     expect(screen.getAllByRole("link", { name: "Agenda" })).toHaveLength(1);
 
     await user.click(screen.getByRole("button", { name: "Toggle menu" }));
-    const mobileTicketsLink = screen.getAllByRole("link", { name: /Entradas/i })[1];
-    mobileTicketsLink.addEventListener("click", (event) => event.preventDefault());
-    await user.click(mobileTicketsLink);
+    expect(screen.getAllByRole("button", { name: "SOLD OUT!" })[1]).toBeDisabled();
+    await user.click(screen.getByRole("button", { name: "Toggle menu" }));
     expect(screen.getAllByRole("link", { name: "Agenda" })).toHaveLength(1);
   });
 });
