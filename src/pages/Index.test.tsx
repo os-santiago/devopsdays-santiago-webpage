@@ -9,7 +9,7 @@ describe("Index page", () => {
 
     expect(screen.getAllByRole("heading", { name: /DevOpsDays/i }).length).toBeGreaterThan(0);
     expect(screen.getByRole("heading", { name: /Aliados de la Misión/i })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { name: /Reserva tu Asiento/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "SOLD OUT!" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /Comparte tu Misión/i })).toBeInTheDocument();
   });
 });

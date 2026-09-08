@@ -9,7 +9,7 @@ describe("SponsorshipPage", () => {
 
     expect(screen.getByRole("heading", { name: /Niveles de Patrocinio/i })).toBeInTheDocument();
     expect(screen.getByText("Platinum 🪐")).toBeInTheDocument();
-    expect(screen.getAllByText("SOLD OUT!")).toHaveLength(4);
+    expect(screen.getAllByText("SOLD OUT!", { selector: "span" })).toHaveLength(4);
     expect(screen.getByText("Gold 🌎")).toBeInTheDocument();
     expect(screen.getByText("Silver 🌙")).toBeInTheDocument();
     // expect(screen.getByText("1 CUPO DISPONIBLE")).toBeInTheDocument();
