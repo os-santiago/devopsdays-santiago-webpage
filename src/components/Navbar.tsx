@@ -10,6 +10,7 @@ const navItems = [
   { label: "Speakers", path: "/speakers" },
   { label: "Patrocinio", path: "/patrocinio" },
   { label: "Contacto", path: "/contacto" },
+  { label: "Código de conducta", path: "/codigo-de-conducta" },
 ];
 
 const Navbar = () => {
@@ -27,7 +28,7 @@ const Navbar = () => {
         </Link>
 
         {/* Desktop */}
-        <div className="hidden md:flex items-center gap-1">
+        <div className="hidden xl:flex items-center gap-1">
           {navItems.map((item) => (
             <Link
               key={item.path}
@@ -53,7 +54,7 @@ const Navbar = () => {
         {/* Mobile toggle */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden text-foreground p-2"
+          className="xl:hidden text-foreground p-2"
           aria-label="Toggle menu"
         >
           {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -67,7 +68,7 @@ const Navbar = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-secondary/95 backdrop-blur-xl border-b border-border overflow-hidden"
+            className="xl:hidden bg-secondary/95 backdrop-blur-xl border-b border-border overflow-hidden"
           >
             <div className="container mx-auto px-4 py-4 flex flex-col gap-2">
               {navItems.map((item) => (

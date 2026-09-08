@@ -13,6 +13,7 @@ describe("Navbar", () => {
     expect(screen.getAllByRole("link", { name: "Speakers" }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: "Patrocinio" }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: "Contacto" }).length).toBeGreaterThan(0);
+    expect(screen.getByRole("link", { name: "Código de conducta" })).toHaveAttribute("href", "/codigo-de-conducta");
     expect(screen.getAllByRole("link", { name: /Entradas/i }).length).toBeGreaterThan(0);
   });
 
@@ -37,6 +38,7 @@ describe("Navbar", () => {
 
     await user.click(screen.getByRole("button", { name: "Toggle menu" }));
     expect(screen.getAllByRole("link", { name: "Agenda" })).toHaveLength(2);
+    expect(screen.getAllByRole("link", { name: "Código de conducta" })[1]).toHaveAttribute("href", "/codigo-de-conducta");
 
     const mobileAgendaLink = screen.getAllByRole("link", { name: "Agenda" })[1];
     await user.click(mobileAgendaLink);

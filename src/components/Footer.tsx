@@ -54,6 +54,7 @@ const Footer = () => (
               { label: "Agenda", path: "/agenda" },
               { label: "Patrocinio", path: "/patrocinio" },
               { label: "Contacto", path: "/contacto" },
+              { label: "Código de conducta", path: "/codigo-de-conducta" },
             ].map((item) => (
               <li key={item.path}>
                 <Link to={item.path} className="text-sm text-muted-foreground hover:text-accent transition-colors">

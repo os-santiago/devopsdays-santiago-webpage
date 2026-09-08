@@ -35,6 +35,17 @@ describe("App routes", () => {
     expect(screen.getByRole("heading", { name: /Voces de la Misión/i })).toBeInTheDocument();
   });
 
+  it("renders the code of conduct and its navigation link", () => {
+    window.history.pushState({}, "", "/codigo-de-conducta");
+    render(<App />);
+
+    expect(screen.getByRole("heading", { level: 1, name: "Código de conducta" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "The Quick Version" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "The Less Quick Version" })).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: "Código de conducta" })).toHaveLength(2);
+    expect(screen.getByRole("link", { name: "confcodeofconduct.com" })).toHaveAttribute("href", "https://confcodeofconduct.com/");
+  });
+
   it("renders not found route", () => {
     const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
