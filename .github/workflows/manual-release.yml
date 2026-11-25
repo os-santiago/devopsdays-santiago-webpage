@@ -133,11 +133,6 @@ jobs:
           CPANEL_FTP_REMOTE_DIR: ${{ secrets.CPANEL_FTP_REMOTE_DIR }}
         run: bash scripts/ci/manual_release_validate_ftp_config.sh
 
-      - name: Create SMTP runtime config for contact API
-        env:
-          SMTP_USER_PASSWORD: ${{ secrets.SMTP_USER_PASSWORD }}
-        run: bash scripts/ci/manual_release_create_smtp_config.sh
-
       - name: Connectivity/Auth preflight (FTPS)
         env:
           CPANEL_FTP_HOST: ${{ secrets.CPANEL_FTP_HOST }}

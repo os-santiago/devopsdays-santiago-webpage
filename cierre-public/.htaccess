@@ -4,12 +4,12 @@ DirectoryIndex index.html
   RewriteEngine On
   RewriteBase /
 
-  # Keep real files/directories working (assets, api/contact.php, etc.)
+  # Serve static files directly.
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
-  # SPA fallback for React Router routes.
+  # Show the closing page at former event URLs.
   RewriteRule ^ index.html [L]
 </IfModule>
 
