@@ -137,7 +137,7 @@ const SponsorshipPage = () => (
 
         <div className="mt-10 text-center">
           <a
-            href="/contacto"
+            href={`${import.meta.env.BASE_URL}contacto`}
             className="inline-flex items-center justify-center px-16 py-3 rounded-xl font-bold bg-primary text-primary-foreground hover:bg-accent hover:text-accent-foreground transition-all"
           >
             Contactar

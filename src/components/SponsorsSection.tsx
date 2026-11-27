@@ -196,7 +196,7 @@ const SponsorsSection = () => (
 
       <div className="text-center mt-12">
         <a
-          href="/patrocinio"
+          href={`${import.meta.env.BASE_URL}patrocinio`}
           className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-muted text-foreground font-semibold hover:bg-accent hover:text-accent-foreground transition-all"
         >
           Conviértete en Patrocinador →
