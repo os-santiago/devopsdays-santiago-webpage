@@ -10,8 +10,8 @@ describe("NotFound", () => {
     renderWithRouter(<NotFound />, { route: "/ruta-que-no-existe" });
 
     expect(screen.getByRole("heading", { name: "404" })).toBeInTheDocument();
-    expect(screen.getByText("Oops! Page not found")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Return to Home" })).toHaveAttribute("href", "/");
+    expect(screen.getByText("¡Ups! Te caíste del mapa.")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Volver al inicio" })).toHaveAttribute("href", "/");
 
     expect(errorSpy).toHaveBeenCalledWith(
       "404 Error: User attempted to access non-existent route:",

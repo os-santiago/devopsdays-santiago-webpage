@@ -35,7 +35,7 @@ describe("ContactPage", () => {
   it("renders content, contact fallback mail and honeypot", () => {
     const { container } = renderWithRouter(<ContactPage />, { route: "/contacto" });
 
-    expect(screen.getByRole("heading", { name: /Comunícate con el/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Habla con el/i })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "santiago@devopsdays.org" })).toHaveAttribute(
       "href",
       "mailto:santiago@devopsdays.org",

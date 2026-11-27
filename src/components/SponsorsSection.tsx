@@ -1,209 +1,60 @@
-import { motion } from "framer-motion";
-import dynatraceLogo from "@/assets/logo-dynatrace.svg";
-import tgNativeLogo from "@/assets/logo-tgnative.svg";
-import redHatLogo from "@/assets/logo-redhat.svg";
-import technologySolutionsLogo from "@/assets/logo-techlatam.svg";
-import fluidAttacksLogo from "@/assets/logo-fluid-attack.png";
-import mondiniLogo from "@/assets/logo-mondini.svg";
-import unykoLogo from "@/assets/logo-unykotalent.png";
-import axmosLogo from "@/assets/logo-axmosdatadog.svg";
-import certJoinLogo from "@/assets/logo-certjoin.png";
-import avattarLogo from "@/assets/logo-avattar.png";
-import actiLogo from "@/assets/logo-acti.png";
-import invokeLogo from "@/assets/logo-rhinvokenexys.svg";
-import suseLogo from "@/assets/logo-suse.png";
-import manageEngineLogo from "@/assets/logo-manageengine.svg";
-import ardanLabsLogo from "@/assets/logo-ardanlabs.svg";
-import aedaLogo from "@/assets/logo-aedait.png";
-import bukLogo from "@/assets/logo-buk.svg";
-import clickHouseLogo from "@/assets/logo-clickhouse.svg";
-import ninasProLogo from "@/assets/logo-ninaspro.svg";
-import ossLogo from "@/assets/logo-oss.svg";
-import cchiaLogo from "@/assets/logo-cchia.png"
-import awsSbgLogo from "@/assets/logo-awssbg.svg"
+import { Link } from "react-router-dom";
+import { sponsorTiers } from "@/data/event";
 
-type Sponsor = {
-  name: string;
-  website: string;
-  logoSrc?: string;
-  cardTheme?: "light" | "dark";
+const slotSize: Record<string, string> = {
+  platinum: "h-28 w-40 text-sm sm:h-32 sm:w-56",
+  gold: "h-24 w-36 text-sm sm:w-44",
+  silver: "h-20 w-24 text-xs sm:w-36 sm:text-sm",
+  comunidad: "h-20 w-24 text-xs sm:w-36 sm:text-sm",
 };
 
-type SponsorTier = {
-  tier: string;
-  capacity: number;
-  sponsors: Sponsor[];
-};
+const SponsorsSection = () => {
+  const total = sponsorTiers.reduce((sum, tier) => sum + tier.slots, 0);
 
-type SponsorSlot = {
-  name: string;
-  website?: string;
-  logoSrc?: string;
-  cardTheme?: Sponsor["cardTheme"];
-  available: boolean;
-};
+  return (
+    <section aria-labelledby="sponsors-title" className="bg-muted py-20">
+      <div className="container mx-auto px-4">
+        <div className="reveal mx-auto mb-12 max-w-2xl text-center">
+          <p className="eyebrow mb-4">Aliados</p>
+          <h2 id="sponsors-title" className="mb-4 text-4xl font-extrabold md:text-5xl">
+            Sé aliado de DevOpsDays Land
+          </h2>
+          <p className="text-lg text-muted-foreground">
+            {total} espacios disponibles para marcas, comunidades y training que quieran ser parte del mundo 2027.
+          </p>
+        </div>
 
-const sponsorTiers = [
-  {
-    tier: "Platinum 🪐",
-    capacity: 4,
-    sponsors: [
-      { name: "Mondini IT", website: "https://mondini-it.com/", logoSrc: mondiniLogo },
-      { name: "Dynatrace", website: "https://www.dynatrace.com", logoSrc: dynatraceLogo },
-      { name: "TG Native", website: "https://tgcorp.tech/", logoSrc: tgNativeLogo },
-      { name: "Axmos", website: "https://www.axmos.tech/es", logoSrc: axmosLogo },
-    ],
-  },
-  {
-    tier: "Oro ⭐",
-    capacity: 4,
-    sponsors: [
-      { name: "Red Hat", website: "https://www.redhat.com", logoSrc: redHatLogo },
-      { name: "Technology Solutions", website: "https://technologylatam.com/", logoSrc: technologySolutionsLogo },
-      { name: "Manage Engine", website: "https://www.manageengine.com/", logoSrc: manageEngineLogo },
-      { name: "ClickHouse", website: "https://www.clickhouse.com/", logoSrc: clickHouseLogo },
-    ],
-  },
-  {
-    tier: "Plata 🌙",
-    capacity: 4,
-    sponsors: [
-      { name: "Fluid Attacks", website: "https://fluidattacks.com/", logoSrc: fluidAttacksLogo },
-      { name: "Unyko Talent", website: "https://unyko.cl/", logoSrc: unykoLogo },
-      { name: "Suse", website: "https://www.suse.com/es-es/", logoSrc: suseLogo },
-      { name: "Invoke", website: "https://www.invoke.cl/", logoSrc: invokeLogo },
-    ],
-  },
-  {
-    tier: "Colaboraciones / Comunidades 🚀",
-    capacity: 10,
-    sponsors: [
-      { name: "CertJoin", website: "https://certjoin.com/es/", logoSrc: certJoinLogo },
-      { name: "Avattar", website: "https://avattar.com/", logoSrc: avattarLogo },
-      { name: "ACTI", website: "https://acti.cl/", logoSrc: actiLogo },
-      { name: "Ardan Labs", website: "https://ardanlabs.com/", logoSrc: ardanLabsLogo },
-      { name: "World AEDA IT", website: "https://worldaedait.com.mx/", logoSrc: aedaLogo },
-      { name: "Buk", website: "https://www.buk.cl/", logoSrc: bukLogo },
-      { name: "NiñasPro", website: "https://ninaspro.cl/", logoSrc: ninasProLogo },
-      { name: "OpenSource Santiago", website: "https://homedir.opensourcesantiago.io/", logoSrc: ossLogo },
-      { name: "Camara Chilena de IA", website: "https://cchia.cl/", logoSrc: cchiaLogo },
-      { name: "AWS SBG", website: "https://builder.aws.com/community/student-builder-groups", logoSrc: awsSbgLogo }
-    ],
-  },
-] satisfies SponsorTier[];
-
-const toSlots = (tier: SponsorTier): SponsorSlot[] => {
-  const filledSlots = tier.sponsors.slice(0, tier.capacity).map((sponsor) => ({
-    name: sponsor.name,
-    website: sponsor.website,
-    logoSrc: sponsor.logoSrc,
-    cardTheme: sponsor.cardTheme,
-    available: false,
-  }));
-
-  const availableSlots = Array.from({ length: Math.max(tier.capacity - filledSlots.length, 0) }, (_, index) => ({
-    name: `Espacio disponible ${index + 1}`,
-    available: true,
-  }));
-
-  return [...filledSlots, ...availableSlots];
-};
-
-const getTierSizing = (tierName: string) => {
-  if (tierName === "Platinum 🪐") {
-    return {
-      cardClassName: "w-56 h-32",
-      logoClassName: "max-h-[5.75rem]",
-    };
-  }
-
-  if (tierName === "Oro ⭐") {
-    return {
-      cardClassName: "w-44 h-24",
-      logoClassName: "max-h-[4.25rem]",
-    };
-  }
-
-  return {
-    cardClassName: "w-40 h-[5.5rem]",
-    logoClassName: "max-h-16",
-  };
-};
-
-const SponsorsSection = () => (
-  <section className="py-20 bg-secondary relative">
-    <div className="container mx-auto px-4">
-      <motion.div
-        className="text-center mb-12"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-      >
-        <span className="px-3 py-1 rounded-full bg-accent/20 text-accent text-xs font-semibold uppercase tracking-widest border border-accent/30">
-          Patrocinadores
-        </span>
-        <h2 className="text-4xl md:text-5xl font-black text-foreground mt-4 mb-4">
-          Aliados de la <span className="text-gradient-space">Misión</span>
-        </h2>
-      </motion.div>
-
-      <div className="space-y-12 max-w-4xl mx-auto">
-        {sponsorTiers.map((tier) => {
-          const { cardClassName, logoClassName } = getTierSizing(tier.tier);
-
-          return (
-            <div key={tier.tier} className="text-center">
-              <h3 className="text-3xl font-bold text-muted-foreground mb-6">{tier.tier}</h3>
-              <div className="flex flex-wrap justify-center gap-6">
-                {toSlots(tier).map((slot) =>
-                  slot.available ? (
-                    <div
-                      key={`${tier.tier}-${slot.name}`}
-                      className={`${cardClassName} rounded-xl bg-card/60 border border-border flex items-center justify-center px-3 text-xs text-muted-foreground font-semibold uppercase tracking-wide`}
+        <div className="space-y-12">
+          {sponsorTiers.map((tier) => (
+            <div key={tier.id} className="reveal">
+              <h3 className="mb-5 text-center text-2xl font-extrabold">
+                {tier.emoji} {tier.name} <span className="text-base font-semibold text-muted-foreground">· {tier.slots} espacios</span>
+              </h3>
+              <ul className="flex flex-wrap justify-center gap-4">
+                {Array.from({ length: tier.slots }, (_, i) => (
+                  <li key={i}>
+                    <Link
+                      to="/patrocinio"
+                      className={`${slotSize[tier.id]} flex flex-col items-center justify-center gap-1 rounded-2xl px-2 text-center border-[3px] border-dashed border-land-navy/40 bg-card/70 font-bold text-muted-foreground transition hover:-translate-y-1 hover:border-land-navy hover:text-land-navy`}
                     >
+                      <span aria-hidden="true" className="font-display text-2xl">{"{ }"}</span>
                       Espacio disponible
-                    </div>
-                  ) : (
-                    <a
-                      key={`${tier.tier}-${slot.name}`}
-                      href={slot.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`${cardClassName} rounded-xl border shadow-sm hover:shadow-md transition-all flex items-center justify-center p-3 ${
-                        slot.cardTheme === "dark"
-                          ? "bg-slate-950 border-slate-700"
-                          : "bg-white border-border/60"
-                      }`}
-                      aria-label={`Sitio web de ${slot.name}`}
-                    >
-                      {slot.logoSrc ? (
-                        <img
-                          src={slot.logoSrc}
-                          alt={`Logo ${slot.name}`}
-                          className={`${logoClassName} max-w-full object-contain`}
-                        />
-                      ) : (
-                        <span className="text-sm text-slate-800 font-semibold text-center">{slot.name}</span>
-                      )}
-                    </a>
-                  ),
-                )}
-              </div>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-          );
-        })}
-      </div>
+          ))}
+        </div>
 
-      <div className="text-center mt-12">
-        <a
-          href="/patrocinio"
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-muted text-foreground font-semibold hover:bg-accent hover:text-accent-foreground transition-all"
-        >
-          Conviértete en Patrocinador →
-        </a>
+        <div className="mt-12 text-center">
+          <Link to="/patrocinio" className="btn-block">
+            Conviértete en Patrocinador
+          </Link>
+        </div>
       </div>
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 export default SponsorsSection;

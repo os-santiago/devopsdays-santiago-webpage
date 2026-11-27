@@ -5,29 +5,28 @@ import Navbar from "@/components/Navbar";
 import { renderWithRouter } from "@/test/test-utils";
 
 describe("Navbar", () => {
-  it("renders expected navigation links", () => {
+  it("renders expected navigation links and the free-ticket CTA", () => {
     renderWithRouter(<Navbar />, { route: "/" });
 
-    expect(screen.getAllByRole("link", { name: "Inicio" }).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole("link", { name: "Agenda" }).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole("link", { name: "Speakers" }).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole("link", { name: "Patrocinio" }).length).toBeGreaterThan(0);
-    expect(screen.getAllByRole("link", { name: "Contacto" }).length).toBeGreaterThan(0);
+    ["Inicio", "Agenda", "Speakers", "Patrocinio", "Contacto"].forEach((name) =>
+      expect(screen.getAllByRole("link", { name }).length).toBeGreaterThan(0),
+    );
     expect(screen.getByRole("link", { name: "Código de conducta" })).toHaveAttribute("href", "/codigo-de-conducta");
-    expect(screen.getByRole("button", { name: "SOLD OUT!" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Avísame · Entrada gratis" })).toBeInTheDocument();
+  });
+
+  it("shows Agenda and Speakers as locked while they have no content", () => {
+    renderWithRouter(<Navbar />, { route: "/" });
+
+    expect(screen.getByRole("link", { name: "Agenda" })).toHaveAttribute("title", "Pronto");
+    expect(screen.getByRole("link", { name: "Speakers" })).toHaveAttribute("title", "Pronto");
+    expect(screen.getByRole("link", { name: "Patrocinio" })).not.toHaveAttribute("title");
   });
 
   it("marks active route", () => {
     renderWithRouter(<Navbar />, { route: "/agenda" });
 
-    const agendaLink = screen.getAllByRole("link", { name: "Agenda" })[0];
-    expect(agendaLink.className).toContain("bg-primary");
-  });
-
-  it("marks speakers route as active", () => {
-    renderWithRouter(<Navbar />, { route: "/speakers" });
-
-    expect(screen.getAllByRole("link", { name: "Speakers" })[0].className).toContain("bg-primary");
+    expect(screen.getAllByRole("link", { name: "Agenda" })[0].className).toContain("bg-primary");
   });
 
   it("toggles mobile menu", async () => {
@@ -38,15 +37,9 @@ describe("Navbar", () => {
 
     await user.click(screen.getByRole("button", { name: "Toggle menu" }));
     expect(screen.getAllByRole("link", { name: "Agenda" })).toHaveLength(2);
-    expect(screen.getAllByRole("link", { name: "Código de conducta" })[1]).toHaveAttribute("href", "/codigo-de-conducta");
+    expect(screen.getAllByRole("button", { name: "Avísame · Entrada gratis" })).toHaveLength(2);
 
-    const mobileAgendaLink = screen.getAllByRole("link", { name: "Agenda" })[1];
-    await user.click(mobileAgendaLink);
-    expect(screen.getAllByRole("link", { name: "Agenda" })).toHaveLength(1);
-
-    await user.click(screen.getByRole("button", { name: "Toggle menu" }));
-    expect(screen.getAllByRole("button", { name: "SOLD OUT!" })[1]).toBeDisabled();
-    await user.click(screen.getByRole("button", { name: "Toggle menu" }));
+    await user.click(screen.getAllByRole("link", { name: "Agenda" })[1]);
     expect(screen.getAllByRole("link", { name: "Agenda" })).toHaveLength(1);
   });
 });

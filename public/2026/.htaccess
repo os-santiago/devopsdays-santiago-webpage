@@ -1,0 +1,10 @@
+# Frozen 2026 edition (built from git tag v2026-final with --base=/2026/).
+# Speaker photos and placeholder.svg are served from the site root (public/speaker-images).
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /2026/
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+  RewriteRule ^ index.html [L]
+</IfModule>

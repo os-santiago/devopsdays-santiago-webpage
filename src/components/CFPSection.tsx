@@ -1,59 +1,53 @@
-import { motion } from "framer-motion";
-import { Send, Lightbulb, Clock } from "lucide-react";
+import { Lock, Send } from "lucide-react";
+import { Instagram, Linkedin } from "@/components/BrandIcons";
+import { event2027, type Status } from "@/data/event";
+import braces from "@/assets/2027/svg/block-braces.svg";
 
-const CFPSection = () => (
-  <section id="cfp" className="py-20 bg-secondary relative overflow-hidden">
-    <div className="absolute inset-0 star-field opacity-20" />
-    <div className="container mx-auto px-4 relative z-10">
-      <motion.div
-        className="max-w-3xl mx-auto text-center"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-      >
-        <span className="px-3 py-1 rounded-full bg-accent/20 text-accent text-xs font-semibold uppercase tracking-widest border border-accent/30">
-          Call for Papers
-        </span>
-        <h2 className="text-4xl md:text-5xl font-black text-foreground mt-4 mb-4">
-          Comparte tu <span className="text-gradient-space">Misión</span>
-        </h2>
-        <p className="text-muted-foreground text-lg mb-10">
-          ¿Tienes una historia DevOps que contar? Postula tu charla y sé parte del programa del evento más importante de la comunidad.
-        </p>
+const copy: Record<Status, string> = {
+  soon: "Muy pronto anunciaremos la apertura del CFP. Síguenos en redes para enterarte primero.",
+  open: "¡El CFP está abierto! Postula tu charla, Ignite o taller y sé parte del programa.",
+  closed: "El CFP 2027 ya cerró. ¡Gracias a todas las personas que postularon!",
+};
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-          {[
-            { icon: Lightbulb, title: "Temas", desc: "Inteligencia Artificial, DevOps, SRE, Platform Engineering, Cloud Native, Seguridad, Cultura" },
-            { icon: Clock, title: "Formato", desc: "Charlas de 30 min, Lightning Talks de 15 min, Talleres 60 min, Panel 30 min" },
-            { icon: Send, title: "Deadline", desc: "07 de Junio, 2026" },
-          ].map((item, i) => (
-            <motion.div
-              key={item.title}
-              className="bg-card/60 border border-border rounded-2xl p-6 text-left"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1 }}
-            >
-              <item.icon className="w-8 h-8 text-primary mb-3" />
-              <h3 className="font-bold text-foreground mb-2">{item.title}</h3>
-              <p className="text-sm text-muted-foreground">{item.desc}</p>
-            </motion.div>
-          ))}
+const CFPSection = ({ status = event2027.cfp }: { status?: Status }) => (
+  <section id="cfp" aria-labelledby="cfp-title" className="bg-background py-20">
+    <div className="container mx-auto px-4">
+      <div className="reveal toy mx-auto flex max-w-4xl flex-col items-center gap-8 bg-card p-8 md:flex-row">
+        <img
+          src={braces}
+          alt=""
+          width={120}
+          height={120}
+          className="bob shrink-0"
+          style={{ "--tilt": "-6deg" } as React.CSSProperties}
+        />
+        <div className="text-center md:text-left">
+          <p className="eyebrow mb-3">
+            {status === "soon" && <Lock className="h-3.5 w-3.5" aria-hidden="true" />}
+            Call for Papers
+          </p>
+          <h2 id="cfp-title" className="mb-3 text-4xl font-extrabold">
+            Inserta tu charla
+          </h2>
+          <p className="mb-6 text-lg text-muted-foreground">{copy[status]}</p>
+          {status === "open" && (
+            <a href={event2027.cfpUrl} target="_blank" rel="noopener noreferrer" className="btn-block">
+              <Send className="h-5 w-5" aria-hidden="true" />
+              Postula tu charla
+            </a>
+          )}
+          {status === "soon" && (
+            <div className="flex flex-wrap justify-center gap-3 md:justify-start">
+              <a href={event2027.instagram} target="_blank" rel="noopener noreferrer" className="btn-block btn-cloud btn-sm">
+                <Instagram size={16} /> Instagram
+              </a>
+              <a href={event2027.linkedin} target="_blank" rel="noopener noreferrer" className="btn-block btn-cloud btn-sm">
+                <Linkedin size={16} /> LinkedIn
+              </a>
+            </div>
+          )}
         </div>
-
-        <p className="mb-4 text-lg font-bold text-accent">
-          El plazo para postular ya finalizó
-        </p>
-        <button
-          type="button"
-          disabled
-          className="inline-flex cursor-not-allowed items-center gap-2 rounded-xl bg-muted px-8 py-4 font-bold text-muted-foreground opacity-70"
-        >
-          <Send className="w-5 h-5" />
-          Postulaciones cerradas
-        </button>
-      </motion.div>
+      </div>
     </div>
   </section>
 );

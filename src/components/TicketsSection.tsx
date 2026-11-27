@@ -1,85 +1,62 @@
-import { motion } from "framer-motion";
-import { Rocket, Star, Gem, Moon } from "lucide-react";
+import TicketCta from "@/components/TicketCta";
+import { event2027, type Status } from "@/data/event";
 
-const tickets = [
-  {
-    icon: Rocket,
-    name: "Entrada 2 días 🛸",
-    price: "$25.000 CLP",
-    features: ["Acceso a los 2 días de evento", "Coffee breaks y Almuerzo", "Kit de bienvenida"],
-    highlight: false,
-  },
-  {
-    icon: Star,
-    name: "Entrada VIP ⭐",
-    price: "$50.000 CLP",
-    features: ["Acceso a los 2 días de evento", "Coffee breaks y Almuerzo", "Kit de bienvenida", "Acceso a sector VIP", "Acceso a After Office", "Estacionamiento"],
-    highlight: true,
-  },
-  {
-    icon: Gem,
-    name: "Entrada 2 días con Estacionamiento 💎",
-    price: "$30.000 CLP",
-    features: ["Acceso a los 2 días de evento", "Coffee breaks y Almuerzo", "Kit de bienvenida", "Estacionamiento"],
-    highlight: false,
-  },
-  {
-    icon: Moon,
-    name: "Entrada 1 día 🛠️",
-    price: "$15.000 CLP",
-    features: ["Acceso a 1 día de evento", "Coffee breaks y Almuerzo", "Kit de bienvenida"],
-    highlight: false,
-  },
+const steps = [
+  { n: 1, title: "Postula", desc: "Completa el formulario de postulación." },
+  { n: 2, title: "El equipo revisa", desc: "El equipo organizador revisa cada postulación." },
+  { n: 3, title: "Recibe tu entrada", desc: "Las personas aceptadas reciben su entrada gratis." },
 ];
 
-const TicketsSection = () => (
-  <section id="entradas" className="py-20 bg-space-gradient relative">
-    <div className="container mx-auto px-4">
-      <motion.div
-        className="text-center mb-12"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-      >
-        <span className="px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-semibold uppercase tracking-widest border border-primary/30">
-          Entradas
-        </span>
-        <h2 className="text-4xl md:text-5xl font-black text-foreground mt-4 mb-4">
-          <span className="text-gradient-space">SOLD OUT!</span>
-        </h2>
-        <p className="text-muted-foreground text-lg">La venta de entradas está cerrada. ¡Gracias por ser parte de la misión DevOps 2026!</p>
-      </motion.div>
+const notes: Record<Status, string> = {
+  soon: "Muy pronto abriremos el proceso de postulación y publicaremos las bases.",
+  open: "¡Las postulaciones están abiertas! Revisa las bases antes de postular.",
+  closed: "El proceso de postulación ya cerró. ¡Gracias a todas las personas que postularon!",
+};
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-7xl mx-auto justify-items-center">
-        {tickets.map((ticket, i) => (
-          <motion.div
-            key={ticket.name}
-            className={`w-full max-w-sm rounded-2xl p-8 border flex flex-col ${
-              ticket.highlight
-                ? "bg-primary/10 border-primary glow-red scale-105"
-                : "bg-card/60 border-border"
-            }`}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: i * 0.15 }}
-          >
-            <ticket.icon className={`w-10 h-10 mb-4 ${ticket.highlight ? "text-primary" : "text-accent"}`} />
-            <h3 className="text-xl font-bold text-foreground mb-1">{ticket.name}</h3>
-            <p className="text-3xl font-black text-foreground mb-6">{ticket.price}</p>
-            <ul className="space-y-3 mb-8 flex-1">
-              {ticket.features.map((f) => (
-                <li key={f} className="text-sm text-muted-foreground flex items-start gap-2">
-                  <span className="text-accent mt-0.5">✦</span>
-                  {f}
-                </li>
-              ))}
-            </ul>
-            <button disabled className="block text-center py-3 rounded-xl font-bold bg-muted text-foreground cursor-not-allowed">
-              SOLD OUT!
-            </button>
-          </motion.div>
-        ))}
+const TicketsSection = ({ status = event2027.tickets }: { status?: Status }) => (
+  <section id="entradas" aria-labelledby="tickets-title" className="bg-land-sky py-20">
+    <div className="container mx-auto px-4">
+      <div className="reveal toy mx-auto max-w-5xl bg-[#FFF6E5] p-6 sm:p-10">
+        <div className="mb-8 text-center">
+          <p className="toy mb-4 inline-block -rotate-2 bg-land-coin px-5 py-1 font-display text-2xl font-extrabold">
+            GRATIS · {event2027.seats} cupos
+          </p>
+          <h2 id="tickets-title" className="mb-3 text-4xl font-extrabold md:text-5xl">
+            Desbloquea tu entrada gratis
+          </h2>
+          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+            Este año las entradas son gratuitas. Para asistir debes postular y el equipo organizador aprobará a quienes
+            recibirán su entrada.
+          </p>
+        </div>
+
+        <ol className="relative mb-10 grid gap-6 md:grid-cols-3">
+          <span
+            aria-hidden="true"
+            className="absolute left-[16%] right-[16%] top-8 hidden border-t-4 border-dotted border-land-navy/40 md:block"
+          />
+          {steps.map((step) => (
+            <li key={step.n} className="relative text-center">
+              <span className="toy relative mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-land-grass font-display text-3xl font-extrabold text-white [text-shadow:0_2px_0_hsl(var(--land-navy))]">
+                {step.n}
+              </span>
+              <h3 className="mb-1 text-2xl font-extrabold">{step.title}</h3>
+              <p className="text-muted-foreground">{step.desc}</p>
+            </li>
+          ))}
+        </ol>
+
+        <div className="flex flex-col items-center gap-4 text-center">
+          <p className="font-semibold">{notes[status]}</p>
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <TicketCta status={status} />
+            {status === "open" && (
+              <a href={event2027.ticketsRulesUrl} target="_blank" rel="noopener noreferrer" className="btn-block btn-cloud">
+                Ver bases
+              </a>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   </section>

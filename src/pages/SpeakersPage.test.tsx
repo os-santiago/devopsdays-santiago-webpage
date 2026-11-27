@@ -1,14 +1,15 @@
 import { describe, expect, it } from "vitest";
 import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { SpeakersContent } from "@/pages/SpeakersPage";
+import SpeakersPage, { SpeakersContent } from "@/pages/SpeakersPage";
+import { renderWithRouter } from "@/test/test-utils";
 import type { AgendaItem, Speaker } from "@/data/event";
 
 const sessions: AgendaItem[] = [
-  { id: "keynote-session", day: "day-1", time: "09:00", title: "El futuro de DevOps", speakerIds: ["ada"], type: "keynote", room: "main", description: "Una mirada al futuro.", topics: ["Cultura"] },
-  { id: "sponsor-session", day: "day-1", time: "10:30", title: "DevOps a escala", speakerIds: ["grace"], type: "talk", room: "main", description: "Experiencias a escala.", topics: ["Plataforma"] },
-  { id: "accepted-session", day: "day-2", time: "12:00", title: "Operaciones simples", speakerIds: ["linus", "grace"], type: "talk", room: "room-a", description: "Menos complejidad.", topics: ["SRE"] },
-  { id: "second-session", day: "day-2", time: "15:00", title: "Sistemas mantenibles", speakerIds: ["linus"], type: "talk", room: "main", description: "Cómo mantener sistemas.", topics: ["Diseño"] },
+  { id: "keynote-session", time: "09:00", title: "El futuro de DevOps", speakerIds: ["ada"], type: "keynote", room: "main", description: "Una mirada al futuro.", topics: ["Cultura"] },
+  { id: "sponsor-session", time: "10:30", title: "DevOps a escala", speakerIds: ["grace"], type: "talk", room: "main", description: "Experiencias a escala.", topics: ["Plataforma"] },
+  { id: "accepted-session", time: "12:00", title: "Operaciones simples", speakerIds: ["linus", "grace"], type: "talk", room: "room-a", description: "Menos complejidad.", topics: ["SRE"] },
+  { id: "second-session", time: "15:00", title: "Sistemas mantenibles", speakerIds: ["linus"], type: "talk", room: "main", description: "Cómo mantener sistemas.", topics: ["Diseño"] },
 ];
 
 const speakerList: Speaker[] = [
@@ -30,7 +31,7 @@ describe("SpeakersContent", () => {
     expect(screen.getByAltText("Gráfica promocional de Ada").closest("section")?.querySelector(".grid")).toHaveClass("grid-cols-1", "min-[900px]:grid-cols-2");
     expect(screen.getByAltText("Logo de Acme")).toHaveAttribute("src", "/acme.svg");
     expect(screen.getByRole("button", { name: /Ada/ })).not.toHaveClass("max-w-sm", "max-w-xs");
-    expect(screen.getByRole("button", { name: /Grace/ })).toHaveClass("max-w-sm", "bg-white", "border-slate-200");
+    expect(screen.getByRole("button", { name: /Grace/ })).toHaveClass("max-w-sm", "toy");
     // expect(screen.getByText("Platform Lead")).toHaveClass("text-slate-600");
     // expect(screen.getByText("Acme")).toBeInTheDocument();
     expect(screen.queryByText("LinkedIn")).not.toBeInTheDocument();
@@ -39,9 +40,9 @@ describe("SpeakersContent", () => {
   });
 
   it.each([
-    ["Ada", ["El futuro de DevOps"], "8 de Septiembre · 09:00", "Cultura"],
-    ["Grace", ["DevOps a escala", "Operaciones simples"], "8 de Septiembre · 10:30", "Plataforma"],
-    ["Linus", ["Operaciones simples", "Sistemas mantenibles"], "9 de Septiembre · 12:00", "SRE"],
+    ["Ada", ["El futuro de DevOps"], "3 de septiembre · 09:00", "Cultura"],
+    ["Grace", ["DevOps a escala", "Operaciones simples"], "3 de septiembre · 10:30", "Plataforma"],
+    ["Linus", ["Operaciones simples", "Sistemas mantenibles"], "3 de septiembre · 12:00", "SRE"],
   ])("opens %s details", async (name, titles, schedule, topic) => {
     const user = userEvent.setup();
     render(<SpeakersContent speakerList={speakerList} sessions={sessions} />);
@@ -78,5 +79,16 @@ describe("SpeakersContent", () => {
     expect(screen.queryByAltText("Gráfica promocional de Ada")).not.toBeInTheDocument();
     expect(screen.getByAltText("Foto de Grace")).toHaveAttribute("src", "/placeholder.svg");
     expect(screen.getByAltText("Logo de Acme")).toHaveAttribute("src", "/placeholder.svg");
+  });
+
+  it("renders the page with speakers, or a locked level when there are none", () => {
+    const { unmount } = renderWithRouter(<SpeakersPage speakerList={speakerList} sessions={sessions} />);
+    expect(screen.getByRole("heading", { level: 1, name: /Los Jugadores/ })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Keynotes" })).toBeInTheDocument();
+    unmount();
+
+    renderWithRouter(<SpeakersPage speakerList={[]} />);
+    expect(screen.getByRole("heading", { name: /Los jugadores aún no se revelan/ })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Keynotes" })).not.toBeInTheDocument();
   });
 });

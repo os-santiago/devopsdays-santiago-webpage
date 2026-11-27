@@ -43,6 +43,7 @@ type SubmitContactDeps = {
   sendForm: (payload: ContactForm) => Promise<Response>;
   toast: (payload: ContactToast) => void;
   resetForm: () => void;
+  successToast?: ContactToast;
 };
 
 export const submitContactForm = async ({
@@ -52,6 +53,7 @@ export const submitContactForm = async ({
   sendForm,
   toast,
   resetForm,
+  successToast = { title: "Mensaje enviado 🚀", description: "Te responderemos pronto. ¡Gracias!" },
 }: SubmitContactDeps) => {
   if (isSubmitting) {
     return;
@@ -78,7 +80,7 @@ export const submitContactForm = async ({
     }
 
     if (response.ok && parsedResponse?.ok) {
-      toast({ title: "Mensaje enviado 🚀", description: "Te responderemos pronto. ¡Gracias!" });
+      toast(successToast);
       resetForm();
       return;
     }

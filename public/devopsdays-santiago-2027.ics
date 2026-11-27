@@ -1,0 +1,16 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//DevOpsDays Santiago//2027//ES
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:devopsdays-santiago-2027@devopsdayschile.cl
+DTSTAMP:20261127T120000Z
+DTSTART:20270903T120000Z
+DTEND:20270903T220000Z
+SUMMARY:DevOpsDays Santiago 2027 · DevOpsDays Land
+LOCATION:Centro de Extensión UC\, Av. Alameda Libertador Bernardo O'Higgins 390\, Santiago\, Chile
+DESCRIPTION:Entrada gratuita por postulación. Más información en https://devopsdayschile.cl
+URL:https://devopsdayschile.cl
+END:VEVENT
+END:VCALENDAR

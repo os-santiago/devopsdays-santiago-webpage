@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import PageHeader from "@/components/PageHeader";
 import { type FormEvent, useState } from "react";
 import { Send, Mail, User, MessageSquare } from "lucide-react";
 import Navbar from "@/components/Navbar";
@@ -103,26 +103,16 @@ const ContactPage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="pt-24 pb-20">
+      <main className="pt-28 pb-20">
         <div className="container mx-auto px-4">
-          <motion.div
-            className="text-center mb-4"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-          >
-            <span className="px-3 py-1 rounded-full bg-primary/20 text-primary text-xs font-semibold uppercase tracking-widest border border-primary/30">
-              Contacto
-            </span>
-            <h1 className="text-4xl md:text-6xl font-black text-foreground mt-4 mb-4">
-              Comunícate con el <span className="text-gradient-space">Centro de Mando</span>
-            </h1>
-            <p className="text-muted-foreground text-lg">¿Preguntas? ¿Ideas? ¡Estamos para ayudarte!</p>
-          </motion.div>
+          <PageHeader eyebrow="Contacto" title={<>Habla con el <span className="text-land-red">Equipo</span></>}>
+            ¿Preguntas? ¿Ideas? ¡Estamos para ayudarte!
+          </PageHeader>
 
           <p className="max-w-2xl mx-auto mb-6 text-center text-sm text-muted-foreground">
             Si tienes algún problema con el formulario, puedes escribirnos a{" "}
             <a
-              className="font-semibold text-primary hover:underline"
+              className="font-semibold text-land-red hover:underline"
               href="mailto:santiago@devopsdays.org"
             >
               santiago@devopsdays.org
@@ -130,13 +120,10 @@ const ContactPage = () => {
             .
           </p>
 
-          <motion.form
+          <form
             onSubmit={handleSubmit}
             noValidate
-            className="max-w-2xl mx-auto space-y-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+            className="toy max-w-2xl mx-auto space-y-6 bg-card p-6 sm:p-8"
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div>
@@ -153,7 +140,7 @@ const ContactPage = () => {
                   onBlur={() => handleFieldBlur("name")}
                   aria-invalid={isFieldErrorVisible("name")}
                   aria-describedby={getFieldDescribedBy("name")}
-                  className="w-full px-4 py-3 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full px-4 py-3 rounded-xl bg-white border-2 border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-land-sky"
                   placeholder="Tu nombre"
                 />
                 {isFieldErrorVisible("name") && (
@@ -176,7 +163,7 @@ const ContactPage = () => {
                   onBlur={() => handleFieldBlur("email")}
                   aria-invalid={isFieldErrorVisible("email")}
                   aria-describedby={getFieldDescribedBy("email")}
-                  className="w-full px-4 py-3 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+                  className="w-full px-4 py-3 rounded-xl bg-white border-2 border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-land-sky"
                   placeholder="tu@email.com"
                 />
                 {isFieldErrorVisible("email") && (
@@ -200,7 +187,7 @@ const ContactPage = () => {
                 onBlur={() => handleFieldBlur("subject")}
                 aria-invalid={isFieldErrorVisible("subject")}
                 aria-describedby={getFieldDescribedBy("subject")}
-                className="w-full px-4 py-3 rounded-xl bg-card border border-border text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+                className="w-full px-4 py-3 rounded-xl bg-white border-2 border-input text-foreground focus:outline-none focus:ring-2 focus:ring-land-sky"
               >
                 <option value="" disabled>
                   Selecciona un asunto
@@ -232,7 +219,7 @@ const ContactPage = () => {
                 onBlur={() => handleFieldBlur("message")}
                 aria-invalid={isFieldErrorVisible("message")}
                 aria-describedby={getFieldDescribedBy("message")}
-                className="w-full px-4 py-3 rounded-xl bg-card border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent resize-none"
+                className="w-full px-4 py-3 rounded-xl bg-white border-2 border-input text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-land-sky resize-none"
                 placeholder="Cuéntanos más..."
               />
               <div className="mt-2 flex items-center justify-between">
@@ -244,7 +231,7 @@ const ContactPage = () => {
                   <span />
                 )}
                 <p
-                  className={`text-xs ${form.message.length >= 360 ? "text-accent" : "text-muted-foreground"}`}
+                  className={`text-xs ${form.message.length >= 360 ? "text-land-red" : "text-muted-foreground"}`}
                   aria-live="polite"
                 >
                   {form.message.length}/{MAX_MESSAGE_LENGTH}
@@ -268,14 +255,14 @@ const ContactPage = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-primary text-primary-foreground font-bold glow-red transition-transform hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="btn-block w-full"
             >
               <Send className="w-5 h-5" />
               {isSubmitting ? "Enviando..." : "Enviar Mensaje"}
             </button>
-          </motion.form>
+          </form>
         </div>
-      </div>
+      </main>
       <Footer />
     </div>
   );
