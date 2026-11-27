@@ -4,14 +4,14 @@ import Footer from "@/components/Footer";
 const CodeOfConductPage = () => (
   <div className="min-h-screen bg-background">
     <Navbar />
-    <main className="pt-24 pb-20 px-4">
-      <article className="max-w-3xl mx-auto space-y-8 text-muted-foreground leading-relaxed">
-        <h1 className="text-4xl md:text-6xl font-black text-foreground text-center">
-          Código de <span className="text-gradient-space">conducta</span>
+    <main className="pt-28 pb-20 px-4">
+      <article className="toy max-w-3xl mx-auto space-y-8 bg-card p-6 sm:p-10 text-muted-foreground leading-relaxed">
+        <h1 className="text-4xl md:text-6xl font-extrabold text-foreground text-center">
+          Código de <span className="text-land-red">conducta</span>
         </h1>
 
         <p>
-          Todos los asistentes, oradores, patrocinadores y voluntarios en DevOpsdays Santiago 2026 deben estar de acuerdo con el siguiente código de conducta. Los organizadores harán cumplir este código durante todo el evento. Esperamos la cooperación de todos los participantes para ayudar a garantizar un entorno seguro para todos.
+          Todos los asistentes, oradores, patrocinadores y voluntarios en DevOpsDays Santiago 2027 deben estar de acuerdo con el siguiente código de conducta. Los organizadores harán cumplir este código durante todo el evento. Esperamos la cooperación de todos los participantes para ayudar a garantizar un entorno seguro para todos.
         </p>
 
         <section aria-labelledby="quick-version" className="space-y-4">
@@ -44,7 +44,7 @@ const CodeOfConductPage = () => (
         </section>
 
         <p lang="en" className="border-t border-border pt-6 text-sm">
-          The devopsdays santiago 2026 Code of Conduct is based on{" "}
+          The DevOpsDays Santiago 2027 Code of Conduct is based on{" "}
           <a href="https://confcodeofconduct.com/" className="text-primary underline underline-offset-4">confcodeofconduct.com</a>.
         </p>
       </article>

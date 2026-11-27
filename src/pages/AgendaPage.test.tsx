@@ -11,57 +11,55 @@ const speakerList: Speaker[] = [
   { id: "grace", category: "accepted", name: "Grace", role: "Platform Lead", photo: "https://example.com/grace.jpg", socials: [] },
 ];
 
+const items: AgendaItem[] = [
+  { time: "08:00", title: "Registro y Café", type: "break", room: "all" },
+  { id: "keynote-ada", time: "09:00", title: "Keynote de apertura", type: "keynote", room: "main", speakerIds: ["ada"], description: "Bienvenida al mundo.", topics: ["Cultura"] },
+  { time: "10:00", title: "Charla en sala A", type: "talk", room: "room-a", speakerIds: ["grace"] },
+  { time: "10:00", title: "Taller en sala B", type: "workshop", room: "room-b", host: "Comunidad", durationSlots: 2 },
+  { time: "11:00", title: "Panel principal", type: "panel", room: "main", speakerIds: ["ada", "grace"] },
+];
+
 describe("AgendaPage", () => {
-  it("renders agenda tabs, room lanes, capacities, and shared events", () => {
-    renderWithRouter(<AgendaPage />, { route: "/agenda" });
+  it("shows a locked level while the 2027 agenda is empty", () => {
+    renderWithRouter(<AgendaPage items={[]} />, { route: "/agenda" });
 
-    expect(screen.getByRole("heading", { name: /Agenda de la Misión/i })).toBeInTheDocument();
-    expect(screen.getByText(/8 y 9 de Septiembre, 2026/i)).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: /Día 1/i })).toBeInTheDocument();
-    expect(screen.getByRole("tab", { name: /Día 2/i })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: /Mapa de Niveles/ })).toBeInTheDocument();
+    expect(screen.getByText(/Viernes 3 de septiembre, 2027 · 8:00 – 18:00 · Centro de Extensión UC/)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "La agenda se está construyendo" })).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { name: "Salas" })).not.toBeInTheDocument();
+  });
 
+  it("renders a single-day grid with rooms, capacities and shared events", () => {
+    renderWithRouter(<AgendaPage items={items} speakerList={speakerList} />, { route: "/agenda" });
+
+    expect(screen.queryByRole("tab")).not.toBeInTheDocument();
     expect(screen.getAllByText("Auditorio Principal").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Sala A").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Sala B").length).toBeGreaterThan(0);
     expect(screen.getAllByText("700+ personas").length).toBeGreaterThan(0);
     expect(screen.getAllByText("100 personas").length).toBeGreaterThanOrEqual(2);
-
-    expect(screen.getAllByText(/Organizadores - Más allá de la IA/).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/El pod que tumbó la cadena/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Registro y Café").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Taller").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Sala cerrada").length).toBeGreaterThan(0);
-    expect(screen.getAllByText("Registro y Café ☕ + Networking 🗣️").length).toBeGreaterThan(0);
     expect(screen.getByRole("heading", { name: "Salas" })).toBeInTheDocument();
-    expect(
-      screen.getByText(/Sala principal donde tendremos las actividades principales para un público de 700\+ personas\./i),
-    ).toBeInTheDocument();
   });
 
   it("opens a session details dialog from an agenda card", async () => {
     const user = userEvent.setup();
+    renderWithRouter(<AgendaPage items={items} speakerList={speakerList} />, { route: "/agenda" });
 
-    renderWithRouter(<AgendaPage />, { route: "/agenda" });
+    await user.click(screen.getAllByRole("button", { name: /Keynote de apertura/ })[0]);
 
-    await user.click(screen.getAllByRole("button", { name: /Organizadores - Más allá de la IA/i })[0]);
-
-    const dialog = screen.getByRole("dialog");
-    const dialogContent = within(dialog);
-
-    expect(dialog).toBeInTheDocument();
-    expect(dialogContent.getByRole("heading", { name: "Organizadores - Más allá de la IA: la evolución de las comunidades DevOps en LATAM en un mundo de IA" })).toBeInTheDocument();
-    expect(dialogContent.getByText("8 de Septiembre · 12:00 · Auditorio Principal")).toBeInTheDocument();
-    expect(dialogContent.getByText(/La Inteligencia Artificial está transformando/)).toBeInTheDocument();
-    expect(dialogContent.getByText("Karen Quijada")).toBeInTheDocument();
-    expect(dialogContent.getByText("Panel")).toBeInTheDocument();
+    const dialog = within(screen.getByRole("dialog"));
+    expect(dialog.getByRole("heading", { name: "Keynote de apertura" })).toBeInTheDocument();
+    expect(dialog.getByText("3 de septiembre · 09:00 · Auditorio Principal")).toBeInTheDocument();
+    expect(dialog.getByText("Bienvenida al mundo.")).toBeInTheDocument();
+    expect(dialog.getByText("Ada")).toBeInTheDocument();
   });
 
   it("opens a session directly from its URL id", () => {
-    renderWithRouter(<AgendaPage />, { route: "/agenda?session=keynote-matias-sonnleitner" });
+    renderWithRouter(<AgendaPage items={items} speakerList={speakerList} />, { route: "/agenda?session=keynote-ada" });
 
     expect(screen.getByRole("dialog")).toBeInTheDocument();
-    expect(screen.getByRole("heading", {
-      name: "DevOps ha muerto, larga vida al DevOps: de servir aplicaciones a servir modelos",
-    })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Keynote de apertura" })).toBeInTheDocument();
   });
 
   it.each([
@@ -69,15 +67,7 @@ describe("AgendaPage", () => {
     ["con un speaker", { speakerIds: ["ada"] }, ["Ada", "SRE"]],
     ["con varios speakers", { speakerIds: ["ada", "grace"] }, ["Ada", "Grace"]],
   ])("renders a session %s", (_, speakerData, expectedTexts) => {
-    const item: AgendaItem = {
-      id: "session",
-      day: "day-1",
-      time: "09:00",
-      title: "Sesión compartida",
-      type: "talk",
-      room: "main",
-      ...speakerData,
-    };
+    const item: AgendaItem = { id: "session", time: "09:00", title: "Sesión compartida", type: "talk", room: "main", ...speakerData };
 
     render(
       <Dialog open>
@@ -89,13 +79,7 @@ describe("AgendaPage", () => {
   });
 
   it("does not render speaker details for breaks", () => {
-    const item: AgendaItem = {
-      day: "day-1",
-      time: "10:00",
-      title: "Coffee Break",
-      type: "break",
-      room: "all",
-    };
+    const item: AgendaItem = { time: "10:00", title: "Coffee Break", type: "break", room: "all" };
 
     render(
       <Dialog open>
@@ -107,14 +91,7 @@ describe("AgendaPage", () => {
   });
 
   it("preserves line breaks in session descriptions", () => {
-    const item: AgendaItem = {
-      day: "day-1",
-      time: "09:00",
-      title: "Keynote",
-      description: "Primer párrafo.\nSegundo párrafo.",
-      type: "keynote",
-      room: "main",
-    };
+    const item: AgendaItem = { time: "09:00", title: "Keynote", description: "Primer párrafo.\nSegundo párrafo.", type: "keynote", room: "main" };
 
     render(
       <Dialog open>
@@ -124,6 +101,5 @@ describe("AgendaPage", () => {
 
     const description = screen.getByRole("dialog").querySelector(".whitespace-pre-line");
     expect(description?.textContent).toBe(item.description);
-    expect(description).toHaveClass("whitespace-pre-line");
   });
 });
