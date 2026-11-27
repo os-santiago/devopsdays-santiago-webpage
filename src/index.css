@@ -1,56 +1,51 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* DevOpsDays Land 2027 — light "sky world" theme.
+   Contrast rule: on sky/coin backgrounds text is always navy; white text only on navy or red. */
 @layer base {
   :root {
-    --background: 210 33% 12%;
-    --foreground: 0 0% 100%;
+    --background: 205 100% 97%;
+    --foreground: 220 72% 16%;
 
-    --card: 210 40% 8%;
-    --card-foreground: 0 0% 100%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 72% 16%;
 
-    --popover: 210 40% 8%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 72% 16%;
 
-    --primary: 357 82% 51%;
+    --primary: 4 75% 48%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 78% 14%;
+    --secondary: 220 72% 16%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 30% 18%;
-    --muted-foreground: 197 60% 70%;
+    --muted: 205 70% 92%;
+    --muted-foreground: 220 30% 32%;
 
-    --accent: 197 76% 61%;
-    --accent-foreground: 210 78% 14%;
+    --accent: 43 100% 62%;
+    --accent-foreground: 220 72% 16%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 4 75% 48%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 30% 22%;
-    --input: 210 30% 22%;
-    --ring: 197 76% 61%;
+    --border: 210 45% 82%;
+    --input: 210 45% 75%;
+    --ring: 205 90% 60%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    /* Custom tokens */
-    --space-dark: 210 78% 12%;
-    --space-navy: 210 78% 14%;
-    --space-red: 357 82% 51%;
-    --space-sky: 197 76% 61%;
-    --space-star: 45 100% 90%;
-
-    --sidebar-background: 210 78% 10%;
-    --sidebar-foreground: 0 0% 95%;
-    --sidebar-primary: 197 76% 61%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 30% 18%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 210 30% 22%;
-    --sidebar-ring: 197 76% 61%;
+    /* Land palette (sampled from the 2027 artwork) */
+    --land-sky: 205 90% 60%;
+    --land-navy: 220 72% 16%;
+    --land-red: 4 75% 48%;
+    --land-coin: 43 100% 62%;
+    --land-grass: 100 60% 45%;
+    --land-wood: 27 76% 51%;
+    --land-pink: 345 78% 59%;
   }
 }
 
@@ -59,48 +54,155 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans antialiased;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Poppins', sans-serif;
+    @apply font-display;
+    letter-spacing: -0.01em;
   }
 }
 
-/* Custom utilities */
-@layer utilities {
-  .text-gradient-space {
-    @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(197 76% 61%), hsl(0 0% 100%));
+@layer components {
+  /* Thick navy outline + hard offset shadow, like the artwork's "toy" look. */
+  .toy {
+    border: 3px solid hsl(var(--land-navy));
+    box-shadow: 0 6px 0 hsl(var(--land-navy));
+    border-radius: 1.25rem;
   }
 
-  .bg-space-gradient {
-    background: linear-gradient(180deg, hsl(210 78% 8%) 0%, hsl(210 78% 14%) 50%, hsl(210 33% 12%) 100%);
+  /* Chunky 3D button: press "bumps" the block down, hover pops a coin. */
+  .btn-block {
+    @apply relative inline-flex items-center justify-center gap-2 px-6 py-3 font-display text-lg font-extrabold leading-none;
+    border: 3px solid hsl(var(--land-navy));
+    border-radius: 0.9rem;
+    box-shadow: 0 6px 0 hsl(var(--land-navy));
+    background: hsl(var(--land-red));
+    color: white;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+  }
+  .btn-block:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 0 hsl(var(--land-navy));
+    filter: brightness(1.05);
+  }
+  .btn-block:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 hsl(var(--land-navy));
+  }
+  .btn-block:focus-visible {
+    outline: 3px solid hsl(var(--land-sky));
+    outline-offset: 4px;
+  }
+  .btn-block:disabled,
+  .btn-block[aria-disabled="true"] {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: 0 6px 0 hsl(var(--land-navy));
+  }
+  .btn-coin {
+    background: hsl(var(--land-coin));
+    color: hsl(var(--land-navy));
+  }
+  .btn-cloud {
+    background: white;
+    color: hsl(var(--land-navy));
+  }
+  .btn-sm {
+    @apply px-4 py-2 text-base;
   }
 
-  .bg-hero-overlay {
-    background: linear-gradient(180deg, rgba(6, 32, 60, 0.7) 0%, rgba(6, 32, 60, 0.9) 100%);
+  /* Bumpy grass band used as a section edge. */
+  .grass-edge {
+    height: 28px;
+    background:
+      radial-gradient(circle at 14px 28px, hsl(var(--land-grass)) 13px, transparent 14px) 0 0 / 28px 28px repeat-x;
   }
 
-  .glow-sky {
-    box-shadow: 0 0 30px hsl(197 76% 61% / 0.3), 0 0 60px hsl(197 76% 61% / 0.1);
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full bg-secondary px-4 py-1 text-xs font-bold uppercase tracking-widest text-secondary-foreground;
+  }
+}
+
+/* ---------- Motion (all of it is opt-in: off for reduced-motion users) ---------- */
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(40px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(var(--tilt, 0deg)); }
+  50% { transform: translateY(-14px) rotate(var(--tilt, 0deg)); }
+}
+@keyframes drift {
+  from { transform: translateX(-30vw); }
+  to { transform: translateX(130vw); }
+}
+@keyframes zoom {
+  to { transform: scale(1.12); }
+}
+@keyframes level-walk {
+  from { left: 0; }
+  to { left: calc(100% - 22px); }
+}
+@keyframes level-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes coin-pop {
+  0% { opacity: 0; transform: translate(-50%, 0) scale(0.6); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -34px) scale(1); }
+}
+
+.level-progress,
+.drift { display: none; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .bob { animation: bob 4.5s ease-in-out infinite; animation-delay: var(--delay, 0s); }
+  .drift { display: block; animation: drift var(--duration, 80s) linear infinite; animation-delay: var(--delay, 0s); }
+
+  @media (hover: hover) {
+    .btn-block:not(:disabled):hover::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: -6px;
+      width: 16px;
+      height: 16px;
+      border-radius: 9999px;
+      background: hsl(var(--land-coin));
+      border: 2px solid hsl(var(--land-navy));
+      animation: coin-pop 0.5s ease-out forwards;
+      pointer-events: none;
+    }
   }
 
-  .glow-red {
-    box-shadow: 0 0 30px hsl(357 82% 51% / 0.3), 0 0 60px hsl(357 82% 51% / 0.1);
-  }
-
-  .star-field {
-    background-image: 
-      radial-gradient(2px 2px at 20% 30%, white 100%, transparent),
-      radial-gradient(1px 1px at 40% 70%, white 100%, transparent),
-      radial-gradient(1.5px 1.5px at 60% 20%, white 100%, transparent),
-      radial-gradient(1px 1px at 80% 50%, white 100%, transparent),
-      radial-gradient(2px 2px at 10% 80%, white 100%, transparent),
-      radial-gradient(1px 1px at 70% 90%, white 100%, transparent),
-      radial-gradient(1.5px 1.5px at 90% 10%, white 100%, transparent),
-      radial-gradient(1px 1px at 30% 50%, white 100%, transparent),
-      radial-gradient(1px 1px at 50% 85%, white 100%, transparent);
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+    .scroll-zoom {
+      animation: zoom linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 100vh;
+    }
+    .level-progress { display: block; }
+    .level-progress__fill {
+      transform-origin: left;
+      animation: level-fill linear both;
+      animation-timeline: scroll(root);
+    }
+    .level-progress__marker {
+      animation: level-walk linear both;
+      animation-timeline: scroll(root);
+    }
   }
 }
